@@ -16,7 +16,10 @@ import odd.ImageBuffer;
  */
 class CanvasContext
 {
-    var buffer : ImageBuffer;
+    public var drawBuffer : ImageBuffer;
+    
+    var renderBuffer : ImageBuffer;
+    
     
     #if js
     var context : CanvasRenderingContext2D;
@@ -24,38 +27,42 @@ class CanvasContext
     var imageData : ImageData;
     #end
     
-    public function new(buffer : ImageBuffer)
+    public function new(width : Int, height : Int)
     {
         trace('new canvas context');
-        this.buffer = buffer;
+        
+        renderBuffer = new ImageBuffer(width, height);
+        drawBuffer = new ImageBuffer(width, height);
         
         #if js
-        createContext();
+        var document : HTMLDocument = Browser.document;
+        var canvas : CanvasElement = document.createCanvasElement();
+        context = canvas.getContext2d();
+        canvas.setAttribute('width', Std.string(width));
+        canvas.setAttribute('height', Std.string(height));
+        document.body.appendChild(canvas);
+        
         draw();
         #end
     }
     
-    #if js
+    var frame : Int = 1;
+    var buffer : Int = 1;
     public function draw() : Void
     {
-        pixelArray = new Uint8ClampedArray(buffer.getData());
-        imageData = new ImageData(pixelArray, buffer.width, buffer.height);
+        #if js
+        pixelArray = new Uint8ClampedArray(renderBuffer.getData());
+        imageData = new ImageData(pixelArray, renderBuffer.width, renderBuffer.height);
         context.putImageData(imageData, 0, 0);
+        #end
+        swapBuffers();
     }
     
-    public function setBuffer(buffer : ImageBuffer) : Void
+    private function swapBuffers() : Void
     {
-        this.buffer = buffer;
+        var tempBuffer : ImageBuffer = renderBuffer;
+        renderBuffer = drawBuffer;
+        drawBuffer = tempBuffer;
+        if (buffer > 2) buffer = 1;
     }
-    
-    private function createContext() : Void
-    {
-        var document : HTMLDocument = Browser.document;
-        var canvas : CanvasElement = document.createCanvasElement();
-        context = canvas.getContext2d();
-        canvas.setAttribute('width', Std.string(buffer.width));
-        canvas.setAttribute('height', Std.string(buffer.height));
-        document.body.appendChild(canvas);
-    }
-    #end
 }

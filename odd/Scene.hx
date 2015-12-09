@@ -1,4 +1,5 @@
 package odd;
+import haxe.Timer;
 
 /**
  * ...
@@ -6,14 +7,21 @@ package odd;
  */
 class Scene
 {
-        
+    var context : Context;
     
-    public function new()
-    {
-        
+    public function new(context : Context) {
+        this.context = context;
     }
     
-    public function draw() {
-        
+    public function create() : Void {}
+   
+    public function destroy() : Void {}
+    
+    public function draw(delta : Float) : Void {
+        context.draw();
+        context.drawBuffer.clear();
+    }
+    
+    public function update(delta : Float) : Void {
     }
 }

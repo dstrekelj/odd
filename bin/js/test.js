@@ -12,6 +12,34 @@ Std.__name__ = true;
 Std.string = function(s) {
 	return js_Boot.__string_rec(s,"");
 };
+var Type = function() { };
+Type.__name__ = true;
+Type.createInstance = function(cl,args) {
+	var _g = args.length;
+	switch(_g) {
+	case 0:
+		return new cl();
+	case 1:
+		return new cl(args[0]);
+	case 2:
+		return new cl(args[0],args[1]);
+	case 3:
+		return new cl(args[0],args[1],args[2]);
+	case 4:
+		return new cl(args[0],args[1],args[2],args[3]);
+	case 5:
+		return new cl(args[0],args[1],args[2],args[3],args[4]);
+	case 6:
+		return new cl(args[0],args[1],args[2],args[3],args[4],args[5]);
+	case 7:
+		return new cl(args[0],args[1],args[2],args[3],args[4],args[5],args[6]);
+	case 8:
+		return new cl(args[0],args[1],args[2],args[3],args[4],args[5],args[6],args[7]);
+	default:
+		throw new js__$Boot_HaxeError("Too many arguments");
+	}
+	return null;
+};
 var haxe__$Int64__$_$_$Int64 = function(high,low) {
 	this.high = high;
 	this.low = low;
@@ -434,27 +462,25 @@ var odd_Engine = function(width,height,framesPerSecond) {
 	this.timeStep = 1 / framesPerSecond;
 	this.timeThen = haxe_Timer.stamp();
 	this.timeAccumulator = 0;
-	this.buffer = new odd_ImageBuffer(width,height);
-	this.context = new odd_backend_js_CanvasContext(this.buffer);
-	this.run();
+	this.context = new odd_backend_js_CanvasContext(width,height);
 };
 odd_Engine.__name__ = true;
 odd_Engine.prototype = {
-	run: function(time) {
+	loadScene: function(newScene) {
+		this.scene = Type.createInstance(newScene,[this.context]);
+		this.scene.create();
+	}
+	,run: function(time) {
 		this.timeNow = haxe_Timer.stamp();
 		this.timeElapsed = this.timeNow - this.timeThen;
 		this.timeThen = this.timeNow;
 		this.timeAccumulator += this.timeElapsed;
 		if(this.timeAccumulator >= this.timeStep) {
-			this.update(this.timeStep);
+			this.scene.update(this.timeStep);
 			this.timeAccumulator = 0;
 		}
-		this.draw(this.timeElapsed);
+		this.scene.draw(this.timeElapsed);
 		window.requestAnimationFrame($bind(this,this.run));
-	}
-	,update: function(delta) {
-	}
-	,draw: function(delta) {
 	}
 	,__class__: odd_Engine
 };
@@ -540,50 +566,85 @@ odd_ImageBuffer.prototype = {
 	}
 	,__class__: odd_ImageBuffer
 };
-var odd_Scene = function() {
+var odd_Scene = function(context) {
+	this.context = context;
 };
 odd_Scene.__name__ = true;
 odd_Scene.prototype = {
-	draw: function() {
+	create: function() {
+	}
+	,destroy: function() {
+	}
+	,draw: function(delta) {
+		this.context.draw();
+		this.context.drawBuffer.clear(null);
+	}
+	,update: function(delta) {
 	}
 	,__class__: odd_Scene
 };
-var odd_backend_js_CanvasContext = function(buffer) {
+var odd_backend_js_CanvasContext = function(width,height) {
+	this.buffer = 1;
+	this.frame = 1;
 	console.log("new canvas context");
-	this.buffer = buffer;
-	this.createContext();
+	this.renderBuffer = new odd_ImageBuffer(width,height);
+	this.drawBuffer = new odd_ImageBuffer(width,height);
+	var document = window.document;
+	var canvas = document.createElement("canvas");
+	this.context = canvas.getContext("2d",null);
+	canvas.setAttribute("width",width == null?"null":"" + width);
+	canvas.setAttribute("height",height == null?"null":"" + height);
+	document.body.appendChild(canvas);
 	this.draw();
 };
 odd_backend_js_CanvasContext.__name__ = true;
 odd_backend_js_CanvasContext.prototype = {
 	draw: function() {
-		this.pixelArray = new Uint8ClampedArray(this.buffer.data.b.bufferValue);
-		this.imageData = new ImageData(this.pixelArray,this.buffer.width,this.buffer.height);
+		this.pixelArray = new Uint8ClampedArray(this.renderBuffer.data.b.bufferValue);
+		this.imageData = new ImageData(this.pixelArray,this.renderBuffer.width,this.renderBuffer.height);
 		this.context.putImageData(this.imageData,0,0);
+		this.swapBuffers();
 	}
-	,setBuffer: function(buffer) {
-		this.buffer = buffer;
-	}
-	,createContext: function() {
-		var document = window.document;
-		var canvas = document.createElement("canvas");
-		this.context = canvas.getContext("2d",null);
-		canvas.setAttribute("width",Std.string(this.buffer.width));
-		canvas.setAttribute("height",Std.string(this.buffer.height));
-		document.body.appendChild(canvas);
+	,swapBuffers: function() {
+		var tempBuffer = this.renderBuffer;
+		this.renderBuffer = this.drawBuffer;
+		this.drawBuffer = tempBuffer;
+		if(this.buffer > 2) this.buffer = 1;
 	}
 	,__class__: odd_backend_js_CanvasContext
 };
 var test_Main = function(width,height,framesPerSecond) {
 	odd_Engine.call(this,width,height,framesPerSecond);
+	this.loadScene(test_Test);
+	this.run();
 };
 test_Main.__name__ = true;
 test_Main.main = function() {
-	new test_Main(640,480,10);
+	new test_Main(320,240,30);
 };
 test_Main.__super__ = odd_Engine;
 test_Main.prototype = $extend(odd_Engine.prototype,{
 	__class__: test_Main
+});
+var test_Test = function(context) {
+	odd_Scene.call(this,context);
+};
+test_Test.__name__ = true;
+test_Test.__super__ = odd_Scene;
+test_Test.prototype = $extend(odd_Scene.prototype,{
+	create: function() {
+		console.log("Scene created.");
+		this.point = { x : 0, y : 0};
+	}
+	,draw: function(elapsed) {
+		odd_Scene.prototype.draw.call(this,elapsed);
+		this.context.drawBuffer.setPixel(this.point.x,this.point.y,-1);
+	}
+	,update: function(elapsed) {
+		this.point.x += 1;
+		this.point.y += 1;
+	}
+	,__class__: test_Test
 });
 var $_, $fid = 0;
 function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id__ = $fid++; var f; if( o.hx__closures__ == null ) o.hx__closures__ = {}; else f = o.hx__closures__[m.__id__]; if( f == null ) { f = function(){ return f.method.apply(f.scope, arguments); }; f.scope = o; f.method = m; o.hx__closures__[m.__id__] = f; } return f; }

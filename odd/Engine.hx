@@ -17,8 +17,8 @@ class Engine
     var timeStep : Float;
     var timeThen : Float;
     
-    var buffer : ImageBuffer;
     var context : Context;
+    
     var scene : Scene;
     
     public function new(width : Int, height : Int, framesPerSecond : Float)
@@ -29,10 +29,13 @@ class Engine
         timeThen = Timer.stamp();
         timeAccumulator = 0;
         
-        buffer = new ImageBuffer(width, height);
-        context = new Context(buffer);
-        
-        run();
+        context = new Context(width, height);
+    }
+    
+    public function loadScene(newScene : Class<Scene>) : Void
+    {
+        scene = Type.createInstance(newScene, [context]);
+        scene.create();
     }
     
     public function run(?time : Float)
@@ -44,17 +47,14 @@ class Engine
         timeAccumulator += timeElapsed;
         
         if (timeAccumulator >= timeStep) {
-            update(timeStep);
+            scene.update(timeStep);
             timeAccumulator = 0;
         }
         
-        draw(timeElapsed);
+        scene.draw(timeElapsed);
         
         #if js
         Browser.window.requestAnimationFrame(run);
         #end
     }
-    
-    public function update(delta : Float) : Void { }
-    public function draw(delta : Float) : Void { } 
 }

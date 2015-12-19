@@ -1,4 +1,4 @@
-package odd.backend.js;
+package odd.renderers.js;
 #if js
 import js.Browser;
 import js.html.CanvasElement;
@@ -7,6 +7,7 @@ import js.html.HTMLDocument;
 import js.html.ImageData;
 import js.html.Uint8ClampedArray;
 #end
+import haxe.io.BytesData;
 import haxe.Timer;
 import odd.ImageBuffer;
 
@@ -14,25 +15,23 @@ import odd.ImageBuffer;
  * ...
  * @author 
  */
-class CanvasContext
+class CanvasRenderer
 {
-    public var drawBuffer : ImageBuffer;
-    
-    var renderBuffer : ImageBuffer;
-    
-    
     #if js
     var context : CanvasRenderingContext2D;
     var pixelArray : Uint8ClampedArray;
     var imageData : ImageData;
     #end
     
+    var width : Int;
+    var height : Int;
+    
     public function new(width : Int, height : Int)
     {
         trace('new canvas context');
         
-        renderBuffer = new ImageBuffer(width, height);
-        drawBuffer = new ImageBuffer(width, height);
+        this.width = width;
+        this.height = height;
         
         #if js
         var document : HTMLDocument = Browser.document;
@@ -41,28 +40,15 @@ class CanvasContext
         canvas.setAttribute('width', Std.string(width));
         canvas.setAttribute('height', Std.string(height));
         document.body.appendChild(canvas);
-        
-        draw();
         #end
     }
     
-    var frame : Int = 1;
-    var buffer : Int = 1;
-    public function draw() : Void
+    public function render(bufferData : BytesData) : Void
     {
         #if js
-        pixelArray = new Uint8ClampedArray(renderBuffer.getData());
-        imageData = new ImageData(pixelArray, renderBuffer.width, renderBuffer.height);
+        pixelArray = new Uint8ClampedArray(bufferData);
+        imageData = new ImageData(pixelArray, width, height);
         context.putImageData(imageData, 0, 0);
         #end
-        swapBuffers();
-    }
-    
-    private function swapBuffers() : Void
-    {
-        var tempBuffer : ImageBuffer = renderBuffer;
-        renderBuffer = drawBuffer;
-        drawBuffer = tempBuffer;
-        if (buffer > 2) buffer = 1;
     }
 }

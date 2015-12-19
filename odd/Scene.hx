@@ -7,21 +7,22 @@ import haxe.Timer;
  */
 class Scene
 {
+    public var buffer : ImageBuffer;
+    
     var context : Context;
     
-    public function new(context : Context) {
+    public function new(buffer : ImageBuffer, context : Context) {
+        this.buffer = buffer;
         this.context = context;
+        
+        trace('-- NEW SCENE --');
     }
     
     public function create() : Void {}
    
     public function destroy() : Void {}
     
-    public function draw(delta : Float) : Void {
-        context.draw();
-        context.drawBuffer.clear();
-    }
+    public function draw() : Void {}
     
-    public function update(delta : Float) : Void {
-    }
+    public function update(delta : Float) : Void {}
 }

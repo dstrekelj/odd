@@ -12,13 +12,13 @@ class Main extends Engine
 {
     static function main() 
     {
-        new Main(320, 240, 30);
+        new Main(640, 480, 30);
     }
     
     public function new(width : Int, height : Int, framesPerSecond : Int)
     {
         super(width, height, framesPerSecond);
-        this.loadScene(Test);
+        this.context.setScene(Test);
         this.run();
     }
 }
@@ -29,20 +29,20 @@ class Test extends Scene
     
     override public function create() : Void
     {
-        trace('Scene created.');
-        point = { x : 0, y : 0 };
+        point = { x : 320, y : 240 };
     }
     
-    override public function draw(elapsed : Float) : Void
+    override public function draw() : Void
     {
-        super.draw(elapsed);
-        context.drawBuffer.setPixel(point.x, point.y, 0xffffffff);
+        super.draw();
+        buffer.setPixel(point.x, point.y, 0xffffffff);
     }
-    
+    var time : Float = 0;
     override public function update(elapsed : Float) : Void
     {
-        point.x += 1;
-        point.y += 1;
+        time += elapsed * 1000;
+        point.x += Std.int(Math.sin(time / 400) * 4);
+        point.y += Std.int(Math.cos(time / 400) * 4);
     }
 }
 

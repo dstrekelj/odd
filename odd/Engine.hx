@@ -4,10 +4,6 @@ import haxe.Timer;
 import js.Browser;
 #end
 
-/**
- * ...
- * @author 
- */
 class Engine
 {
     var framesPerSecond : Float;
@@ -18,8 +14,6 @@ class Engine
     var timeThen : Float;
     
     var context : Context;
-    
-    var scene : Scene;
     
     public function new(width : Int, height : Int, framesPerSecond : Float)
     {
@@ -32,12 +26,6 @@ class Engine
         context = new Context(width, height);
     }
     
-    public function loadScene(newScene : Class<Scene>) : Void
-    {
-        scene = Type.createInstance(newScene, [context]);
-        scene.create();
-    }
-    
     public function run(?time : Float)
     {
         timeNow = Timer.stamp();
@@ -47,11 +35,11 @@ class Engine
         timeAccumulator += timeElapsed;
         
         if (timeAccumulator >= timeStep) {
-            scene.update(timeStep);
+            context.update(timeStep);
             timeAccumulator = 0;
         }
         
-        scene.draw(timeElapsed);
+        context.draw();
         
         #if js
         Browser.window.requestAnimationFrame(run);

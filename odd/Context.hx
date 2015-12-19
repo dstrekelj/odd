@@ -2,6 +2,9 @@ package odd;
 
 class Context
 {
+    public var width : Int;
+    public var height : Int;
+    
     var renderer : Renderer;
     var scene : Scene;
     
@@ -10,6 +13,9 @@ class Context
 
     public function new(width : Int, height : Int) 
     {
+        this.width = width;
+        this.height = height;
+        
         renderBuffer = new ImageBuffer(width, height);
         drawBuffer = new ImageBuffer(width, height);
         

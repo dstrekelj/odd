@@ -23,7 +23,7 @@ class ImageBuffer
         
         data = Bytes.alloc(width * height * 4);
         
-        clearColor = 0xffff0000;
+        clearColor = 0xff000000;
         clearData = Bytes.alloc(width * height * 4);
         for (i in 0...width) {
             for (j in 0...height) {

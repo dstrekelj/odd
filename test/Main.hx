@@ -68,7 +68,7 @@ class Starfield extends Scene
             var x = Math.floor((star.x / star.z) * halfWidth + halfWidth);
             var y = Math.floor((star.y / star.z) * halfHeight + halfHeight);
             
-            if (x < 0 || x >= context.width || y < 0 || x >= context.height)
+            if (x < 0 || x >= context.width || y < 0 || y >= context.height)
             {
                 star.x = 2 * (Math.random() - 0.5) * spread;
                 star.y = 2 * (Math.random() - 0.5) * spread;

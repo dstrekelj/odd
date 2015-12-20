@@ -4,6 +4,11 @@ Odd is a peculiar little software renderer written in Haxe that aims to be rende
 
 The idea is that all of the rendering logic is defined in a cross-platform way, and that the image buffer data is then passed to a user-specified back-end which will handle the drawing of the frame (to a window, canvas, image, ASCII text, etc.).
 
+## Instructions
+
+1. Get [Haxe](http://haxe.org/download/). I'm using 3.2.0, so any 3.2.x version is likely to work.
+2. Run build file (e.g. `haxe build.hxml`) or do it manually (e.g. `haxe -main test.Main -js bin/js/test.js -D ODD_CANVAS_RENDERER`)
+
 ## Adding your own renderer
 
 The renderer's only job is to draw its idea of a pixel on its idea of a window / canvas. Certain requirements need to be met for the renderer to work.

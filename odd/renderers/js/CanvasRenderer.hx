@@ -28,7 +28,7 @@ class CanvasRenderer
     
     public function new(width : Int, height : Int)
     {
-        trace('new canvas context');
+        trace('-- CanvasRenderer --');
         
         this.width = width;
         this.height = height;

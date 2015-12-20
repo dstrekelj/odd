@@ -465,7 +465,7 @@ var odd_Context = function(width,height) {
 	this.height = height;
 	this.renderBuffer = new odd_ImageBuffer(width,height);
 	this.drawBuffer = new odd_ImageBuffer(width,height);
-	this.renderer = new odd_renderers_js_CanvasRenderer(width,height);
+	this.renderer = new OddCanvasRenderer(width,height);
 };
 odd_Context.__name__ = true;
 odd_Context.prototype = {
@@ -614,7 +614,7 @@ odd_Scene.prototype = {
 	,__class__: odd_Scene
 };
 var odd_renderers_js_CanvasRenderer = function(width,height) {
-	console.log("new canvas context");
+	console.log("-- CanvasRenderer --");
 	this.width = width;
 	this.height = height;
 	var document = window.document;
@@ -633,25 +633,12 @@ odd_renderers_js_CanvasRenderer.prototype = {
 	}
 	,__class__: odd_renderers_js_CanvasRenderer
 };
-var test_Main = function(width,height,framesPerSecond) {
-	odd_Engine.call(this,width,height,framesPerSecond);
-	this.context.setScene(test_Test);
-	this.run();
-};
-test_Main.__name__ = true;
-test_Main.main = function() {
-	new test_Main(800,600,60);
-};
-test_Main.__super__ = odd_Engine;
-test_Main.prototype = $extend(odd_Engine.prototype,{
-	__class__: test_Main
-});
-var test_Starfield = function(buffer,context) {
+var samples_Starfield = function(buffer,context) {
 	odd_Scene.call(this,buffer,context);
 };
-test_Starfield.__name__ = true;
-test_Starfield.__super__ = odd_Scene;
-test_Starfield.prototype = $extend(odd_Scene.prototype,{
+samples_Starfield.__name__ = true;
+samples_Starfield.__super__ = odd_Scene;
+samples_Starfield.prototype = $extend(odd_Scene.prototype,{
 	create: function() {
 		odd_Scene.prototype.create.call(this);
 		this.spread = 64;
@@ -691,18 +678,19 @@ test_Starfield.prototype = $extend(odd_Scene.prototype,{
 	,draw: function() {
 		odd_Scene.prototype.draw.call(this);
 	}
-	,__class__: test_Starfield
+	,__class__: samples_Starfield
 });
-var test_Test = function(buffer,context) {
+var samples_Triangle = function(buffer,context) {
 	odd_Scene.call(this,buffer,context);
 };
-test_Test.__name__ = true;
-test_Test.__super__ = odd_Scene;
-test_Test.prototype = $extend(odd_Scene.prototype,{
+samples_Triangle.__name__ = true;
+samples_Triangle.__super__ = odd_Scene;
+samples_Triangle.prototype = $extend(odd_Scene.prototype,{
 	create: function() {
 		odd_Scene.prototype.create.call(this);
 		this.p1 = { x : this.context.width / 2 | 0, y : this.context.height / 2 | 0};
 		this.p2 = { x : 0, y : 0};
+		this.p3 = { x : 0, y : 0};
 		this.time = 0;
 	}
 	,update: function(elapsed) {
@@ -710,16 +698,18 @@ test_Test.prototype = $extend(odd_Scene.prototype,{
 		this.time += elapsed;
 		this.p2.x = this.p1.x + Std["int"](Math.sin(this.time) * 100);
 		this.p2.y = this.p1.y + Std["int"](Math.cos(this.time) * 100);
+		this.p3.x = this.p1.x + Std["int"](Math.sin(this.time * 2) * 100);
+		this.p3.y = this.p1.y + Std["int"](Math.cos(this.time * 2) * 100);
 	}
 	,draw: function() {
 		odd_Scene.prototype.draw.call(this);
-		this.buffer.setPixel(this.p1.x,this.p1.y,-1);
-		this.buffer.setPixel(this.p2.x,this.p2.y,-1);
 		this.drawLine(this.p1,this.p2);
+		this.drawLine(this.p2,this.p3);
+		this.drawLine(this.p3,this.p1);
 	}
 	,drawLine: function(a,b) {
-		var p_x = a.x;
-		var p_y = a.y;
+		var x = a.x;
+		var y = a.y;
 		var dx = Math.round(Math.abs(b.x - a.x));
 		var dy = Math.round(Math.abs(b.y - a.y));
 		var sx;
@@ -729,21 +719,33 @@ test_Test.prototype = $extend(odd_Scene.prototype,{
 		var e;
 		e = (dx > dy?dx:-dy) / 2;
 		while(true) {
-			console.log(a.x);
-			this.buffer.setPixel(p_x,p_y,-1);
-			if(p_x == b.x && p_y == b.y) break;
+			this.buffer.setPixel(x,y,-1);
+			if(x == b.x && y == b.y) break;
 			var te = e;
 			if(te > -dx) {
 				e -= dy;
-				p_x += sx;
+				x += sx;
 			}
 			if(te < dy) {
 				e += dx;
-				p_y += sy;
+				y += sy;
 			}
 		}
 	}
-	,__class__: test_Test
+	,__class__: samples_Triangle
+});
+var test_Main = function(width,height,framesPerSecond) {
+	odd_Engine.call(this,width,height,framesPerSecond);
+	this.context.setScene(samples_Triangle);
+	this.run();
+};
+test_Main.__name__ = true;
+test_Main.main = function() {
+	new test_Main(800,600,60);
+};
+test_Main.__super__ = odd_Engine;
+test_Main.prototype = $extend(odd_Engine.prototype,{
+	__class__: test_Main
 });
 var $_, $fid = 0;
 function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id__ = $fid++; var f; if( o.hx__closures__ == null ) o.hx__closures__ = {}; else f = o.hx__closures__[m.__id__]; if( f == null ) { f = function(){ return f.method.apply(f.scope, arguments); }; f.scope = o; f.method = m; o.hx__closures__[m.__id__] = f; } return f; }

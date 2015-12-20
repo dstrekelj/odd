@@ -12,6 +12,8 @@ class Triangle extends Scene
     var p2 : Point;
     var p3 : Point;
     
+    var r : Int;
+    
     var time : Float;
     
     override public function create() : Void
@@ -22,6 +24,8 @@ class Triangle extends Scene
         p2 = { x : 0, y : 0 };
         p3 = { x : 0, y : 0 };
         
+        r = Std.int(context.width / 4);
+        
         time = 0;
     }
     
@@ -31,11 +35,11 @@ class Triangle extends Scene
         
         time += elapsed;
         
-        p2.x = p1.x + Std.int(Math.sin(time) * 100);
-        p2.y = p1.y + Std.int(Math.cos(time) * 100);
+        p2.x = p1.x + Std.int(Math.sin(time) * r);
+        p2.y = p1.y + Std.int(Math.cos(time) * r);
         
-        p3.x = p1.x + Std.int(Math.sin(time * 2) * 100);
-        p3.y = p1.y + Std.int(Math.cos(time * 2) * 100);
+        p3.x = p1.x + Std.int(Math.sin(time * 2) * r);
+        p3.y = p1.y + Std.int(Math.cos(time * 2) * r);
     }
     
     override public function draw() : Void

@@ -14,8 +14,6 @@ A sample renderer class should look like this:
 class MyRenderer
 {
     public function new(width : Int, height : Int);
-    public var width : Int;
-    public var height : Int;
     public function render(bufferData : PLATFORM_SPECIFIC_TYPE);
 }
 ```

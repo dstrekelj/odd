@@ -30,8 +30,10 @@ class NekoAsciiRenderer
             image.addChar(10);
         }
         
+        #if neko
         Sys.print(image.toString());
         Sys.command('cls');
+        #end
     }
     
     public function putChar(r : Int, g : Int, b : Int) : Void

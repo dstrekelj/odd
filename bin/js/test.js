@@ -461,6 +461,8 @@ js_html_compat_Uint8Array._subarray = function(start,end) {
 	return a;
 };
 var odd_Context = function(width,height) {
+	this.width = width;
+	this.height = height;
 	this.renderBuffer = new odd_ImageBuffer(width,height);
 	this.drawBuffer = new odd_ImageBuffer(width,height);
 	this.renderer = new odd_renderers_js_CanvasRenderer(width,height);
@@ -516,7 +518,7 @@ var odd_ImageBuffer = function(width,height) {
 	this.width = width;
 	this.height = height;
 	this.data = haxe_io_Bytes.alloc(width * height * 4);
-	this.clearColor = -65536;
+	this.clearColor = -16777216;
 	this.clearData = haxe_io_Bytes.alloc(width * height * 4);
 	var _g = 0;
 	while(_g < width) {
@@ -638,30 +640,108 @@ var test_Main = function(width,height,framesPerSecond) {
 };
 test_Main.__name__ = true;
 test_Main.main = function() {
-	new test_Main(640,480,30);
+	new test_Main(800,600,60);
 };
 test_Main.__super__ = odd_Engine;
 test_Main.prototype = $extend(odd_Engine.prototype,{
 	__class__: test_Main
 });
+var test_Starfield = function(buffer,context) {
+	odd_Scene.call(this,buffer,context);
+};
+test_Starfield.__name__ = true;
+test_Starfield.__super__ = odd_Scene;
+test_Starfield.prototype = $extend(odd_Scene.prototype,{
+	create: function() {
+		odd_Scene.prototype.create.call(this);
+		this.spread = 64;
+		this.speed = 32;
+		var _g = [];
+		var _g1 = 0;
+		while(_g1 < 256) {
+			var i = _g1++;
+			_g.push({ x : 2 * (Math.random() - 0.5) * this.spread, y : 2 * (Math.random() - 0.5) * this.spread, z : Math.random() * this.spread});
+		}
+		this.stars = _g;
+	}
+	,update: function(elapsed) {
+		odd_Scene.prototype.update.call(this,elapsed);
+		var halfWidth = this.context.width / 2;
+		var halfHeight = this.context.height / 2;
+		var _g = 0;
+		var _g1 = this.stars;
+		while(_g < _g1.length) {
+			var star = _g1[_g];
+			++_g;
+			star.z -= elapsed * this.speed;
+			if(star.z <= 0) {
+				star.x = 2 * (Math.random() - 0.5) * this.spread;
+				star.y = 2 * (Math.random() - 0.5) * this.spread;
+				star.z = Math.random() * this.spread;
+			}
+			var x = Math.floor(star.x / star.z * halfWidth + halfWidth);
+			var y = Math.floor(star.y / star.z * halfHeight + halfHeight);
+			if(x < 0 || x >= this.context.width || y < 0 || y >= this.context.height) {
+				star.x = 2 * (Math.random() - 0.5) * this.spread;
+				star.y = 2 * (Math.random() - 0.5) * this.spread;
+				star.z = Math.random() * this.spread;
+			} else this.buffer.setPixel(x,y,-1);
+		}
+	}
+	,draw: function() {
+		odd_Scene.prototype.draw.call(this);
+	}
+	,__class__: test_Starfield
+});
 var test_Test = function(buffer,context) {
-	this.time = 0;
 	odd_Scene.call(this,buffer,context);
 };
 test_Test.__name__ = true;
 test_Test.__super__ = odd_Scene;
 test_Test.prototype = $extend(odd_Scene.prototype,{
 	create: function() {
-		this.point = { x : 320, y : 240};
+		odd_Scene.prototype.create.call(this);
+		this.p1 = { x : this.context.width / 2 | 0, y : this.context.height / 2 | 0};
+		this.p2 = { x : 0, y : 0};
+		this.time = 0;
+	}
+	,update: function(elapsed) {
+		odd_Scene.prototype.update.call(this,elapsed);
+		this.time += elapsed;
+		this.p2.x = this.p1.x + Std["int"](Math.sin(this.time) * 100);
+		this.p2.y = this.p1.y + Std["int"](Math.cos(this.time) * 100);
 	}
 	,draw: function() {
 		odd_Scene.prototype.draw.call(this);
-		this.buffer.setPixel(this.point.x,this.point.y,-1);
+		this.buffer.setPixel(this.p1.x,this.p1.y,-1);
+		this.buffer.setPixel(this.p2.x,this.p2.y,-1);
+		this.drawLine(this.p1,this.p2);
 	}
-	,update: function(elapsed) {
-		this.time += elapsed * 1000;
-		this.point.x += Std["int"](Math.sin(this.time / 400) * 4);
-		this.point.y += Std["int"](Math.cos(this.time / 400) * 4);
+	,drawLine: function(a,b) {
+		var p_x = a.x;
+		var p_y = a.y;
+		var dx = Math.round(Math.abs(b.x - a.x));
+		var dy = Math.round(Math.abs(b.y - a.y));
+		var sx;
+		if(a.x < b.x) sx = 1; else sx = -1;
+		var sy;
+		if(a.y < b.y) sy = 1; else sy = -1;
+		var e;
+		e = (dx > dy?dx:-dy) / 2;
+		while(true) {
+			console.log(a.x);
+			this.buffer.setPixel(p_x,p_y,-1);
+			if(p_x == b.x && p_y == b.y) break;
+			var te = e;
+			if(te > -dx) {
+				e -= dy;
+				p_x += sx;
+			}
+			if(te < dy) {
+				e += dx;
+				p_y += sy;
+			}
+		}
 	}
 	,__class__: test_Test
 });

@@ -1,3 +1,2 @@
 -main test.Main
--D ODD_CANVAS_RENDERER
--js bin/js/test.js
+-neko bin/neko/test.n

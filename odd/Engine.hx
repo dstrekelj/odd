@@ -43,6 +43,10 @@ class Engine
         
         #if js
         Browser.window.requestAnimationFrame(run);
+        #else
+        while (true) {
+            run();
+        }
         #end
     }
 }

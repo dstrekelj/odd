@@ -8,7 +8,7 @@ class Main extends Engine
 {
     static function main() 
     {
-        new Main(800, 600, 60);
+        new Main(200, 100, 60);
     }
     
     public function new(width : Int, height : Int, framesPerSecond : Int)

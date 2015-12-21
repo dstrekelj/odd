@@ -1,20 +1,11 @@
 package test;
-import odd.Engine;
-import odd.Scene;
-import samples.Starfield;
-import samples.Triangle;
 
-class Main extends Engine
+class Main
 {
-    static function main() 
+    static function main()
     {
-        new Main(800, 600, 60);
-    }
-    
-    public function new(width : Int, height : Int, framesPerSecond : Int)
-    {
-        super(width, height, framesPerSecond);
-        this.context.setScene(Triangle);
-        this.run();
+        var testRunner = new haxe.unit.TestRunner();
+        testRunner.add(new MathTest());
+        testRunner.run();
     }
 }

@@ -5,6 +5,14 @@ import odd.math.Mat4;
 import odd.math.Vec3.Vector3;
 import odd.math.Vec4.Vector4;
 
+/**
+ * TODO:
+ * - RotateX test
+ * - RotateY test
+ * - RotateZ test
+ * - Rotate test
+ */
+
 class Mat4Test extends TestCase
 {
     var I : Matrix4;
@@ -142,26 +150,6 @@ class Mat4Test extends TestCase
         );
         
         this.assertEquals(Std.string(X * 0), EMPTY);
-    }
-    
-    public function testMultiplyVector3()
-    {
-        var X = Matrix4.translate( -10, 5, 0);
-        
-        var Y = new Vector3(0, 5, -5);
-        
-        this.assertEquals(Std.string(X * Y), '{ -10, 10, -5 }');
-    }
-    
-    public function testMultiplyVector4()
-    {
-        var X = Matrix4.translate( -10, 5, 0.5);
-        
-        var Y = new Vector4(20, -13, 0.5, 1);
-        
-        var S = '{ 10, -8, 1, 1 }';
-        
-        this.assertEquals(Std.string(X * Y), S);
     }
     
     public function testMultiplyMatrix()

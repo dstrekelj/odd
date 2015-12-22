@@ -1,5 +1,7 @@
 package odd.math;
 
+import odd.math.Mat4.Matrix4;
+
 class Vec4
 {
     public var x : Float;
@@ -75,13 +77,24 @@ abstract Vector4(Vec4) from Vec4 to Vec4
     }
 
     @:op(A * B)
-    inline function multiply(B : Float) : Vector4
+    inline function multiplyScalar(B : Float) : Vector4
     {
         return new Vector4(
             this.x * B,
             this.y * B,
             this.z * B,
             this.w * B
+        );
+    }
+    
+    @:op(A * B)
+    inline function multiplyMatrix4(B : Matrix4) : Vector4
+    {
+        return new Vector4(
+          B.xx * this.x + B.yx * this.y + B.zx * this.z + B.wx * this.w,
+          B.xy * this.x + B.yy * this.y + B.zy * this.z + B.wy * this.w,
+          B.xz * this.x + B.yz * this.y + B.zz * this.z + B.wz * this.w,
+          B.xw * this.x + B.yw * this.y + B.zw * this.z + B.ww * this.w
         );
     }
     

@@ -225,37 +225,6 @@ abstract Matrix4(Mat4) from Mat4 to Mat4
     }
 
     @:op(A * B)
-    function multiplyVector3(B : Vector3) : Vector3
-    {
-        var v = new Vector3();
-        v.x = this.xx * B.x + this.yx * B.y + this.zx * B.z + this.wx;
-        v.y = this.xy * B.x + this.yy * B.y + this.zy * B.z + this.wy;
-        v.z = this.xz * B.x + this.yz * B.y + this.zz * B.z + this.wz;
-        
-        var w : Float = this.xw * B.x + this.xy * B.y + this.xz * B.z + this.ww;
-        
-        if (w != 1 && w != 0)
-        {
-            v.x /= w;
-            v.y /= w;
-            v.z /= w;
-        }
-        
-        return v;
-    }
-    
-    @:op(A * B)
-    inline function multiplyVector4(B : Vector4) : Vector4
-    {
-        return new Vector4(
-          this.xx * B.x + this.yx * B.y + this.zx * B.z + this.wx * B.w,
-          this.xy * B.x + this.yy * B.y + this.zy * B.z + this.wy * B.w,
-          this.xz * B.x + this.yz * B.y + this.zz * B.z + this.wz * B.w,
-          this.xw * B.x + this.yw * B.y + this.zw * B.z + this.ww * B.w
-        );
-    }
-
-    @:op(A * B)
     inline function multiplyMatrix(B : Matrix4) : Matrix4
     {
         return new Matrix4(

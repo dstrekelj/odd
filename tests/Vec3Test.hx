@@ -3,6 +3,7 @@ package tests;
 import haxe.ds.Vector;
 import haxe.unit.TestCase;
 import odd.math.Vec3;
+import odd.math.Mat4.Matrix4;
 
 class Vec3Test extends TestCase
 {
@@ -59,7 +60,7 @@ class Vec3Test extends TestCase
         this.assertEquals(Std.string(v2 - v1), Std.string(v2));
     }
     
-    public function testMultiply()
+    public function testMultiplyScalar()
     {
         var v1 = new Vector3();
         var v2 = new Vector3(1, 1, 1);
@@ -68,6 +69,14 @@ class Vec3Test extends TestCase
         this.assertEquals(Std.string(v1 * 2), '{ 0, 0, 0 }');
         this.assertEquals(Std.string(v2 * 2), '{ 2, 2, 2 }');
         this.assertEquals(Std.string(v3 * 2), '{ 0, -4, 1 }');
+    }
+    
+    public function testMultiplyMatrix4()
+    {
+        var v = new Vector3(0, 5, -5);
+        var m = Matrix4.translate( -10, 5, 0);
+        
+        this.assertEquals(Std.string(v * m), '{ -10, 10, -5 }');
     }
     
     public function testDivide()

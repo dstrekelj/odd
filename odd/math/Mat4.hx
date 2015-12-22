@@ -1,4 +1,6 @@
 package odd.math;
+
+import odd.math.Vec3.Vector3;
 import odd.math.Vec4.Vector4;
 
 class Mat4
@@ -90,7 +92,7 @@ abstract Matrix4(Mat4) from Mat4 to Mat4
         );
     }
 
-    inline public static function rotateX(a : Float) : Matrix4
+    public static function rotateX(a : Float) : Matrix4
     {
         var c : Float = Math.cos(a);
         var s : Float = Math.sin(a);
@@ -102,7 +104,7 @@ abstract Matrix4(Mat4) from Mat4 to Mat4
         );
     }
 
-    inline public static function rotateY(a : Float) : Matrix4
+    public static function rotateY(a : Float) : Matrix4
     {
         var c : Float = Math.cos(a);
         var s : Float = Math.sin(a);
@@ -114,7 +116,7 @@ abstract Matrix4(Mat4) from Mat4 to Mat4
         );
     }
 
-    inline public static function rotateZ(a : Float) : Matrix4
+    public static function rotateZ(a : Float) : Matrix4
     {
         var c : Float = Math.cos(a);
         var s : Float = Math.sin(a);
@@ -126,7 +128,7 @@ abstract Matrix4(Mat4) from Mat4 to Mat4
         );
     }
 
-    inline public static function rotate(roll : Float, pitch : Float, yaw : Float) : Matrix4
+    public static function rotate(roll : Float, pitch : Float, yaw : Float) : Matrix4
     {
         var cx : Float = Math.cos(roll);
         var sx : Float = Math.sin(roll);
@@ -142,6 +144,39 @@ abstract Matrix4(Mat4) from Mat4 to Mat4
             cz * sy * sx - sz * cx,     sz * sy * sx + cz * cx,     cy * sx,    0,
             cz * sy * cx + sz * sx,     sz * sy * cx - cz * sx,     cy * cx,    0,
             0,                          0,                          0,          1
+        );
+    }
+    
+    inline public static function screenSpace(halfWidth : Float, halfHeight : Float) : Matrix4
+    {
+        return new Matrix4(
+            halfWidth,  0,          0,  0,
+            0,         -halfHeight, 0,  0,
+            0,          0,          1,  0,
+            halfWidth,  halfHeight, 0,  1
+        );
+    }
+    
+    public static function perspective(fieldOfView : Float, aspectRatio : Float, near : Float, far : Float) : Matrix4
+    {
+        var t : Float = Math.tan(fieldOfView / 2);
+        var r : Float = near - far;
+        
+        return new Matrix4(
+            1 / (t * aspectRatio),  0,      0,                      0,
+            0,                      1 / t,  0,                      0,
+            0,                      0,      ( -near - far) / r,     2 * near * far / r,
+            0,                      0,      1,                      0
+        );
+    }
+    
+    public static function projection(left : Float, right : Float, top : Float, bottom : Float, near : Float, far : Float) : Matrix4
+    {
+        return new Matrix4(
+            (2 * near) / (right - left),    0,                              (right + left) / (right - left),    0,
+            0,                              (2 * near) / (top - bottom),    (top + bottom) / (top - bottom),    0,
+            0,                              0,                             -(far + near) / (far - near),       -(2 * far * near) / (far - near),
+            0,                              0,                              1,                                  0
         );
     }
 
@@ -179,7 +214,7 @@ abstract Matrix4(Mat4) from Mat4 to Mat4
     }
 
     @:op(A * B)
-    inline function scalarProduct(B : Float) : Matrix4
+    inline function multiplyScalar(B : Float) : Matrix4
     {
         return new Matrix4(
           this.xx * B, this.xy * B, this.xz * B, this.xw * B,
@@ -190,7 +225,27 @@ abstract Matrix4(Mat4) from Mat4 to Mat4
     }
 
     @:op(A * B)
-    inline function vectorProduct(B : Vector4) : Vector4
+    function multiplyVector3(B : Vector3) : Vector3
+    {
+        var v = new Vector3();
+        v.x = this.xx * B.x + this.yx * B.y + this.zx * B.z + this.wx;
+        v.y = this.xy * B.x + this.yy * B.y + this.zy * B.z + this.wy;
+        v.z = this.xz * B.x + this.yz * B.y + this.zz * B.z + this.wz;
+        
+        var w : Float = this.xw * B.x + this.xy * B.y + this.xz * B.z + this.ww;
+        
+        if (w != 1 && w != 0)
+        {
+            v.x /= w;
+            v.y /= w;
+            v.z /= w;
+        }
+        
+        return v;
+    }
+    
+    @:op(A * B)
+    inline function multiplyVector4(B : Vector4) : Vector4
     {
         return new Vector4(
           this.xx * B.x + this.yx * B.y + this.zx * B.z + this.wx * B.w,
@@ -201,7 +256,7 @@ abstract Matrix4(Mat4) from Mat4 to Mat4
     }
 
     @:op(A * B)
-    inline function matrixProduct(B : Matrix4) : Matrix4
+    inline function multiplyMatrix(B : Matrix4) : Matrix4
     {
         return new Matrix4(
           this.xx * B.xx + this.xy * B.yx + this.xz * B.zx + this.xw * B.wx, this.xx * B.xy + this.xy * B.yy + this.xz * B.zy + this.xw * B.wy, this.xx * B.xz + this.xy * B.yz + this.xz * B.zz + this.xw * B.wz, this.xx * B.xw + this.xy * B.yw + this.xz * B.zw + this.xw * B.ww,

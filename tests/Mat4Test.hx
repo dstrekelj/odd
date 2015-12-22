@@ -2,6 +2,7 @@ package tests;
 
 import haxe.unit.TestCase;
 import odd.math.Mat4;
+import odd.math.Vec3.Vector3;
 import odd.math.Vec4.Vector4;
 
 class Mat4Test extends TestCase
@@ -131,7 +132,7 @@ class Mat4Test extends TestCase
         this.assertEquals(Std.string(X - Y), EMPTY);
     }
     
-    public function testScalarProduct()
+    public function testMultiplyScalar()
     {
         var X = new Matrix4(
             1, 1, 1, 1,
@@ -143,7 +144,16 @@ class Mat4Test extends TestCase
         this.assertEquals(Std.string(X * 0), EMPTY);
     }
     
-    public function testVectorProduct()
+    public function testMultiplyVector3()
+    {
+        var X = Matrix4.translate( -10, 5, 0);
+        
+        var Y = new Vector3(0, 5, -5);
+        
+        this.assertEquals(Std.string(X * Y), '{ -10, 10, -5 }');
+    }
+    
+    public function testMultiplyVector4()
     {
         var X = Matrix4.translate( -10, 5, 0.5);
         
@@ -154,7 +164,7 @@ class Mat4Test extends TestCase
         this.assertEquals(Std.string(X * Y), S);
     }
     
-    public function testMatrixProduct()
+    public function testMultiplyMatrix()
     {
         var X = new Matrix4(
             1, 2, 3, 4,

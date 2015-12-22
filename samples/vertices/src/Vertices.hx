@@ -11,6 +11,7 @@ class Vertices extends Scene
 {
     var p1 : Vertex;
     var p2 : Vertex;
+    var p3 : Vertex;
     
     var screenSpace : Matrix4;
     var perspective : Matrix4;
@@ -18,19 +19,18 @@ class Vertices extends Scene
     
     var camera : Matrix4;
     var translation : Matrix4;
+    var rotation : Matrix4;
+    var scale : Matrix4;
     
     override public function create() : Void
     {
         super.create();
         
-        p1 = new Vertex(400, 300, 10);
-        p2 = new Vertex(500, 400, 10);
+        p1 = new Vertex(200, 100, 1);
+        p2 = new Vertex(500, 400, 3);
+        p3 = new Vertex(600, 200, 5);
         
         screenSpace = Matrix4.screenSpace(context.width / 2, context.height / 2);
-        
-        //perspective = Matrix4.perspective(70, context.width / context.height, 0.1, 1000); 
-        //var x = Math.floor((star.x / star.z) * halfWidth + halfWidth);
-        //var y = Math.floor((star.y / star.z) * halfHeight + halfHeight);
         
         projection = Matrix4.projection(0, context.width, 0, context.height, 0.1, 100);
         
@@ -43,6 +43,7 @@ class Vertices extends Scene
         
         camera = Matrix4.identity();
         translation = Matrix4.translate(0, 0, -0.1);
+        scale = Matrix4.scale(10, 10, 10);
         
         var m = new Matrix4(
             0.718762, 0.615033,-0.324214, 0,
@@ -73,20 +74,50 @@ class Vertices extends Scene
         trace(p_raster);
     }
     
+    var time : Float = 0;
     override public function update(elapsed : Float) : Void
     {
         super.update(elapsed);
-        
-        p2.position = p2.position * translation;
+        time += elapsed;
+        rotation = Matrix4.rotateZ(elapsed);
+        p1.position = p1.position * rotation;
+        p2.position = p2.position * rotation;
+        p3.position = p3.position * rotation;
     }
     
     override public function draw() : Void
     {
         super.draw();
         
-        buffer.setPixel(Math.round(p1.position.x), Math.round(p1.position.y), 0xffffffff);
+        var p_screen = p1.position * camera;
+        p_screen.x /= p_screen.z;
+        p_screen.y /= p_screen.z;
+        
+        var p_ndc = new Vector3();
+        p_ndc.x = (p_screen.x + context.width / 2) / context.width;
+        p_ndc.y = (p_screen.y + context.height / 2) / context.height;
+        
+        var p_raster = new Vector3();
+        p_raster.x = p_ndc.x * context.width;
+        p_raster.y = p_ndc.y * context.height;
+        
+        buffer.setPixel(Math.round(p_raster.x), Math.round(p_raster.y), 0xffffffff);
         
         var p_screen = p2.position * camera;
+        p_screen.x /= p_screen.z;
+        p_screen.y /= p_screen.z;
+        
+        var p_ndc = new Vector3();
+        p_ndc.x = (p_screen.x + context.width / 2) / context.width;
+        p_ndc.y = (p_screen.y + context.height / 2) / context.height;
+        
+        var p_raster = new Vector3();
+        p_raster.x = p_ndc.x * context.width;
+        p_raster.y = p_ndc.y * context.height;
+        
+        buffer.setPixel(Math.round(p_raster.x), Math.round(p_raster.y), 0xffffffff);
+        
+        var p_screen = p3.position * camera;
         p_screen.x /= p_screen.z;
         p_screen.y /= p_screen.z;
         

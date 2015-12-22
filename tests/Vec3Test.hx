@@ -1,4 +1,5 @@
-package test;
+package tests;
+
 import haxe.ds.Vector;
 import haxe.unit.TestCase;
 import odd.math.Vec3;

@@ -1,4 +1,5 @@
-package samples;
+package;
+
 import odd.Scene;
 
 typedef Point = {
@@ -64,15 +65,11 @@ class Triangle extends Scene
         
         var e : Float = (dx > dy ? dx : -dy) / 2;
         
-        while (true)
+        while (x != b.x || y != b.y)
         {
             buffer.setPixel(x, y, 0xffffffff);
-            if (x == b.x && y == b.y)
-            {
-                break;
-            }
             
-            var te = e;
+            var te : Float = e;
             
             if (te > -dx)
             {

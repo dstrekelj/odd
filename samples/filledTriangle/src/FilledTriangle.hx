@@ -1,4 +1,5 @@
-package samples;
+package;
+
 import odd.Scene;
 
 typedef Point = {
@@ -80,7 +81,7 @@ class FilledTriangle extends Scene
         {
             buffer.setPixel(x, y, 0xffffffff);
             
-            var te = e;
+            var te : Float = e;
             
             if (te > -dx)
             {

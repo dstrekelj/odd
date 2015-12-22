@@ -1,6 +1,6 @@
-package samples;
+package;
+
 import odd.Engine;
-import odd.Scene;
 
 class Main extends Engine
 {

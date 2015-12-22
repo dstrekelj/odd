@@ -7,7 +7,12 @@ The idea is that all of the rendering logic is defined in a cross-platform way, 
 ## Instructions
 
 1. Get [Haxe](http://haxe.org/download/). I'm using 3.2.0, so any 3.2.x version is likely to work.
-2. Run build file (e.g. `haxe build.hxml`) or do it manually (e.g. `haxe -main samples.Main -js bin/js/test.js -D ODD_CANVAS_RENDERER`)
+2. Build samples (`haxe samples.hxml`)
+3. Run samples!
+
+Note that samples are currently all built for JS only, even though there's also a proof-of-concept ASCII renderer for Neko available.
+
+To build samples for neko, just change the build target to `-neko` instead of `-js`.
 
 ## Adding your own renderer
 

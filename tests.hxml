@@ -1,0 +1,2 @@
+-main tests.Main
+-neko tests/bin/tests.n

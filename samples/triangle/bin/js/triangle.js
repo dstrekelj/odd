@@ -6,6 +6,42 @@ function $extend(from, fields) {
 	if( fields.toString !== Object.prototype.toString ) proto.toString = fields.toString;
 	return proto;
 }
+var odd_Engine = function(width,height,framesPerSecond) {
+	this.framesPerSecond = framesPerSecond;
+	this.timeStep = 1 / framesPerSecond;
+	this.timeThen = haxe_Timer.stamp();
+	this.timeAccumulator = 0;
+	this.context = new odd_Context(width,height);
+};
+odd_Engine.__name__ = true;
+odd_Engine.prototype = {
+	run: function(time) {
+		this.timeNow = haxe_Timer.stamp();
+		this.timeElapsed = this.timeNow - this.timeThen;
+		this.timeThen = this.timeNow;
+		this.timeAccumulator += this.timeElapsed;
+		if(this.timeAccumulator >= this.timeStep) {
+			this.context.update(this.timeStep);
+			this.timeAccumulator = 0;
+		}
+		this.context.draw();
+		window.requestAnimationFrame($bind(this,this.run));
+	}
+	,__class__: odd_Engine
+};
+var Main = function(width,height,framesPerSecond) {
+	odd_Engine.call(this,width,height,framesPerSecond);
+	this.context.setScene(Triangle);
+	this.run();
+};
+Main.__name__ = true;
+Main.main = function() {
+	new Main(800,600,60);
+};
+Main.__super__ = odd_Engine;
+Main.prototype = $extend(odd_Engine.prototype,{
+	__class__: Main
+});
 Math.__name__ = true;
 var Std = function() { };
 Std.__name__ = true;
@@ -22,6 +58,77 @@ StringBuf.__name__ = true;
 StringBuf.prototype = {
 	__class__: StringBuf
 };
+var odd_Scene = function(buffer,context) {
+	this.buffer = buffer;
+	this.context = context;
+	console.log("-- NEW SCENE --");
+};
+odd_Scene.__name__ = true;
+odd_Scene.prototype = {
+	create: function() {
+	}
+	,destroy: function() {
+	}
+	,draw: function() {
+	}
+	,update: function(delta) {
+	}
+	,__class__: odd_Scene
+};
+var Triangle = function(buffer,context) {
+	odd_Scene.call(this,buffer,context);
+};
+Triangle.__name__ = true;
+Triangle.__super__ = odd_Scene;
+Triangle.prototype = $extend(odd_Scene.prototype,{
+	create: function() {
+		odd_Scene.prototype.create.call(this);
+		this.p1 = { x : this.context.width / 2 | 0, y : this.context.height / 2 | 0};
+		this.p2 = { x : 0, y : 0};
+		this.p3 = { x : 0, y : 0};
+		this.r = this.context.width / 4 | 0;
+		this.time = 0;
+	}
+	,update: function(elapsed) {
+		odd_Scene.prototype.update.call(this,elapsed);
+		this.time += elapsed;
+		this.p2.x = this.p1.x + Std["int"](Math.sin(this.time) * this.r);
+		this.p2.y = this.p1.y + Std["int"](Math.cos(this.time) * this.r);
+		this.p3.x = this.p1.x + Std["int"](Math.sin(this.time * 2) * this.r);
+		this.p3.y = this.p1.y + Std["int"](Math.cos(this.time * 2) * this.r);
+	}
+	,draw: function() {
+		odd_Scene.prototype.draw.call(this);
+		this.drawLine(this.p1,this.p2);
+		this.drawLine(this.p2,this.p3);
+		this.drawLine(this.p3,this.p1);
+	}
+	,drawLine: function(a,b) {
+		var x = a.x;
+		var y = a.y;
+		var dx = Math.round(Math.abs(b.x - a.x));
+		var dy = Math.round(Math.abs(b.y - a.y));
+		var sx;
+		if(a.x < b.x) sx = 1; else sx = -1;
+		var sy;
+		if(a.y < b.y) sy = 1; else sy = -1;
+		var e;
+		e = (dx > dy?dx:-dy) / 2;
+		while(x != b.x || y != b.y) {
+			this.buffer.setPixel(x,y,-1);
+			var te = e;
+			if(te > -dx) {
+				e -= dy;
+				x += sx;
+			}
+			if(te < dy) {
+				e += dx;
+				y += sy;
+			}
+		}
+	}
+	,__class__: Triangle
+});
 var Type = function() { };
 Type.__name__ = true;
 Type.createInstance = function(cl,args) {
@@ -503,29 +610,6 @@ odd_Context.prototype = {
 	}
 	,__class__: odd_Context
 };
-var odd_Engine = function(width,height,framesPerSecond) {
-	this.framesPerSecond = framesPerSecond;
-	this.timeStep = 1 / framesPerSecond;
-	this.timeThen = haxe_Timer.stamp();
-	this.timeAccumulator = 0;
-	this.context = new odd_Context(width,height);
-};
-odd_Engine.__name__ = true;
-odd_Engine.prototype = {
-	run: function(time) {
-		this.timeNow = haxe_Timer.stamp();
-		this.timeElapsed = this.timeNow - this.timeThen;
-		this.timeThen = this.timeNow;
-		this.timeAccumulator += this.timeElapsed;
-		if(this.timeAccumulator >= this.timeStep) {
-			this.context.update(this.timeStep);
-			this.timeAccumulator = 0;
-		}
-		this.context.draw();
-		window.requestAnimationFrame($bind(this,this.run));
-	}
-	,__class__: odd_Engine
-};
 var odd_ImageBuffer = function(width,height) {
 	this.width = width;
 	this.height = height;
@@ -608,23 +692,6 @@ odd_ImageBuffer.prototype = {
 	}
 	,__class__: odd_ImageBuffer
 };
-var odd_Scene = function(buffer,context) {
-	this.buffer = buffer;
-	this.context = context;
-	console.log("-- NEW SCENE --");
-};
-odd_Scene.__name__ = true;
-odd_Scene.prototype = {
-	create: function() {
-	}
-	,destroy: function() {
-	}
-	,draw: function() {
-	}
-	,update: function(delta) {
-	}
-	,__class__: odd_Scene
-};
 var odd_renderers_js_CanvasRenderer = function(width,height) {
 	console.log("-- CanvasRenderer --");
 	this.width = width;
@@ -673,173 +740,6 @@ odd_renderers_neko_NekoAsciiRenderer.prototype = {
 	}
 	,__class__: odd_renderers_neko_NekoAsciiRenderer
 };
-var samples_FilledTriangle = function(buffer,context) {
-	odd_Scene.call(this,buffer,context);
-};
-samples_FilledTriangle.__name__ = true;
-samples_FilledTriangle.__super__ = odd_Scene;
-samples_FilledTriangle.prototype = $extend(odd_Scene.prototype,{
-	create: function() {
-		odd_Scene.prototype.create.call(this);
-		this.p1 = { x : this.context.width / 2 | 0, y : this.context.height / 2 | 0};
-		this.p2 = { x : 0, y : 0};
-		this.p3 = { x : 0, y : 0};
-		this.p4 = { x : 20, y : 0};
-		this.p5 = { x : 0, y : 20};
-		this.p6 = { x : 40, y : 20};
-		this.p7 = { x : 20, y : 40};
-		this.r = this.context.width / 4 | 0;
-		this.time = 0;
-	}
-	,update: function(elapsed) {
-		odd_Scene.prototype.update.call(this,elapsed);
-		this.time += elapsed;
-		this.p2.x = this.p1.x + Std["int"](Math.sin(this.time) * this.r);
-		this.p2.y = this.p1.y + Std["int"](Math.cos(this.time) * this.r);
-		this.p3.x = this.p1.x + Std["int"](Math.sin(this.time * 2) * this.r);
-		this.p3.y = this.p1.y + Std["int"](Math.cos(this.time * 2) * this.r);
-	}
-	,draw: function() {
-		odd_Scene.prototype.draw.call(this);
-		this.drawLine(this.p1,this.p2);
-		this.drawLine(this.p2,this.p3);
-		this.drawLine(this.p3,this.p1);
-		this.fillTriangle(this.p3,this.p2,this.p1);
-	}
-	,drawLine: function(a,b) {
-		var x = a.x;
-		var y = a.y;
-		var dx = Math.round(Math.abs(b.x - a.x));
-		var dy = Math.round(Math.abs(b.y - a.y));
-		var sx;
-		if(a.x < b.x) sx = 1; else sx = -1;
-		var sy;
-		if(a.y < b.y) sy = 1; else sy = -1;
-		var e;
-		e = (dx > dy?dx:-dy) / 2;
-		while(x != b.x || y != b.y) {
-			this.buffer.setPixel(x,y,-1);
-			var te = e;
-			if(te > -dx) {
-				e -= dy;
-				x += sx;
-			}
-			if(te < dy) {
-				e += dx;
-				y += sy;
-			}
-		}
-	}
-	,fillRow: function(x1,x2,y) {
-		var _g = x1;
-		while(_g < x2) {
-			var column = _g++;
-			this.buffer.setPixel(column,y,-1);
-		}
-	}
-	,fillBottomFlatTriangle: function(a,b,c) {
-		if(b.y < a.y && b.y < c.y) {
-			var t = a;
-			a = b;
-			b = t;
-		} else if(c.y < a.y && c.y < b.y) {
-			var t1 = a;
-			a = c;
-			c = t1;
-		}
-		if(b.x > c.x) {
-			var t2 = b;
-			b = c;
-			c = t2;
-		}
-		if(b.y == c.y) {
-			var k1 = (b.x - a.x) / (b.y - a.y);
-			var k2 = (c.x - a.x) / (c.y - a.y);
-			var x1 = a.x;
-			var x2 = a.x;
-			var _g1 = a.y;
-			var _g = b.y + 1;
-			while(_g1 < _g) {
-				var row = _g1++;
-				this.fillRow(Math.round(x1),Math.round(x2),row);
-				x1 += k1;
-				x2 += k2;
-			}
-		}
-	}
-	,fillTopFlatTriangle: function(a,b,c) {
-		if(a.y > b.y && a.y > c.y) {
-			var t = c;
-			c = a;
-			a = t;
-		} else if(b.y > a.y && b.y > c.y) {
-			var t1 = c;
-			c = b;
-			b = t1;
-		}
-		if(a.x > b.x) {
-			var t2 = b;
-			b = a;
-			a = t2;
-		}
-		if(a.y == b.y) {
-			var k1 = (c.x - a.x) / (c.y - a.y);
-			var k2 = (c.x - b.x) / (c.y - b.y);
-			var x1 = c.x;
-			var x2 = c.x;
-			var row = c.y;
-			while(row-- > a.y) {
-				x1 -= k1;
-				x2 -= k2;
-				this.fillRow(Math.round(x1),Math.round(x2),row);
-			}
-		}
-	}
-	,fillTriangle: function(a,b,c) {
-		if(b.y < a.y && b.y < c.y) {
-			var t = a;
-			a = b;
-			b = t;
-			if(c.y < b.y) {
-				t = b;
-				b = c;
-				c = t;
-			}
-		} else if(c.y < a.y && c.y < b.y) {
-			var t1 = a;
-			a = c;
-			c = t1;
-			if(c.y < b.y) {
-				t1 = b;
-				b = c;
-				c = t1;
-			}
-		} else if(c.y < b.y) {
-			var t2 = b;
-			b = c;
-			c = t2;
-		}
-		if(b.y == c.y) this.fillBottomFlatTriangle(a,b,c); else if(a.y == b.y) this.fillTopFlatTriangle(a,b,c); else {
-			var t3 = { x : a.x + Math.round((b.y - a.y) / (c.y - a.y) * (c.x - a.x)), y : b.y};
-			this.fillBottomFlatTriangle(a,b,t3);
-			this.fillTopFlatTriangle(b,t3,c);
-		}
-	}
-	,__class__: samples_FilledTriangle
-});
-var test_Main = function(width,height,framesPerSecond) {
-	odd_Engine.call(this,width,height,framesPerSecond);
-	this.context.setScene(samples_FilledTriangle);
-	this.run();
-};
-test_Main.__name__ = true;
-test_Main.main = function() {
-	new test_Main(800,600,60);
-};
-test_Main.__super__ = odd_Engine;
-test_Main.prototype = $extend(odd_Engine.prototype,{
-	__class__: test_Main
-});
 var $_, $fid = 0;
 function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id__ = $fid++; var f; if( o.hx__closures__ == null ) o.hx__closures__ = {}; else f = o.hx__closures__[m.__id__]; if( f == null ) { f = function(){ return f.method.apply(f.scope, arguments); }; f.scope = o; f.method = m; o.hx__closures__[m.__id__] = f; } return f; }
 String.prototype.__class__ = String;
@@ -867,5 +767,5 @@ haxe_io_FPHelper.i64tmp = (function($this) {
 }(this));
 js_Boot.__toStr = {}.toString;
 js_html_compat_Uint8Array.BYTES_PER_ELEMENT = 1;
-test_Main.main();
+Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});

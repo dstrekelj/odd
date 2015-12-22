@@ -1,4 +1,0 @@
--main samples.Main
--D ODD_CANVAS_RENDERER
-#-neko bin/neko/filledTriangle.n
--js bin/js/test.js

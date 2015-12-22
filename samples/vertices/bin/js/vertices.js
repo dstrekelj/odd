@@ -6,14 +6,54 @@ function $extend(from, fields) {
 	if( fields.toString !== Object.prototype.toString ) proto.toString = fields.toString;
 	return proto;
 }
+var odd_Engine = function(width,height,framesPerSecond) {
+	this.framesPerSecond = framesPerSecond;
+	this.timeStep = 1 / framesPerSecond;
+	this.timeThen = haxe_Timer.stamp();
+	this.timeAccumulator = 0;
+	this.context = new odd_Context(width,height);
+};
+odd_Engine.__name__ = true;
+odd_Engine.prototype = {
+	run: function(time) {
+		this.timeNow = haxe_Timer.stamp();
+		this.timeElapsed = this.timeNow - this.timeThen;
+		this.timeThen = this.timeNow;
+		this.timeAccumulator += this.timeElapsed;
+		if(this.timeAccumulator >= this.timeStep) {
+			this.context.update(this.timeStep);
+			this.timeAccumulator = 0;
+		}
+		this.context.draw();
+		window.requestAnimationFrame($bind(this,this.run));
+	}
+	,__class__: odd_Engine
+};
+var Main = function(width,height,framesPerSecond) {
+	odd_Engine.call(this,width,height,framesPerSecond);
+	this.context.setScene(Vertices);
+	this.run();
+};
+Main.__name__ = true;
+Main.main = function() {
+	new Main(800,600,60);
+};
+Main.__super__ = odd_Engine;
+Main.prototype = $extend(odd_Engine.prototype,{
+	__class__: Main
+});
 Math.__name__ = true;
 var Std = function() { };
 Std.__name__ = true;
 Std.string = function(s) {
 	return js_Boot.__string_rec(s,"");
 };
-Std["int"] = function(x) {
-	return x | 0;
+var StringBuf = function() {
+	this.b = "";
+};
+StringBuf.__name__ = true;
+StringBuf.prototype = {
+	__class__: StringBuf
 };
 var Type = function() { };
 Type.__name__ = true;
@@ -43,6 +83,51 @@ Type.createInstance = function(cl,args) {
 	}
 	return null;
 };
+var odd_Scene = function(buffer,context) {
+	this.buffer = buffer;
+	this.context = context;
+	console.log("-- NEW SCENE --");
+};
+odd_Scene.__name__ = true;
+odd_Scene.prototype = {
+	create: function() {
+	}
+	,destroy: function() {
+	}
+	,draw: function() {
+	}
+	,update: function(delta) {
+	}
+	,__class__: odd_Scene
+};
+var Vertices = function(buffer,context) {
+	odd_Scene.call(this,buffer,context);
+};
+Vertices.__name__ = true;
+Vertices.__super__ = odd_Scene;
+Vertices.prototype = $extend(odd_Scene.prototype,{
+	create: function() {
+		odd_Scene.prototype.create.call(this);
+		this.p1 = new odd_geom_Vertex(400,300,10);
+		this.p2 = new odd_geom_Vertex(500,400,10);
+		var halfWidth = this.context.width / 2;
+		var halfHeight = this.context.height / 2;
+		this.screenSpace = new odd_math_Mat4(halfWidth,0,0,0,0,-halfHeight,0,0,0,0,1,0,halfWidth,halfHeight,0,1);
+		this.projection = odd_math__$Mat4_Matrix4_$Impl_$.projection(0,this.context.width,0,this.context.height,0.1,100);
+		this.perspective = new odd_math_Mat4(1 / (this.context.width / 2),0,0,0,0,1 / (this.context.height / 2),0,0,0,0,1,0,this.context.width / 2,this.context.height / 2,0,1);
+	}
+	,update: function(elapsed) {
+		odd_Scene.prototype.update.call(this,elapsed);
+	}
+	,draw: function() {
+		odd_Scene.prototype.draw.call(this);
+		this.buffer.setPixel(Math.round(this.p1.position.x),Math.round(this.p1.position.y),-1);
+		var v1 = this.p2.transform(this.screenSpace).perspectiveDivide();
+		console.log(v1.position);
+		this.buffer.setPixel(Math.round(v1.position.x),Math.round(v1.position.y),-1);
+	}
+	,__class__: Vertices
+});
 var haxe__$Int64__$_$_$Int64 = function(high,low) {
 	this.high = high;
 	this.low = low;
@@ -66,6 +151,11 @@ var haxe_io_Bytes = function(data) {
 haxe_io_Bytes.__name__ = true;
 haxe_io_Bytes.alloc = function(length) {
 	return new haxe_io_Bytes(new ArrayBuffer(length));
+};
+haxe_io_Bytes.ofData = function(b) {
+	var hb = b.hxBytes;
+	if(hb != null) return hb;
+	return new haxe_io_Bytes(b);
 };
 haxe_io_Bytes.prototype = {
 	blit: function(pos,src,srcpos,len) {
@@ -491,29 +581,6 @@ odd_Context.prototype = {
 	}
 	,__class__: odd_Context
 };
-var odd_Engine = function(width,height,framesPerSecond) {
-	this.framesPerSecond = framesPerSecond;
-	this.timeStep = 1 / framesPerSecond;
-	this.timeThen = haxe_Timer.stamp();
-	this.timeAccumulator = 0;
-	this.context = new odd_Context(width,height);
-};
-odd_Engine.__name__ = true;
-odd_Engine.prototype = {
-	run: function(time) {
-		this.timeNow = haxe_Timer.stamp();
-		this.timeElapsed = this.timeNow - this.timeThen;
-		this.timeThen = this.timeNow;
-		this.timeAccumulator += this.timeElapsed;
-		if(this.timeAccumulator >= this.timeStep) {
-			this.context.update(this.timeStep);
-			this.timeAccumulator = 0;
-		}
-		this.context.draw();
-		window.requestAnimationFrame($bind(this,this.run));
-	}
-	,__class__: odd_Engine
-};
 var odd_ImageBuffer = function(width,height) {
 	this.width = width;
 	this.height = height;
@@ -596,22 +663,170 @@ odd_ImageBuffer.prototype = {
 	}
 	,__class__: odd_ImageBuffer
 };
-var odd_Scene = function(buffer,context) {
-	this.buffer = buffer;
-	this.context = context;
-	console.log("-- NEW SCENE --");
+var odd_geom_Vertex = function(x,y,z) {
+	this.position = new odd_math_Vec4(x,y,z,null);
 };
-odd_Scene.__name__ = true;
-odd_Scene.prototype = {
-	create: function() {
+odd_geom_Vertex.__name__ = true;
+odd_geom_Vertex.prototype = {
+	transform: function(transformation) {
+		var v;
+		var B = this.position;
+		v = new odd_math_Vec4(transformation.xx * B.x + transformation.yx * B.y + transformation.zx * B.z + transformation.wx * B.w,transformation.xy * B.x + transformation.yy * B.y + transformation.zy * B.z + transformation.wy * B.w,transformation.xz * B.x + transformation.yz * B.y + transformation.zz * B.z + transformation.wz * B.w,transformation.xw * B.x + transformation.yw * B.y + transformation.zw * B.z + transformation.ww * B.w);
+		var w = new odd_geom_Vertex(v.x,v.y,v.z);
+		w.position.w = v.w;
+		return w;
 	}
-	,destroy: function() {
+	,perspectiveDivide: function() {
+		var w = new odd_geom_Vertex(this.position.x / this.position.w,this.position.y / this.position.w,this.position.z / this.position.w);
+		w.position.w = this.position.w;
+		return w;
 	}
-	,draw: function() {
+	,__class__: odd_geom_Vertex
+};
+var odd_math_Mat4 = function(xx,xy,xz,xw,yx,yy,yz,yw,zx,zy,zz,zw,wx,wy,wz,ww) {
+	this.xx = xx;
+	this.xy = xy;
+	this.xz = xz;
+	this.xw = xw;
+	this.yx = yx;
+	this.yy = yy;
+	this.yz = yz;
+	this.yw = yw;
+	this.zx = zx;
+	this.zy = zy;
+	this.zz = zz;
+	this.zw = zw;
+	this.wx = wx;
+	this.wy = wy;
+	this.wz = wz;
+	this.ww = ww;
+};
+odd_math_Mat4.__name__ = true;
+odd_math_Mat4.prototype = {
+	toString: function() {
+		return "{ { " + this.xx + ", " + this.xy + ", " + this.xz + ", " + this.xw + " }, { " + this.yx + ", " + this.yy + ", " + this.yz + ", " + this.yw + " }, { " + this.zx + ", " + this.zy + ", " + this.zz + ", " + this.zw + " }, { " + this.wx + ", " + this.wy + ", " + this.wz + ", " + this.ww + " } }";
 	}
-	,update: function(delta) {
+	,__class__: odd_math_Mat4
+};
+var odd_math__$Mat4_Matrix4_$Impl_$ = {};
+odd_math__$Mat4_Matrix4_$Impl_$.__name__ = true;
+odd_math__$Mat4_Matrix4_$Impl_$._new = function(xx,xy,xz,xw,yx,yy,yz,yw,zx,zy,zz,zw,wx,wy,wz,ww) {
+	return new odd_math_Mat4(xx,xy,xz,xw,yx,yy,yz,yw,zx,zy,zz,zw,wx,wy,wz,ww);
+};
+odd_math__$Mat4_Matrix4_$Impl_$.identity = function() {
+	return new odd_math_Mat4(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1);
+};
+odd_math__$Mat4_Matrix4_$Impl_$.empty = function() {
+	return new odd_math_Mat4(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+};
+odd_math__$Mat4_Matrix4_$Impl_$.translate = function(x,y,z) {
+	return new odd_math_Mat4(1,0,0,0,0,1,0,0,0,0,1,0,x,y,z,1);
+};
+odd_math__$Mat4_Matrix4_$Impl_$.scale = function(x,y,z) {
+	return new odd_math_Mat4(x,0,0,0,0,y,0,0,0,0,z,0,0,0,0,1);
+};
+odd_math__$Mat4_Matrix4_$Impl_$.rotateX = function(a) {
+	var c = Math.cos(a);
+	var s = Math.sin(a);
+	return new odd_math_Mat4(1,0,0,0,0,c,s,0,0,-s,c,0,0,0,0,1);
+};
+odd_math__$Mat4_Matrix4_$Impl_$.rotateY = function(a) {
+	var c = Math.cos(a);
+	var s = Math.sin(a);
+	return new odd_math_Mat4(c,0,-s,0,0,1,0,0,s,0,c,0,0,0,0,1);
+};
+odd_math__$Mat4_Matrix4_$Impl_$.rotateZ = function(a) {
+	var c = Math.cos(a);
+	var s = Math.sin(a);
+	return new odd_math_Mat4(c,s,0,0,-s,c,0,0,0,0,1,0,0,0,0,1);
+};
+odd_math__$Mat4_Matrix4_$Impl_$.rotate = function(roll,pitch,yaw) {
+	var cx = Math.cos(roll);
+	var sx = Math.sin(roll);
+	var cy = Math.cos(pitch);
+	var sy = Math.sin(pitch);
+	var cz = Math.cos(yaw);
+	var sz = Math.sin(yaw);
+	return new odd_math_Mat4(cz * cy,sz * sy,-sy,0,cz * sy * sx - sz * cx,sz * sy * sx + cz * cx,cy * sx,0,cz * sy * cx + sz * sx,sz * sy * cx - cz * sx,cy * cx,0,0,0,0,1);
+};
+odd_math__$Mat4_Matrix4_$Impl_$.screenSpace = function(halfWidth,halfHeight) {
+	return new odd_math_Mat4(halfWidth,0,0,0,0,-halfHeight,0,0,0,0,1,0,halfWidth,halfHeight,0,1);
+};
+odd_math__$Mat4_Matrix4_$Impl_$.perspective = function(fieldOfView,aspectRatio,near,far) {
+	var t = Math.tan(fieldOfView / 2);
+	var r = near - far;
+	return new odd_math_Mat4(1 / (t * aspectRatio),0,0,0,0,1 / t,0,0,0,0,(-near - far) / r,2 * near * far / r,0,0,1,0);
+};
+odd_math__$Mat4_Matrix4_$Impl_$.projection = function(left,right,top,bottom,near,far) {
+	return new odd_math_Mat4(2 * near / (right - left),0,(right + left) / (right - left),0,0,2 * near / (top - bottom),(top + bottom) / (top - bottom),0,0,0,-(far + near) / (far - near),-(2 * far * near) / (far - near),0,0,1,0);
+};
+odd_math__$Mat4_Matrix4_$Impl_$.negate = function(this1) {
+	return new odd_math_Mat4(-this1.xx,-this1.xy,-this1.xz,-this1.xw,-this1.yx,-this1.yy,-this1.yz,-this1.yw,-this1.zx,-this1.zy,-this1.zz,-this1.zw,-this1.wx,-this1.wy,-this1.wz,-this1.ww);
+};
+odd_math__$Mat4_Matrix4_$Impl_$.add = function(this1,B) {
+	return new odd_math_Mat4(this1.xx + B.xx,this1.xy + B.xy,this1.xz + B.xz,this1.xw + B.xw,this1.yx + B.yx,this1.yy + B.yy,this1.yz + B.yz,this1.yw + B.yw,this1.zx + B.zx,this1.zy + B.zy,this1.zz + B.zz,this1.zw + B.zw,this1.wx + B.wx,this1.wy + B.wy,this1.wz + B.wz,this1.ww + B.ww);
+};
+odd_math__$Mat4_Matrix4_$Impl_$.subtract = function(this1,B) {
+	return new odd_math_Mat4(this1.xx - B.xx,this1.xy - B.xy,this1.xz - B.xz,this1.xw - B.xw,this1.yx - B.yx,this1.yy - B.yy,this1.yz - B.yz,this1.yw - B.yw,this1.zx - B.zx,this1.zy - B.zy,this1.zz - B.zz,this1.zw - B.zw,this1.wx - B.wx,this1.wy - B.wy,this1.wz - B.wz,this1.ww - B.ww);
+};
+odd_math__$Mat4_Matrix4_$Impl_$.scalarProduct = function(this1,B) {
+	return new odd_math_Mat4(this1.xx * B,this1.xy * B,this1.xz * B,this1.xw * B,this1.yx * B,this1.yy * B,this1.yz * B,this1.yw * B,this1.zx * B,this1.zy * B,this1.zz * B,this1.zw * B,this1.wx * B,this1.wy * B,this1.wz * B,this1.ww * B);
+};
+odd_math__$Mat4_Matrix4_$Impl_$.vectorProduct = function(this1,B) {
+	return new odd_math_Vec4(this1.xx * B.x + this1.yx * B.y + this1.zx * B.z + this1.wx * B.w,this1.xy * B.x + this1.yy * B.y + this1.zy * B.z + this1.wy * B.w,this1.xz * B.x + this1.yz * B.y + this1.zz * B.z + this1.wz * B.w,this1.xw * B.x + this1.yw * B.y + this1.zw * B.z + this1.ww * B.w);
+};
+odd_math__$Mat4_Matrix4_$Impl_$.matrixProduct = function(this1,B) {
+	return new odd_math_Mat4(this1.xx * B.xx + this1.xy * B.yx + this1.xz * B.zx + this1.xw * B.wx,this1.xx * B.xy + this1.xy * B.yy + this1.xz * B.zy + this1.xw * B.wy,this1.xx * B.xz + this1.xy * B.yz + this1.xz * B.zz + this1.xw * B.wz,this1.xx * B.xw + this1.xy * B.yw + this1.xz * B.zw + this1.xw * B.ww,this1.yx * B.xx + this1.yy * B.yx + this1.yz * B.zx + this1.yw * B.wx,this1.yx * B.xy + this1.yy * B.yy + this1.yz * B.zy + this1.yw * B.wy,this1.yx * B.xz + this1.yy * B.yz + this1.yz * B.zz + this1.yw * B.wz,this1.yx * B.xw + this1.yy * B.yw + this1.yz * B.zw + this1.yw * B.ww,this1.zx * B.xx + this1.zy * B.yx + this1.zz * B.zx + this1.zw * B.wx,this1.zx * B.xy + this1.zy * B.yy + this1.zz * B.zy + this1.zw * B.wy,this1.zx * B.xz + this1.zy * B.yz + this1.zz * B.zz + this1.zw * B.wz,this1.zx * B.xw + this1.zy * B.yw + this1.zz * B.zw + this1.zw * B.ww,this1.wx * B.xx + this1.wy * B.yx + this1.wz * B.zx + this1.ww * B.wx,this1.wx * B.xy + this1.wy * B.yy + this1.wz * B.zy + this1.ww * B.wy,this1.wx * B.xz + this1.wy * B.yz + this1.wz * B.zz + this1.ww * B.wz,this1.wx * B.xw + this1.wy * B.yw + this1.wz * B.zw + this1.ww * B.ww);
+};
+var odd_math_Vec4 = function(x,y,z,w) {
+	if(w == null) w = 1;
+	if(z == null) z = 0;
+	if(y == null) y = 0;
+	if(x == null) x = 0;
+	this.x = x;
+	this.y = y;
+	this.z = z;
+	this.w = w;
+};
+odd_math_Vec4.__name__ = true;
+odd_math_Vec4.prototype = {
+	toString: function() {
+		return "{ " + this.x + ", " + this.y + ", " + this.z + ", " + this.w + " }";
 	}
-	,__class__: odd_Scene
+	,__class__: odd_math_Vec4
+};
+var odd_math__$Vec4_Vector4_$Impl_$ = {};
+odd_math__$Vec4_Vector4_$Impl_$.__name__ = true;
+odd_math__$Vec4_Vector4_$Impl_$.get_length = function(this1) {
+	return Math.sqrt(this1.x * this1.x + this1.y * this1.y + this1.z * this1.z + this1.w * this1.w);
+};
+odd_math__$Vec4_Vector4_$Impl_$._new = function(x,y,z,w) {
+	return new odd_math_Vec4(x,y,z,w);
+};
+odd_math__$Vec4_Vector4_$Impl_$.negate = function(this1) {
+	return new odd_math_Vec4(-this1.x,-this1.y,-this1.z,-this1.w);
+};
+odd_math__$Vec4_Vector4_$Impl_$.add = function(this1,B) {
+	return new odd_math_Vec4(this1.x + B.x,this1.y + B.y,this1.z + B.z,this1.w + B.w);
+};
+odd_math__$Vec4_Vector4_$Impl_$.subtract = function(this1,B) {
+	return new odd_math_Vec4(this1.x - B.x,this1.y - B.y,this1.z - B.z,this1.w - B.w);
+};
+odd_math__$Vec4_Vector4_$Impl_$.multiply = function(this1,B) {
+	return new odd_math_Vec4(this1.x * B,this1.y * B,this1.z * B,this1.w * B);
+};
+odd_math__$Vec4_Vector4_$Impl_$.divide = function(this1,B) {
+	return new odd_math_Vec4(this1.x / B,this1.y / B,this1.z / B,this1.w / B);
+};
+odd_math__$Vec4_Vector4_$Impl_$.dotProduct = function(this1,B) {
+	return this1.x * B.x + this1.y * B.y + this1.z * B.z + this1.w * B.w;
+};
+odd_math__$Vec4_Vector4_$Impl_$.normalize = function(this1) {
+	var x = this1.x / Math.sqrt(this1.x * this1.x + this1.y * this1.y + this1.z * this1.z + this1.w * this1.w);
+	var y = this1.y / Math.sqrt(this1.x * this1.x + this1.y * this1.y + this1.z * this1.z + this1.w * this1.w);
+	var z = this1.z / Math.sqrt(this1.x * this1.x + this1.y * this1.y + this1.z * this1.z + this1.w * this1.w);
+	var w = this1.w / Math.sqrt(this1.x * this1.x + this1.y * this1.y + this1.z * this1.z + this1.w * this1.w);
+	return new odd_math_Vec4(x,y,z,w);
 };
 var odd_renderers_js_CanvasRenderer = function(width,height) {
 	console.log("-- CanvasRenderer --");
@@ -633,120 +848,34 @@ odd_renderers_js_CanvasRenderer.prototype = {
 	}
 	,__class__: odd_renderers_js_CanvasRenderer
 };
-var samples_Starfield = function(buffer,context) {
-	odd_Scene.call(this,buffer,context);
+var odd_renderers_neko_NekoAsciiRenderer = function(width,height) {
+	this.width = width;
+	this.height = height;
 };
-samples_Starfield.__name__ = true;
-samples_Starfield.__super__ = odd_Scene;
-samples_Starfield.prototype = $extend(odd_Scene.prototype,{
-	create: function() {
-		odd_Scene.prototype.create.call(this);
-		this.spread = 64;
-		this.speed = 32;
-		var _g = [];
+odd_renderers_neko_NekoAsciiRenderer.__name__ = true;
+odd_renderers_neko_NekoAsciiRenderer.prototype = {
+	render: function(bufferData) {
+		this.image = new StringBuf();
+		this.bytes = haxe_io_Bytes.ofData(bufferData);
 		var _g1 = 0;
-		while(_g1 < 256) {
-			var i = _g1++;
-			_g.push({ x : 2 * (Math.random() - 0.5) * this.spread, y : 2 * (Math.random() - 0.5) * this.spread, z : Math.random() * this.spread});
-		}
-		this.stars = _g;
-	}
-	,update: function(elapsed) {
-		odd_Scene.prototype.update.call(this,elapsed);
-		var halfWidth = this.context.width / 2;
-		var halfHeight = this.context.height / 2;
-		var _g = 0;
-		var _g1 = this.stars;
-		while(_g < _g1.length) {
-			var star = _g1[_g];
-			++_g;
-			star.z -= elapsed * this.speed;
-			if(star.z <= 0) {
-				star.x = 2 * (Math.random() - 0.5) * this.spread;
-				star.y = 2 * (Math.random() - 0.5) * this.spread;
-				star.z = Math.random() * this.spread;
+		var _g = this.height;
+		while(_g1 < _g) {
+			var row = _g1++;
+			var _g3 = 0;
+			var _g2 = this.width;
+			while(_g3 < _g2) {
+				var col = _g3++;
+				this.putChar(this.bytes.b[(col + row * this.width) * 4],this.bytes.b[(col + row * this.width) * 4 + 1],this.bytes.b[(col + row * this.width) * 4 + 2]);
 			}
-			var x = Math.floor(star.x / star.z * halfWidth + halfWidth);
-			var y = Math.floor(star.y / star.z * halfHeight + halfHeight);
-			if(x < 0 || x >= this.context.width || y < 0 || y >= this.context.height) {
-				star.x = 2 * (Math.random() - 0.5) * this.spread;
-				star.y = 2 * (Math.random() - 0.5) * this.spread;
-				star.z = Math.random() * this.spread;
-			} else this.buffer.setPixel(x,y,-1);
+			this.image.b += "\n";
 		}
 	}
-	,draw: function() {
-		odd_Scene.prototype.draw.call(this);
+	,putChar: function(r,g,b) {
+		var value = r + g + b;
+		if(value >= 567) this.image.b += String.fromCharCode(178); else if(value >= 378) this.image.b += String.fromCharCode(176); else if(value >= 189) this.image.b += String.fromCharCode(177); else this.image.b += String.fromCharCode(32);
 	}
-	,__class__: samples_Starfield
-});
-var samples_Triangle = function(buffer,context) {
-	odd_Scene.call(this,buffer,context);
+	,__class__: odd_renderers_neko_NekoAsciiRenderer
 };
-samples_Triangle.__name__ = true;
-samples_Triangle.__super__ = odd_Scene;
-samples_Triangle.prototype = $extend(odd_Scene.prototype,{
-	create: function() {
-		odd_Scene.prototype.create.call(this);
-		this.p1 = { x : this.context.width / 2 | 0, y : this.context.height / 2 | 0};
-		this.p2 = { x : 0, y : 0};
-		this.p3 = { x : 0, y : 0};
-		this.time = 0;
-	}
-	,update: function(elapsed) {
-		odd_Scene.prototype.update.call(this,elapsed);
-		this.time += elapsed;
-		this.p2.x = this.p1.x + Std["int"](Math.sin(this.time) * 100);
-		this.p2.y = this.p1.y + Std["int"](Math.cos(this.time) * 100);
-		this.p3.x = this.p1.x + Std["int"](Math.sin(this.time * 2) * 100);
-		this.p3.y = this.p1.y + Std["int"](Math.cos(this.time * 2) * 100);
-	}
-	,draw: function() {
-		odd_Scene.prototype.draw.call(this);
-		this.drawLine(this.p1,this.p2);
-		this.drawLine(this.p2,this.p3);
-		this.drawLine(this.p3,this.p1);
-	}
-	,drawLine: function(a,b) {
-		var x = a.x;
-		var y = a.y;
-		var dx = Math.round(Math.abs(b.x - a.x));
-		var dy = Math.round(Math.abs(b.y - a.y));
-		var sx;
-		if(a.x < b.x) sx = 1; else sx = -1;
-		var sy;
-		if(a.y < b.y) sy = 1; else sy = -1;
-		var e;
-		e = (dx > dy?dx:-dy) / 2;
-		while(true) {
-			this.buffer.setPixel(x,y,-1);
-			if(x == b.x && y == b.y) break;
-			var te = e;
-			if(te > -dx) {
-				e -= dy;
-				x += sx;
-			}
-			if(te < dy) {
-				e += dx;
-				y += sy;
-			}
-		}
-	}
-	,__class__: samples_Triangle
-});
-var test_Main = function(width,height,framesPerSecond) {
-	odd_Engine.call(this,width,height,framesPerSecond);
-	this.context.setScene(samples_Triangle);
-	this.run();
-};
-test_Main.__name__ = true;
-test_Main.main = function() {
-	new test_Main(800,600,60);
-};
-test_Main.__super__ = odd_Engine;
-test_Main.prototype = $extend(odd_Engine.prototype,{
-	__class__: test_Main
-});
 var $_, $fid = 0;
 function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id__ = $fid++; var f; if( o.hx__closures__ == null ) o.hx__closures__ = {}; else f = o.hx__closures__[m.__id__]; if( f == null ) { f = function(){ return f.method.apply(f.scope, arguments); }; f.scope = o; f.method = m; o.hx__closures__[m.__id__] = f; } return f; }
 String.prototype.__class__ = String;
@@ -774,5 +903,5 @@ haxe_io_FPHelper.i64tmp = (function($this) {
 }(this));
 js_Boot.__toStr = {}.toString;
 js_html_compat_Uint8Array.BYTES_PER_ELEMENT = 1;
-test_Main.main();
+Main.main();
 })(typeof console != "undefined" ? console : {log:function(){}});

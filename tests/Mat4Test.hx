@@ -1,9 +1,10 @@
-package test;
+package tests;
+
 import haxe.unit.TestCase;
 import odd.math.Mat4;
 import odd.math.Vec4.Vector4;
 
-class MatrixTest extends TestCase
+class Mat4Test extends TestCase
 {
     var I : Matrix4;
     var E : Matrix4;

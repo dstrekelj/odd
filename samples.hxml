@@ -1,0 +1,25 @@
+-cp samples/filledTriangle/src
+-main Main
+-D ODD_CANVAS_RENDERER
+-js samples/filledTriangle/bin/js/filledTriangle.js
+
+--next
+
+-cp samples/starfield/src
+-main Main
+-D ODD_CANVAS_RENDERER
+-js samples/starfield/bin/js/starfield.js
+
+--next
+
+-cp samples/triangle/src
+-main Main
+-D ODD_CANVAS_RENDERER
+-js samples/triangle/bin/js/triangle.js
+
+--next
+
+-cp samples/vertices/src
+-main Main
+-D ODD_CANVAS_RENDERER
+-js samples/vertices/bin/js/vertices.js

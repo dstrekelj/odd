@@ -1,4 +1,5 @@
-package samples;
+package;
+
 import odd.Scene;
 
 typedef Star = {

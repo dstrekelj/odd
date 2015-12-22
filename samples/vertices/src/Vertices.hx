@@ -1,10 +1,10 @@
 package;
 
 import haxe.Timer;
-import odd.Context;
 import odd.geom.Vertex;
-import odd.math.Mat4;
-import odd.math.Vec4;
+import odd.math.Vec3.Vector3;
+import odd.math.Mat4.Matrix4;
+import odd.math.Vec4.Vector4;
 import odd.Scene;
 
 class Vertices extends Scene
@@ -15,6 +15,9 @@ class Vertices extends Scene
     var screenSpace : Matrix4;
     var perspective : Matrix4;
     var projection : Matrix4;
+    
+    var camera : Matrix4;
+    var translation : Matrix4;
     
     override public function create() : Void
     {
@@ -37,12 +40,44 @@ class Vertices extends Scene
             0,                          0,                          1,  0,
             context.width / 2,          context.height / 2,         0,  1
         );
+        
+        camera = Matrix4.identity();
+        translation = Matrix4.translate(0, 0, -0.1);
+        
+        var m = new Matrix4(
+            0.718762, 0.615033,-0.324214, 0,
+           -0.393732, 0.744416, 0.539277, 0,
+            0.573024,-0.259959, 0.777216, 0,
+            0.526967, 1.254234, -2.53215, 1
+        );
+        
+        var p = new odd.math.Vec3.Vector3(-0.5, 0.5, -0.5);
+        
+        //trace(p * m);
+        
+        var p_world = new Vector3(200, 300, 10);
+        var p_screen = p_world * camera;
+        p_screen.x /= p_screen.z;
+        p_screen.y /= p_screen.z;
+        
+        var p_ndc = new Vector3();
+        p_ndc.x = (p_screen.x + context.width / 2) / context.width;
+        p_ndc.y = (p_screen.y + context.height / 2) / context.height;
+        
+        var p_raster = new Vector3();
+        p_raster.x = p_ndc.x * context.width;
+        p_raster.y = p_ndc.y * context.height;
+        
+        trace(p_screen);
+        trace(p_ndc);
+        trace(p_raster);
     }
     
     override public function update(elapsed : Float) : Void
     {
         super.update(elapsed);
-        //p2.position.z += 0.1;
+        
+        p2.position = p2.position * translation;
     }
     
     override public function draw() : Void
@@ -51,19 +86,18 @@ class Vertices extends Scene
         
         buffer.setPixel(Math.round(p1.position.x), Math.round(p1.position.y), 0xffffffff);
         
-        var v1 = p2.transform(screenSpace).perspectiveDivide();
-        trace(v1.position);
-        buffer.setPixel(Math.round(v1.position.x), Math.round(v1.position.y), 0xffffffff);
+        var p_screen = p2.position * camera;
+        p_screen.x /= p_screen.z;
+        p_screen.y /= p_screen.z;
         
-        /*
-        //var transformed : Vector4 = new Vector4(p2.position.x / p2.position.z, p2.position.y / p2.position.z, p2.position.z, p2.position.w);
-        //transformed = perspective * transformed;
-        var transformed : Vector4 = projection * p2.position;
-        //transformed = perspective * transformed;
-        //transformed.x = transformed.x / transformed.z;
-        //transformed.y = transformed.y / transformed.z;
-        trace(transformed);
-        buffer.setPixel(Math.round(transformed.x), Math.round(transformed.y), 0xffffffff);
-        */
+        var p_ndc = new Vector3();
+        p_ndc.x = (p_screen.x + context.width / 2) / context.width;
+        p_ndc.y = (p_screen.y + context.height / 2) / context.height;
+        
+        var p_raster = new Vector3();
+        p_raster.x = p_ndc.x * context.width;
+        p_raster.y = p_ndc.y * context.height;
+        
+        buffer.setPixel(Math.round(p_raster.x), Math.round(p_raster.y), 0xffffffff);
     }
 }

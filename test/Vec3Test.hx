@@ -105,4 +105,11 @@ class Vec3Test extends TestCase
         this.assertEquals(Std.string(v2 % v3), '{ 2, 4, 2 }');
         this.assertEquals(Std.string(v3 % v2), '{ -2, -4, -2 }');
     }
+    
+    public function testNormalize()
+    {
+        var v1 = new Vector3(1, -3, 5);
+        
+        this.assertEquals(v1.normalize().length, 1);
+    }
 }

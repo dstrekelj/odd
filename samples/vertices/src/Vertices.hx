@@ -2,9 +2,9 @@ package;
 
 import haxe.Timer;
 import odd.geom.Vertex;
-import odd.math.Vec3.Vector3;
-import odd.math.Mat4.Matrix4;
-import odd.math.Vec4.Vector4;
+import odd.math.Vector3;
+import odd.math.Matrix4;
+import odd.math.Vector4;
 import odd.Scene;
 
 class Vertices extends Scene
@@ -52,19 +52,20 @@ class Vertices extends Scene
             0.526967, 1.254234, -2.53215, 1
         );
         
-        var p = new odd.math.Vec3.Vector3(-0.5, 0.5, -0.5);
+        var p = new Vector3(-0.5, 0.5, -0.5);
         
         //trace(p * m);
         
         var p_world = new Vector3(200, 300, 10);
         var p_screen = p_world * camera;
+        // Convert to screen space
         p_screen.x /= p_screen.z;
         p_screen.y /= p_screen.z;
-        
+        // Convert to NDC
         var p_ndc = new Vector3();
         p_ndc.x = (p_screen.x + context.width / 2) / context.width;
         p_ndc.y = (p_screen.y + context.height / 2) / context.height;
-        
+        // Convert to raster
         var p_raster = new Vector3();
         p_raster.x = p_ndc.x * context.width;
         p_raster.y = p_ndc.y * context.height;

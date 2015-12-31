@@ -1,6 +1,6 @@
 package odd.math;
 
-import odd.math.Mat4.Matrix4;
+import odd.math.Matrix4;
 
 class Vec4
 {

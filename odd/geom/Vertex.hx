@@ -1,7 +1,7 @@
 package odd.geom;
 
 import odd.ImageBuffer;
-import odd.math.Vec3.Vector3;
+import odd.math.Vector3;
 
 class Vertex
 {

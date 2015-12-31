@@ -1,7 +1,7 @@
 package odd.math;
 
-import odd.math.Vec3.Vector3;
-import odd.math.Vec4.Vector4;
+import odd.math.Vector3;
+import odd.math.Vector4;
 
 class Mat4
 {

@@ -115,7 +115,7 @@ Vertices.prototype = $extend(odd_Scene.prototype,{
 		var halfWidth = this.context.width / 2;
 		var halfHeight = this.context.height / 2;
 		this.screenSpace = new odd_math_Mat4(halfWidth,0,0,0,0,-halfHeight,0,0,0,0,1,0,halfWidth,halfHeight,0,1);
-		this.projection = odd_math__$Mat4_Matrix4_$Impl_$.projection(0,this.context.width,0,this.context.height,0.1,100);
+		this.projection = odd_math__$Matrix4_Matrix4_$Impl_$.projection(0,this.context.width,0,this.context.height,0.1,100);
 		this.perspective = new odd_math_Mat4(1 / (this.context.width / 2),0,0,0,0,1 / (this.context.height / 2),0,0,0,0,1,0,this.context.width / 2,this.context.height / 2,0,1);
 		this.camera = new odd_math_Mat4(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1);
 		this.translation = new odd_math_Mat4(1,0,0,0,0,1,0,0,0,0,1,0,0,0,-0.1,1);
@@ -123,7 +123,7 @@ Vertices.prototype = $extend(odd_Scene.prototype,{
 		var m = new odd_math_Mat4(0.718762,0.615033,-0.324214,0,-0.393732,0.744416,0.539277,0,0.573024,-0.259959,0.777216,0,0.526967,1.254234,-2.53215,1);
 		var p = new odd_math_Vec3(-0.5,0.5,-0.5);
 		var p_world = new odd_math_Vec3(200,300,10);
-		var p_screen = odd_math__$Vec3_Vector3_$Impl_$.multiplyMatrix4(p_world,this.camera);
+		var p_screen = odd_math__$Vector3_Vector3_$Impl_$.multiplyMatrix4(p_world,this.camera);
 		p_screen.x /= p_screen.z;
 		p_screen.y /= p_screen.z;
 		var p_ndc = new odd_math_Vec3(null,null,null);
@@ -139,14 +139,14 @@ Vertices.prototype = $extend(odd_Scene.prototype,{
 	,update: function(elapsed) {
 		odd_Scene.prototype.update.call(this,elapsed);
 		this.time += elapsed;
-		this.rotation = odd_math__$Mat4_Matrix4_$Impl_$.rotateZ(elapsed);
-		this.p1.position = odd_math__$Vec3_Vector3_$Impl_$.multiplyMatrix4(this.p1.position,this.rotation);
-		this.p2.position = odd_math__$Vec3_Vector3_$Impl_$.multiplyMatrix4(this.p2.position,this.rotation);
-		this.p3.position = odd_math__$Vec3_Vector3_$Impl_$.multiplyMatrix4(this.p3.position,this.rotation);
+		this.rotation = odd_math__$Matrix4_Matrix4_$Impl_$.rotateZ(elapsed);
+		this.p1.position = odd_math__$Vector3_Vector3_$Impl_$.multiplyMatrix4(this.p1.position,this.rotation);
+		this.p2.position = odd_math__$Vector3_Vector3_$Impl_$.multiplyMatrix4(this.p2.position,this.rotation);
+		this.p3.position = odd_math__$Vector3_Vector3_$Impl_$.multiplyMatrix4(this.p3.position,this.rotation);
 	}
 	,draw: function() {
 		odd_Scene.prototype.draw.call(this);
-		var p_screen = odd_math__$Vec3_Vector3_$Impl_$.multiplyMatrix4(this.p1.position,this.camera);
+		var p_screen = odd_math__$Vector3_Vector3_$Impl_$.multiplyMatrix4(this.p1.position,this.camera);
 		p_screen.x /= p_screen.z;
 		p_screen.y /= p_screen.z;
 		var p_ndc = new odd_math_Vec3(null,null,null);
@@ -156,7 +156,7 @@ Vertices.prototype = $extend(odd_Scene.prototype,{
 		p_raster.x = p_ndc.x * this.context.width;
 		p_raster.y = p_ndc.y * this.context.height;
 		this.buffer.setPixel(Math.round(p_raster.x),Math.round(p_raster.y),-1);
-		var p_screen1 = odd_math__$Vec3_Vector3_$Impl_$.multiplyMatrix4(this.p2.position,this.camera);
+		var p_screen1 = odd_math__$Vector3_Vector3_$Impl_$.multiplyMatrix4(this.p2.position,this.camera);
 		p_screen1.x /= p_screen1.z;
 		p_screen1.y /= p_screen1.z;
 		var p_ndc1 = new odd_math_Vec3(null,null,null);
@@ -166,7 +166,7 @@ Vertices.prototype = $extend(odd_Scene.prototype,{
 		p_raster1.x = p_ndc1.x * this.context.width;
 		p_raster1.y = p_ndc1.y * this.context.height;
 		this.buffer.setPixel(Math.round(p_raster1.x),Math.round(p_raster1.y),-1);
-		var p_screen2 = odd_math__$Vec3_Vector3_$Impl_$.multiplyMatrix4(this.p3.position,this.camera);
+		var p_screen2 = odd_math__$Vector3_Vector3_$Impl_$.multiplyMatrix4(this.p3.position,this.camera);
 		p_screen2.x /= p_screen2.z;
 		p_screen2.y /= p_screen2.z;
 		var p_ndc2 = new odd_math_Vec3(null,null,null);
@@ -746,39 +746,39 @@ odd_math_Mat4.prototype = {
 	}
 	,__class__: odd_math_Mat4
 };
-var odd_math__$Mat4_Matrix4_$Impl_$ = {};
-odd_math__$Mat4_Matrix4_$Impl_$.__name__ = true;
-odd_math__$Mat4_Matrix4_$Impl_$._new = function(xx,xy,xz,xw,yx,yy,yz,yw,zx,zy,zz,zw,wx,wy,wz,ww) {
+var odd_math__$Matrix4_Matrix4_$Impl_$ = {};
+odd_math__$Matrix4_Matrix4_$Impl_$.__name__ = true;
+odd_math__$Matrix4_Matrix4_$Impl_$._new = function(xx,xy,xz,xw,yx,yy,yz,yw,zx,zy,zz,zw,wx,wy,wz,ww) {
 	return new odd_math_Mat4(xx,xy,xz,xw,yx,yy,yz,yw,zx,zy,zz,zw,wx,wy,wz,ww);
 };
-odd_math__$Mat4_Matrix4_$Impl_$.identity = function() {
+odd_math__$Matrix4_Matrix4_$Impl_$.identity = function() {
 	return new odd_math_Mat4(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1);
 };
-odd_math__$Mat4_Matrix4_$Impl_$.empty = function() {
+odd_math__$Matrix4_Matrix4_$Impl_$.empty = function() {
 	return new odd_math_Mat4(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 };
-odd_math__$Mat4_Matrix4_$Impl_$.translate = function(x,y,z) {
+odd_math__$Matrix4_Matrix4_$Impl_$.translate = function(x,y,z) {
 	return new odd_math_Mat4(1,0,0,0,0,1,0,0,0,0,1,0,x,y,z,1);
 };
-odd_math__$Mat4_Matrix4_$Impl_$.scale = function(x,y,z) {
+odd_math__$Matrix4_Matrix4_$Impl_$.scale = function(x,y,z) {
 	return new odd_math_Mat4(x,0,0,0,0,y,0,0,0,0,z,0,0,0,0,1);
 };
-odd_math__$Mat4_Matrix4_$Impl_$.rotateX = function(a) {
+odd_math__$Matrix4_Matrix4_$Impl_$.rotateX = function(a) {
 	var c = Math.cos(a);
 	var s = Math.sin(a);
 	return new odd_math_Mat4(1,0,0,0,0,c,s,0,0,-s,c,0,0,0,0,1);
 };
-odd_math__$Mat4_Matrix4_$Impl_$.rotateY = function(a) {
+odd_math__$Matrix4_Matrix4_$Impl_$.rotateY = function(a) {
 	var c = Math.cos(a);
 	var s = Math.sin(a);
 	return new odd_math_Mat4(c,0,-s,0,0,1,0,0,s,0,c,0,0,0,0,1);
 };
-odd_math__$Mat4_Matrix4_$Impl_$.rotateZ = function(a) {
+odd_math__$Matrix4_Matrix4_$Impl_$.rotateZ = function(a) {
 	var c = Math.cos(a);
 	var s = Math.sin(a);
 	return new odd_math_Mat4(c,s,0,0,-s,c,0,0,0,0,1,0,0,0,0,1);
 };
-odd_math__$Mat4_Matrix4_$Impl_$.rotate = function(roll,pitch,yaw) {
+odd_math__$Matrix4_Matrix4_$Impl_$.rotate = function(roll,pitch,yaw) {
 	var cx = Math.cos(roll);
 	var sx = Math.sin(roll);
 	var cy = Math.cos(pitch);
@@ -787,30 +787,30 @@ odd_math__$Mat4_Matrix4_$Impl_$.rotate = function(roll,pitch,yaw) {
 	var sz = Math.sin(yaw);
 	return new odd_math_Mat4(cz * cy,sz * sy,-sy,0,cz * sy * sx - sz * cx,sz * sy * sx + cz * cx,cy * sx,0,cz * sy * cx + sz * sx,sz * sy * cx - cz * sx,cy * cx,0,0,0,0,1);
 };
-odd_math__$Mat4_Matrix4_$Impl_$.screenSpace = function(halfWidth,halfHeight) {
+odd_math__$Matrix4_Matrix4_$Impl_$.screenSpace = function(halfWidth,halfHeight) {
 	return new odd_math_Mat4(halfWidth,0,0,0,0,-halfHeight,0,0,0,0,1,0,halfWidth,halfHeight,0,1);
 };
-odd_math__$Mat4_Matrix4_$Impl_$.perspective = function(fieldOfView,aspectRatio,near,far) {
+odd_math__$Matrix4_Matrix4_$Impl_$.perspective = function(fieldOfView,aspectRatio,near,far) {
 	var t = Math.tan(fieldOfView / 2);
 	var r = near - far;
 	return new odd_math_Mat4(1 / (t * aspectRatio),0,0,0,0,1 / t,0,0,0,0,(-near - far) / r,2 * near * far / r,0,0,1,0);
 };
-odd_math__$Mat4_Matrix4_$Impl_$.projection = function(left,right,top,bottom,near,far) {
+odd_math__$Matrix4_Matrix4_$Impl_$.projection = function(left,right,top,bottom,near,far) {
 	return new odd_math_Mat4(2 * near / (right - left),0,(right + left) / (right - left),0,0,2 * near / (top - bottom),(top + bottom) / (top - bottom),0,0,0,-(far + near) / (far - near),-(2 * far * near) / (far - near),0,0,1,0);
 };
-odd_math__$Mat4_Matrix4_$Impl_$.negate = function(this1) {
+odd_math__$Matrix4_Matrix4_$Impl_$.negate = function(this1) {
 	return new odd_math_Mat4(-this1.xx,-this1.xy,-this1.xz,-this1.xw,-this1.yx,-this1.yy,-this1.yz,-this1.yw,-this1.zx,-this1.zy,-this1.zz,-this1.zw,-this1.wx,-this1.wy,-this1.wz,-this1.ww);
 };
-odd_math__$Mat4_Matrix4_$Impl_$.add = function(this1,B) {
+odd_math__$Matrix4_Matrix4_$Impl_$.add = function(this1,B) {
 	return new odd_math_Mat4(this1.xx + B.xx,this1.xy + B.xy,this1.xz + B.xz,this1.xw + B.xw,this1.yx + B.yx,this1.yy + B.yy,this1.yz + B.yz,this1.yw + B.yw,this1.zx + B.zx,this1.zy + B.zy,this1.zz + B.zz,this1.zw + B.zw,this1.wx + B.wx,this1.wy + B.wy,this1.wz + B.wz,this1.ww + B.ww);
 };
-odd_math__$Mat4_Matrix4_$Impl_$.subtract = function(this1,B) {
+odd_math__$Matrix4_Matrix4_$Impl_$.subtract = function(this1,B) {
 	return new odd_math_Mat4(this1.xx - B.xx,this1.xy - B.xy,this1.xz - B.xz,this1.xw - B.xw,this1.yx - B.yx,this1.yy - B.yy,this1.yz - B.yz,this1.yw - B.yw,this1.zx - B.zx,this1.zy - B.zy,this1.zz - B.zz,this1.zw - B.zw,this1.wx - B.wx,this1.wy - B.wy,this1.wz - B.wz,this1.ww - B.ww);
 };
-odd_math__$Mat4_Matrix4_$Impl_$.multiplyScalar = function(this1,B) {
+odd_math__$Matrix4_Matrix4_$Impl_$.multiplyScalar = function(this1,B) {
 	return new odd_math_Mat4(this1.xx * B,this1.xy * B,this1.xz * B,this1.xw * B,this1.yx * B,this1.yy * B,this1.yz * B,this1.yw * B,this1.zx * B,this1.zy * B,this1.zz * B,this1.zw * B,this1.wx * B,this1.wy * B,this1.wz * B,this1.ww * B);
 };
-odd_math__$Mat4_Matrix4_$Impl_$.multiplyMatrix = function(this1,B) {
+odd_math__$Matrix4_Matrix4_$Impl_$.multiplyMatrix = function(this1,B) {
 	return new odd_math_Mat4(this1.xx * B.xx + this1.xy * B.yx + this1.xz * B.zx + this1.xw * B.wx,this1.xx * B.xy + this1.xy * B.yy + this1.xz * B.zy + this1.xw * B.wy,this1.xx * B.xz + this1.xy * B.yz + this1.xz * B.zz + this1.xw * B.wz,this1.xx * B.xw + this1.xy * B.yw + this1.xz * B.zw + this1.xw * B.ww,this1.yx * B.xx + this1.yy * B.yx + this1.yz * B.zx + this1.yw * B.wx,this1.yx * B.xy + this1.yy * B.yy + this1.yz * B.zy + this1.yw * B.wy,this1.yx * B.xz + this1.yy * B.yz + this1.yz * B.zz + this1.yw * B.wz,this1.yx * B.xw + this1.yy * B.yw + this1.yz * B.zw + this1.yw * B.ww,this1.zx * B.xx + this1.zy * B.yx + this1.zz * B.zx + this1.zw * B.wx,this1.zx * B.xy + this1.zy * B.yy + this1.zz * B.zy + this1.zw * B.wy,this1.zx * B.xz + this1.zy * B.yz + this1.zz * B.zz + this1.zw * B.wz,this1.zx * B.xw + this1.zy * B.yw + this1.zz * B.zw + this1.zw * B.ww,this1.wx * B.xx + this1.wy * B.yx + this1.wz * B.zx + this1.ww * B.wx,this1.wx * B.xy + this1.wy * B.yy + this1.wz * B.zy + this1.ww * B.wy,this1.wx * B.xz + this1.wy * B.yz + this1.wz * B.zz + this1.ww * B.wz,this1.wx * B.xw + this1.wy * B.yw + this1.wz * B.zw + this1.ww * B.ww);
 };
 var odd_math_Vec3 = function(x,y,z) {
@@ -828,27 +828,27 @@ odd_math_Vec3.prototype = {
 	}
 	,__class__: odd_math_Vec3
 };
-var odd_math__$Vec3_Vector3_$Impl_$ = {};
-odd_math__$Vec3_Vector3_$Impl_$.__name__ = true;
-odd_math__$Vec3_Vector3_$Impl_$.get_length = function(this1) {
+var odd_math__$Vector3_Vector3_$Impl_$ = {};
+odd_math__$Vector3_Vector3_$Impl_$.__name__ = true;
+odd_math__$Vector3_Vector3_$Impl_$.get_length = function(this1) {
 	return Math.sqrt(this1.x * this1.x + this1.y * this1.y + this1.z * this1.z);
 };
-odd_math__$Vec3_Vector3_$Impl_$._new = function(x,y,z) {
+odd_math__$Vector3_Vector3_$Impl_$._new = function(x,y,z) {
 	return new odd_math_Vec3(x,y,z);
 };
-odd_math__$Vec3_Vector3_$Impl_$.negate = function(this1) {
+odd_math__$Vector3_Vector3_$Impl_$.negate = function(this1) {
 	return new odd_math_Vec3(-this1.x,-this1.y,-this1.z);
 };
-odd_math__$Vec3_Vector3_$Impl_$.add = function(this1,B) {
+odd_math__$Vector3_Vector3_$Impl_$.add = function(this1,B) {
 	return new odd_math_Vec3(this1.x + B.x,this1.y + B.y,this1.z + B.z);
 };
-odd_math__$Vec3_Vector3_$Impl_$.subtract = function(this1,B) {
+odd_math__$Vector3_Vector3_$Impl_$.subtract = function(this1,B) {
 	return new odd_math_Vec3(this1.x - B.x,this1.y - B.y,this1.z - B.z);
 };
-odd_math__$Vec3_Vector3_$Impl_$.multiplyScalar = function(this1,B) {
+odd_math__$Vector3_Vector3_$Impl_$.multiplyScalar = function(this1,B) {
 	return new odd_math_Vec3(this1.x * B,this1.y * B,this1.z * B);
 };
-odd_math__$Vec3_Vector3_$Impl_$.multiplyMatrix4 = function(this1,B) {
+odd_math__$Vector3_Vector3_$Impl_$.multiplyMatrix4 = function(this1,B) {
 	var v = new odd_math_Vec3(null,null,null);
 	v.x = this1.x * B.xx + this1.y * B.yx + this1.z * B.zx + B.wx;
 	v.y = this1.x * B.xy + this1.y * B.yy + this1.z * B.zy + B.wy;
@@ -861,16 +861,16 @@ odd_math__$Vec3_Vector3_$Impl_$.multiplyMatrix4 = function(this1,B) {
 	}
 	return v;
 };
-odd_math__$Vec3_Vector3_$Impl_$.divide = function(this1,B) {
+odd_math__$Vector3_Vector3_$Impl_$.divide = function(this1,B) {
 	return new odd_math_Vec3(this1.x / B,this1.y / B,this1.z / B);
 };
-odd_math__$Vec3_Vector3_$Impl_$.dotProduct = function(this1,B) {
+odd_math__$Vector3_Vector3_$Impl_$.dotProduct = function(this1,B) {
 	return this1.x * B.x + this1.y * B.y + this1.z * B.z;
 };
-odd_math__$Vec3_Vector3_$Impl_$.crossProduct = function(this1,B) {
+odd_math__$Vector3_Vector3_$Impl_$.crossProduct = function(this1,B) {
 	return new odd_math_Vec3(this1.y * B.z - this1.z * B.y,this1.z * B.x - this1.x * B.z,this1.x * B.y - this1.y * B.x);
 };
-odd_math__$Vec3_Vector3_$Impl_$.normalize = function(this1) {
+odd_math__$Vector3_Vector3_$Impl_$.normalize = function(this1) {
 	var x = this1.x / Math.sqrt(this1.x * this1.x + this1.y * this1.y + this1.z * this1.z);
 	var y = this1.y / Math.sqrt(this1.x * this1.x + this1.y * this1.y + this1.z * this1.z);
 	var z = this1.z / Math.sqrt(this1.x * this1.x + this1.y * this1.y + this1.z * this1.z);
@@ -893,36 +893,36 @@ odd_math_Vec4.prototype = {
 	}
 	,__class__: odd_math_Vec4
 };
-var odd_math__$Vec4_Vector4_$Impl_$ = {};
-odd_math__$Vec4_Vector4_$Impl_$.__name__ = true;
-odd_math__$Vec4_Vector4_$Impl_$.get_length = function(this1) {
+var odd_math__$Vector4_Vector4_$Impl_$ = {};
+odd_math__$Vector4_Vector4_$Impl_$.__name__ = true;
+odd_math__$Vector4_Vector4_$Impl_$.get_length = function(this1) {
 	return Math.sqrt(this1.x * this1.x + this1.y * this1.y + this1.z * this1.z + this1.w * this1.w);
 };
-odd_math__$Vec4_Vector4_$Impl_$._new = function(x,y,z,w) {
+odd_math__$Vector4_Vector4_$Impl_$._new = function(x,y,z,w) {
 	return new odd_math_Vec4(x,y,z,w);
 };
-odd_math__$Vec4_Vector4_$Impl_$.negate = function(this1) {
+odd_math__$Vector4_Vector4_$Impl_$.negate = function(this1) {
 	return new odd_math_Vec4(-this1.x,-this1.y,-this1.z,-this1.w);
 };
-odd_math__$Vec4_Vector4_$Impl_$.add = function(this1,B) {
+odd_math__$Vector4_Vector4_$Impl_$.add = function(this1,B) {
 	return new odd_math_Vec4(this1.x + B.x,this1.y + B.y,this1.z + B.z,this1.w + B.w);
 };
-odd_math__$Vec4_Vector4_$Impl_$.subtract = function(this1,B) {
+odd_math__$Vector4_Vector4_$Impl_$.subtract = function(this1,B) {
 	return new odd_math_Vec4(this1.x - B.x,this1.y - B.y,this1.z - B.z,this1.w - B.w);
 };
-odd_math__$Vec4_Vector4_$Impl_$.multiplyScalar = function(this1,B) {
+odd_math__$Vector4_Vector4_$Impl_$.multiplyScalar = function(this1,B) {
 	return new odd_math_Vec4(this1.x * B,this1.y * B,this1.z * B,this1.w * B);
 };
-odd_math__$Vec4_Vector4_$Impl_$.multiplyMatrix4 = function(this1,B) {
+odd_math__$Vector4_Vector4_$Impl_$.multiplyMatrix4 = function(this1,B) {
 	return new odd_math_Vec4(B.xx * this1.x + B.yx * this1.y + B.zx * this1.z + B.wx * this1.w,B.xy * this1.x + B.yy * this1.y + B.zy * this1.z + B.wy * this1.w,B.xz * this1.x + B.yz * this1.y + B.zz * this1.z + B.wz * this1.w,B.xw * this1.x + B.yw * this1.y + B.zw * this1.z + B.ww * this1.w);
 };
-odd_math__$Vec4_Vector4_$Impl_$.divide = function(this1,B) {
+odd_math__$Vector4_Vector4_$Impl_$.divide = function(this1,B) {
 	return new odd_math_Vec4(this1.x / B,this1.y / B,this1.z / B,this1.w / B);
 };
-odd_math__$Vec4_Vector4_$Impl_$.dotProduct = function(this1,B) {
+odd_math__$Vector4_Vector4_$Impl_$.dotProduct = function(this1,B) {
 	return this1.x * B.x + this1.y * B.y + this1.z * B.z + this1.w * B.w;
 };
-odd_math__$Vec4_Vector4_$Impl_$.normalize = function(this1) {
+odd_math__$Vector4_Vector4_$Impl_$.normalize = function(this1) {
 	var x = this1.x / Math.sqrt(this1.x * this1.x + this1.y * this1.y + this1.z * this1.z + this1.w * this1.w);
 	var y = this1.y / Math.sqrt(this1.x * this1.x + this1.y * this1.y + this1.z * this1.z + this1.w * this1.w);
 	var z = this1.z / Math.sqrt(this1.x * this1.x + this1.y * this1.y + this1.z * this1.z + this1.w * this1.w);

@@ -1,0 +1,7 @@
+-lib odd
+
+-dce full
+
+-cp src
+-main Tests
+-neko bin/tests.n

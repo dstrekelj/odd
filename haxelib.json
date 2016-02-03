@@ -1,0 +1,10 @@
+{
+  "contributors": [ "dstrekelj" ],
+  "description": "Platform-agnostic software renderer",
+  "name": "odd",
+  "license": "MIT",
+  "releasenote": "Initial release",
+  "tags": ["cross", "3d"],
+  "url" : "https://github.com/dstrekelj/odd/",
+  "version": "1.0.0"
+}

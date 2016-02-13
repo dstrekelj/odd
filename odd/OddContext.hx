@@ -16,11 +16,11 @@ class OddContext
         this.height = height;
         this.image = new OddImage(width, height, clearColor);
         
-        OddPipeline.init(width, height);
+        OddPipeline.init(width, height, image);
     }
     
     public inline function render(mesh : OddMesh) : Void
     {
-        OddPipeline.run(mesh, image);
+        OddPipeline.run(mesh);
     }
 }

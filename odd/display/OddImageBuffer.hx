@@ -2,7 +2,7 @@ package odd.display;
 
 import haxe.io.Bytes;
 import haxe.io.BytesData;
-import odd.util.OddColor;
+import odd.util.color.OddRGB;
 
 class OddImageBuffer
 {
@@ -12,9 +12,9 @@ class OddImageBuffer
     
     var data : Bytes;
     
-    var clearColor : OddColor;
+    var clearColor : OddRGB;
     
-    public function new(width : Int, height : Int, clearColor : OddColor)
+    public function new(width : Int, height : Int, clearColor : OddRGB)
     {
         this.width = width;
         this.height = height;
@@ -114,12 +114,12 @@ class OddImageBuffer
      * @param y Vertical position of pixel
      * @param color Pixel color
      */
-    public function setPixel(x : Int, y : Int, c : OddColor) : Void
+    public function setPixel(x : Int, y : Int, c : OddRGB) : Void
     {
-        setR(x, y, c.r);
-        setG(x, y, c.g);
-        setB(x, y, c.b);
-        setA(x, y, c.a);
+        setR(x, y, c.Ri);
+        setG(x, y, c.Gi);
+        setB(x, y, c.Bi);
+        setA(x, y, c.Ai);
     }
 
     /**

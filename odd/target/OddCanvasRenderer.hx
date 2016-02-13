@@ -1,4 +1,4 @@
-package odd.renderer;
+package odd.target;
 
 import haxe.io.BytesData;
 #if js

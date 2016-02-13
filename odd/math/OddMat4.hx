@@ -131,7 +131,7 @@ abstract OddMat4(Array<Float>)
         );
     }
     
-    public static function rotateX(a : Float) : OddMat4
+    public static inline function rotateX(a : Float) : OddMat4
     {
         var c : Float = Math.cos(a);
         var s : Float = Math.sin(a);
@@ -143,7 +143,7 @@ abstract OddMat4(Array<Float>)
         );
     }
 
-    public static function rotateY(a : Float) : OddMat4
+    public static inline function rotateY(a : Float) : OddMat4
     {
         var c : Float = Math.cos(a);
         var s : Float = Math.sin(a);
@@ -155,7 +155,7 @@ abstract OddMat4(Array<Float>)
         );
     }
 
-    public static function rotateZ(a : Float) : OddMat4
+    public static inline function rotateZ(a : Float) : OddMat4
     {
         var c : Float = Math.cos(a);
         var s : Float = Math.sin(a);
@@ -167,7 +167,7 @@ abstract OddMat4(Array<Float>)
         );
     }
 
-    public static function rotate(roll : Float, pitch : Float, yaw : Float) : OddMat4
+    public static inline function rotate(roll : Float, pitch : Float, yaw : Float) : OddMat4
     {
         var cx : Float = Math.cos(roll);
         var sx : Float = Math.sin(roll);
@@ -183,6 +183,31 @@ abstract OddMat4(Array<Float>)
             cz * sy * sx - sz * cx,     sz * sy * sx + cz * cx,     cy * sx,    0,
             cz * sy * cx + sz * sx,     sz * sy * cx - cz * sx,     cy * cx,    0,
             0,                          0,                          0,          1
+        );
+    }
+    
+    public static inline function perspective(fieldOfView : Float, aspectRatio : Float, n : Float, f : Float) : OddMat4
+    {
+        var t : Float = Math.tan(OddAngle.rad(fieldOfView) / 2) * n;
+        var b : Float = -t;
+        var r : Float = t * aspectRatio;
+        var l : Float = -r;
+        
+        return new OddMat4(
+            (2 * n) / (r - l),  0,  0,  0,
+            0,                  (2 * n) / (t - b),  0,  0,
+            (r + l) / (r - l),  (t + b) / (t - b), -(f + n) / (f - n),     -1,
+            0,                  0,                 -(2 * f * n) / (f - n),  0
+        );
+    }
+    
+    public static inline function orthographic(b : Float, t : Float, l : Float, r : Float, n : Float, f : Float) : OddMat4
+    {
+        return new OddMat4(
+            2 / (r - l),        0,                  0,                  0,
+            0,                  2 / (t - b),        0,                  0,
+            0,                  0,                 -2 / (f - n),        0,
+           -(r + l) / (r - l), -(t + b) / (t - b), -(f + n) / (f - n),  1
         );
     }
     

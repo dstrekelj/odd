@@ -1,16 +1,16 @@
 package odd.display;
 
 import odd.math.OddVec2;
-import odd.util.OddColor;
+import odd.util.color.OddRGB;
 
 class OddImage extends OddImageBuffer
 {
-    public function new(width : Int, height : Int, clearColor : OddColor)
+    public function new(width : Int, height : Int, clearColor : OddRGB)
     {
         super(width, height, clearColor);
     }
     
-    public inline function point(x : Int, y : Int, color : OddColor) : Void
+    public inline function point(x : Int, y : Int, color : OddRGB) : Void
     {
         this.setPixel(x, y, color);
     }
@@ -23,7 +23,7 @@ class OddImage extends OddImageBuffer
      * @param y2 Y-coordinate of end point
      * @param color Color
      */
-    public function line(x1 : Int, y1 : Int, x2 : Int, y2 : Int, color : OddColor) : Void
+    public function line(x1 : Int, y1 : Int, x2 : Int, y2 : Int, c1 : OddRGB, c2 : OddRGB) : Void
     {
         var x : Int = x1;
         var y : Int = y1;
@@ -36,9 +36,22 @@ class OddImage extends OddImageBuffer
         
         var e : Float = (dx > dy ? dx : -dy) / 2;
         
+        var l : Float = Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+        
         while (x != x2 || y != y2)
         {
-            this.setPixel(x, y, color);
+            if (c1 == c2)
+            {
+                this.setPixel(x, y, c1);
+            }
+            else
+            {
+                var l1 : Float = Math.sqrt((x1 - x) * (x1 - x) + (y1 - y) * (y1 - y));
+                var l2 : Float = Math.sqrt((x2 - x) * (x2 - x) + (y2 - y) * (y2 - y));
+                var s2 : Float = l1 / l;
+                var s1 : Float = l2 / l;
+                this.setPixel(x, y, OddRGB.RGBc(Std.int(s1 * c1.Ri + s2 * c2.Ri), Std.int(s1 * c1.Gi + s2 * c2.Gi), Std.int(s1 * c1.Bi + s2 * c2.Bi)));
+            }
             
             var te : Float = e;
             
@@ -63,7 +76,7 @@ class OddImage extends OddImageBuffer
      * @param r Radius of circle
      * @param color Color
      */
-    public function circle(x : Int, y : Int, r : Int, color : OddColor)
+    public function circle(x : Int, y : Int, r : Int, color : OddRGB)
     {
         var cx : Int = r;
         var cy : Int = 0;

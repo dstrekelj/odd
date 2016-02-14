@@ -34,15 +34,16 @@ class OddPipeline
     
     public static function run(mesh : OddMesh) : Void
     {
-        var positions : Array<OddVec3> = mesh.geometry.positions;
-        var faces : Array<Array<Int>> = mesh.geometry.faces;
-        var colors : Array<OddRGB> = mesh.geometry.colors;
+        var positions : Array<OddVec3> = mesh.geometry.positions.copy();
+        var faces : Array<Array<Int>> = mesh.geometry.faces.copy();
+        var colors : Array<OddRGB> = mesh.geometry.colors.copy();
         
         var i : Int = 0;
         while (i < positions.length)
         {
             var p : OddVec3 = positions[i];
             
+            p *= mesh.transform;
             p *= M_world_to_camera;
             p *= M_perspective;
             p.x /= p.z;
@@ -123,7 +124,7 @@ private class DrawFunctions
         {
             if (cp1 == cp2)
             {
-                image.setPixel(x, y, cp1);
+                image.point(x, y, cp1);
             }
             else
             {
@@ -138,7 +139,7 @@ private class DrawFunctions
                 var g : Float = (s1 * cp1.Gf + s2 * cp2.Gf) * z;
                 var b : Float = (s1 * cp1.Bf + s2 * cp2.Bf) * z;
                 
-                image.setPixel(x, y, OddRGB.RGBf(r, g, b));
+                image.point(x, y, OddRGB.RGBf(r, g, b));
             }
             
             var te : Float = e;
@@ -209,7 +210,7 @@ private class DrawFunctions
                     var g : Float = (a1 * p1c.Gf + a2 * p2c.Gf + a3 * p3c.Gf) * z;
                     var b : Float = (a1 * p1c.Bf + a2 * p2c.Bf + a3 * p3c.Bf) * z;
                     
-                    image.point(j, i, OddRGB.RGBf(r, g, b));
+                    image.pixel(j, i, z, OddRGB.RGBf(r, g, b));
                 }
                 
                 j++;

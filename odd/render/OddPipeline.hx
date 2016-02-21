@@ -122,24 +122,24 @@ private class DrawFunctions
         
         while (x != x2 || y != y2)
         {
+            var l1 : Float = Math.sqrt((x1 - x) * (x1 - x) + (y1 - y) * (y1 - y));
+            var l2 : Float = Math.sqrt((x2 - x) * (x2 - x) + (y2 - y) * (y2 - y));
+            
+            var s1 : Float = l2 / l;
+            var s2 : Float = l1 / l;
+            var z : Float = 1 / (s1 * z1 + s2 * z2);
+            
             if (cp1 == cp2)
             {
-                image.point(x, y, cp1);
+                image.pixel(x, y, z, cp1);
             }
             else
             {
-                var l1 : Float = Math.sqrt((x1 - x) * (x1 - x) + (y1 - y) * (y1 - y));
-                var l2 : Float = Math.sqrt((x2 - x) * (x2 - x) + (y2 - y) * (y2 - y));
-                
-                var s1 : Float = l2 / l;
-                var s2 : Float = l1 / l;
-                var z : Float = 1 / (s1 * z1 + s2 * z2);
-                
                 var r : Float = (s1 * cp1.Rf + s2 * cp2.Rf) * z;
                 var g : Float = (s1 * cp1.Gf + s2 * cp2.Gf) * z;
                 var b : Float = (s1 * cp1.Bf + s2 * cp2.Bf) * z;
                 
-                image.point(x, y, OddRGB.RGBf(r, g, b));
+                image.pixel(x, y, z, OddRGB.RGBf(r, g, b));
             }
             
             var te : Float = e;

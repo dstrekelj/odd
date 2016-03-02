@@ -1,6 +1,6 @@
 # odd
 
-Odd is a peculiar little software renderer written in Haxe that aims to be renderer / platform agnostic.
+Odd is a peculiar little software renderer written in Haxe that aims to be platform agnostic.
 
 The idea is that all of the rendering logic is defined in a cross-platform way, and that the image buffer data is then passed to a user-specified back-end which will handle the drawing of the frame (to a window, canvas, image, ASCII text, etc.).
 
@@ -8,13 +8,9 @@ The idea is that all of the rendering logic is defined in a cross-platform way, 
 
 ## Instructions
 
-1. Get [Haxe](http://haxe.org/download/). I'm using 3.2.0, so any 3.2.x version is likely to work.
-2. Build samples (`haxe samples.hxml`)
+1. Get [Haxe](http://haxe.org/download/). Any 3.2.x version is likely to work.
+2. Get odd: `haxelib git odd https://github.com/dstrekelj/odd.git dev`
 3. Run samples!
-
-Note that samples are currently all built for JS only, even though there's also a proof-of-concept ASCII renderer for Neko available.
-
-To build samples for neko, just change the build target to `-neko` instead of `-js`.
 
 ## Adding your own renderer
 

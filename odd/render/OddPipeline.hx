@@ -58,9 +58,9 @@ class OddPipeline
         
         i = 0;
         do {
-            var i1 : Int = indices[i];
+            var i1 : Int = indices[(mesh.cullMethod == OddCullMethod.CLOCKWISE) ? i : (i + 2)];
             var i2 : Int = indices[i + 1];
-            var i3 : Int = indices[i + 2];
+            var i3 : Int = indices[(mesh.cullMethod == OddCullMethod.CLOCKWISE) ? (i + 2) : i];
             
             var p1 : OddVec3 = positions[i1];
             var p2 : OddVec3 = positions[i2];
@@ -70,7 +70,7 @@ class OddPipeline
             var c2 : OddRGB = colors[i2];
             var c3 : OddRGB = colors[i3];
             
-            switch (mesh.method)
+            switch (mesh.renderMethod)
             {
                 case OddRenderMethod.LINE:
                     DrawFunctions.drawLine(p1, c1, p2, c2, imageBuffer);
@@ -182,11 +182,6 @@ private class DrawFunctions
         var p2c : OddRGB = OddRGB.RGBf(cb.Rf * p2z, cb.Gf * p2z, cb.Bf * p2z);
         var p3c : OddRGB = OddRGB.RGBf(cc.Rf * p3z, cc.Gf * p3z, cc.Bf * p3z);
         
-        function edge(point1 : OddVec2, point2 : OddVec2, point3 : OddVec2) : Float
-        {
-            return (point3.x - point1.x) * (point2.y - point1.y) - (point3.y - point1.y) * (point2.x - point1.x);
-        }
-        
         var a : Float = edge(p1, p2, p3);
         
         var i = minY;
@@ -221,5 +216,10 @@ private class DrawFunctions
             }
             i++;
         }
+    }
+    
+    public static inline function edge(point1 : OddVec2, point2 : OddVec2, point3 : OddVec2) : Float
+    {
+        return (point3.x - point1.x) * (point2.y - point1.y) - (point3.y - point1.y) * (point2.x - point1.x);
     }
 }

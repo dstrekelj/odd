@@ -35,7 +35,7 @@ class OddPipeline
     public static function run(mesh : OddMesh) : Void
     {
         var positions : Array<OddVec3> = mesh.geometry.positions.copy();
-        var faces : Array<Array<Int>> = mesh.geometry.faces.copy();
+        var indices : Array<Int> = mesh.geometry.indices.copy();
         var colors : Array<OddRGB> = mesh.geometry.colors.copy();
         
         var i : Int = 0;
@@ -56,11 +56,11 @@ class OddPipeline
             i++;
         }
         
-        for (f in faces)
-        {
-            var i1 : Int = f[0] - 1;
-            var i2 : Int = f[1] - 1;
-            var i3 : Int = f[2] - 1;
+        i = 0;
+        do {
+            var i1 : Int = indices[i];
+            var i2 : Int = indices[i + 1];
+            var i3 : Int = indices[i + 2];
             
             var p1 : OddVec3 = positions[i1];
             var p2 : OddVec3 = positions[i2];
@@ -83,7 +83,11 @@ class OddPipeline
                     DrawFunctions.drawPoint(p2, c2, imageBuffer);
                     DrawFunctions.drawPoint(p3, c3, imageBuffer);
             }
-        }
+        } while ((i += 3) < indices.length);
+        
+        positions = null;
+        indices = null;
+        colors = null;
     }
 }
 

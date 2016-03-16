@@ -7,24 +7,45 @@ class OddGeometry
 {
     public var positions : Array<OddVec3>;
     public var colors : Array<OddRGB>;
-    public var faces : Array<Array<Int>>;
+    public var indices : Array<Int>;
     
-    function new()
+    public function new()
     {
         positions = new Array<OddVec3>();
         colors = new Array<OddRGB>();
-        faces = new Array<Array<Int>>();
+        indices = new Array<Int>();
     }
     
-    public static inline function fromArray(array : Array<Float>) : OddGeometry
-    {
-        var g = new OddGeometry();
-        
+    public inline function positionsFromArray(array : Array<Float>) : Void
+    {   
         var i : Int = 0;
         do {
-            g.positions.push(OddVec3.fromArray(array.slice(i, i + 3)));
+            positions.push(OddVec3.fromArray(array.slice(i, i + 3)));
         } while ((i += 3) < array.length);
-        
+    }
+    
+    public inline function colorsFromArrayInt(array : Array<Int>) : Void
+    {
+        var i : Int = 0;
+        do {
+            colors.push(OddRGB.RGB(array[i]));
+        } while (i++ < array.length);
+    }
+    
+    public inline function colorsFromArrayFloat(array : Array<Float>) : Void
+    {
+        var i : Int = 0;
+        do {
+            colors.push(OddRGB.RGBf(array[i], array[i + 1], array[i + 2]));
+        } while ((i += 3) < array.length);
+    }
+    
+    public inline function clone() : OddGeometry
+    {
+        var g = new OddGeometry();
+        g.positions = this.positions.copy();
+        g.colors = this.colors.copy();
+        g.indices = this.indices.copy();
         return g;
     }
 }

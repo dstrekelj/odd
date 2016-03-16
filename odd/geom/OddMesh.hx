@@ -11,9 +11,9 @@ class OddMesh
     
     public function new(geometry : OddGeometry)
     {
-        this.geometry = geometry;
+        this.geometry = geometry.clone();
         this.transform = OddMat4.identity();
-        method = OddRenderMethod.POINT;
+        method = OddRenderMethod.TRIANGLE;
     }
     
     public function translate(x : Float, y : Float, z : Float) : Void

@@ -40,7 +40,12 @@ class OddDepthBuffer extends OddPixelBuffer
      */
     public inline function get(x : Int, y : Int) : Float
     {
-        return data.getDouble(getIndex(x, y));
+        // TODO: Implement proper clip space in pipeline
+        if (x >= 0 && x < width && y >= 0 && y < height)
+        {
+            return data.getDouble(getIndex(x, y));
+        }
+        return 0;
     }
     
     /**
@@ -52,6 +57,10 @@ class OddDepthBuffer extends OddPixelBuffer
      */
     public inline function set(x : Int, y : Int, v : Float) : Void
     {
-        data.setDouble(getIndex(x, y), v);
+        // TODO: Implement proper clip space in pipeline
+        if (x >= 0 && x < width && y >= 0 && y < height)
+        {
+            data.setDouble(getIndex(x, y), v);
+        }
     }
 }

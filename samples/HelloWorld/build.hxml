@@ -6,3 +6,4 @@
 -main Main
 
 -js bin/js/HelloWorld.js
+#-neko bin/neko/HelloWorld.n

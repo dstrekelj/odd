@@ -86,6 +86,7 @@ class OddPixelBuffer
      */
     private inline function setByte(x : Int, y : Int, b : Int, v : Int) : Void
     {
+        // TODO: Implement proper clip space in pipeline
         if (x >= 0 && x < width && y >= 0 && y < height)
         {
             data.set(getIndex(x, y) + b, v);

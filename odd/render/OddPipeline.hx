@@ -21,7 +21,7 @@ class OddPipeline
     {
         imageBuffer = image;
         
-        M_world_to_camera = OddMat4.translate(0, 0, 20);
+        M_world_to_camera = OddMat4.translate(0, 0, 1);
         M_perspective = OddMat4.identity();
         M_ndc = OddMat4.identity();
         M_raster = new OddMat4(

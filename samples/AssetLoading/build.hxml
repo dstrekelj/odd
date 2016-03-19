@@ -1,0 +1,9 @@
+-lib odd
+
+-dce full
+
+-cp src
+-main Main
+
+-js bin/js/AssetLoading.js
+#-neko bin/neko/AssetLoading.n

@@ -1,4 +1,5 @@
 package odd.geom;
+
 import odd.math.OddVec3;
 import odd.render.OddRenderMethod;
 import odd.util.color.OddRGB;
@@ -46,6 +47,19 @@ class OddGeometry
         g.positions = this.positions.copy();
         g.colors = this.colors.copy();
         g.indices = this.indices.copy();
+        return g;
+    }
+    
+    @:allow(odd.macro.OddLoaderMacros)
+    public static inline function fromGeometryData(positions : Array<Float>, indices : Array<Int>) : OddGeometry
+    {
+        var g = new OddGeometry();
+        g.positionsFromArray(positions);
+        g.indices = indices.copy();
+        var i = 0;
+        do {
+            g.colors.push(OddRGB.RGB(0xffffff));
+        } while (i++ < positions.length);
         return g;
     }
 }

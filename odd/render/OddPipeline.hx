@@ -57,33 +57,68 @@ class OddPipeline
         }
         
         i = 0;
-        do {
-            var i1 : Int = indices[(mesh.cullMethod == OddCullMethod.CLOCKWISE) ? i : (i + 2)];
-            var i2 : Int = indices[i + 1];
-            var i3 : Int = indices[(mesh.cullMethod == OddCullMethod.CLOCKWISE) ? (i + 2) : i];
-            
-            var p1 : OddVec3 = positions[i1];
-            var p2 : OddVec3 = positions[i2];
-            var p3 : OddVec3 = positions[i3];
-            
-            var c1 : OddRGB = colors[i1];
-            var c2 : OddRGB = colors[i2];
-            var c3 : OddRGB = colors[i3];
-            
-            switch (mesh.renderMethod)
-            {
-                case OddRenderMethod.LINE:
-                    DrawFunctions.drawLine(p1, c1, p2, c2, imageBuffer);
-                    DrawFunctions.drawLine(p2, c2, p3, c3, imageBuffer);
-                    DrawFunctions.drawLine(p3, c3, p1, c1, imageBuffer);
-                case OddRenderMethod.TRIANGLE:
+        
+        if (mesh.renderMethod == OddRenderMethod.QUAD)
+        {
+            do {
+                var i1 : Int = indices[i];
+                var i2 : Int = indices[i + 1];
+                var i3 : Int = indices[i + 2];
+                var i4 : Int = indices[i + 3];
+                
+                var p1 : OddVec3 = positions[i1];
+                var p2 : OddVec3 = positions[i2];
+                var p3 : OddVec3 = positions[i3];
+                var p4 : OddVec3 = positions[i4];
+                
+                var c1 : OddRGB = colors[i1];
+                var c2 : OddRGB = colors[i2];
+                var c3 : OddRGB = colors[i3];
+                var c4 : OddRGB = colors[i4];
+                
+                if (mesh.cullMethod == OddCullMethod.CLOCKWISE)
+                {
                     DrawFunctions.drawTriangle(p1, p2, p3, c1, c2, c3, imageBuffer);
-                default:
-                    DrawFunctions.drawPoint(p1, c1, imageBuffer);
-                    DrawFunctions.drawPoint(p2, c2, imageBuffer);
-                    DrawFunctions.drawPoint(p3, c3, imageBuffer);
-            }
-        } while ((i += 3) < indices.length);
+                    DrawFunctions.drawTriangle(p3, p4, p1, c3, c4, c1, imageBuffer);
+                }
+                else
+                {
+                    DrawFunctions.drawTriangle(p4, p3, p2, c4, c3, c2, imageBuffer);
+                    DrawFunctions.drawTriangle(p2, p1, p4, c2, c1, c4, imageBuffer);
+                }
+                
+            } while ((i += 4) < indices.length);
+        }
+        else
+        {
+            do {
+                var i1 : Int = indices[(mesh.cullMethod == OddCullMethod.CLOCKWISE) ? i : (i + 2)];
+                var i2 : Int = indices[i + 1];
+                var i3 : Int = indices[(mesh.cullMethod == OddCullMethod.CLOCKWISE) ? (i + 2) : i];
+                
+                var p1 : OddVec3 = positions[i1];
+                var p2 : OddVec3 = positions[i2];
+                var p3 : OddVec3 = positions[i3];
+                
+                var c1 : OddRGB = colors[i1];
+                var c2 : OddRGB = colors[i2];
+                var c3 : OddRGB = colors[i3];
+                
+                switch (mesh.renderMethod)
+                {
+                    case OddRenderMethod.LINE:
+                        DrawFunctions.drawLine(p1, c1, p2, c2, imageBuffer);
+                        DrawFunctions.drawLine(p2, c2, p3, c3, imageBuffer);
+                        DrawFunctions.drawLine(p3, c3, p1, c1, imageBuffer);
+                    case OddRenderMethod.TRIANGLE:
+                        DrawFunctions.drawTriangle(p1, p2, p3, c1, c2, c3, imageBuffer);
+                    default:
+                        DrawFunctions.drawPoint(p1, c1, imageBuffer);
+                        DrawFunctions.drawPoint(p2, c2, imageBuffer);
+                        DrawFunctions.drawPoint(p3, c3, imageBuffer);
+                }
+            } while ((i += 3) < indices.length);
+        }
         
         positions = null;
         indices = null;

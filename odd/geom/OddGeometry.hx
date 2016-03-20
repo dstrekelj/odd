@@ -58,7 +58,7 @@ class OddGeometry
         g.indices = indices.copy();
         var i = 0;
         do {
-            g.colors.push(OddRGB.RGB(0xffffff));
+            g.colors.push((i % 2 == 0) ? OddRGB.RGB(0xffffff) : OddRGB.RGB(0x999999));
         } while (i++ < positions.length);
         return g;
     }

@@ -1,8 +1,0 @@
--lib odd
-
--dce full
-
--cp src
--main Main
-
--js bin/js/Pipeline.js

@@ -17,8 +17,8 @@ class Main
     static function main()
     {
         #if js
-        var width = 640;
-        var height = 480;
+        var width = 800;
+        var height = 600;
         #elseif sys
         var width = 360;
         var height = 120;

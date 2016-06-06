@@ -1,8 +1,8 @@
 package odd.macro;
 
-import odd.geom.OddGeometry;
-import odd.math.OddVec3;
-import odd.util.color.OddRGB;
+import odd.geom.Geometry;
+import odd.math.Vec3;
+import odd.util.color.RGB;
 
 #if macro
 import haxe.macro.Context;
@@ -14,7 +14,7 @@ import sys.io.FileSeek;
 using haxe.macro.Tools;
 #end
 
-class OddLoaderMacros
+class LoaderMacros
 {
     public static macro function fromOBJ(path : String) : Expr
     {
@@ -50,6 +50,6 @@ class OddLoaderMacros
             }
         }
         
-        return macro OddGeometry.fromGeometryData($v{positions}, $v{indices});
+        return macro Geometry.fromGeometryData($v{positions}, $v{indices});
     }
 }

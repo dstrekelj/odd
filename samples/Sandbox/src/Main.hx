@@ -1,15 +1,15 @@
 package;
 
-import odd.OddContext;
-import odd.geom.OddGeometry;
-import odd.geom.OddMesh;
-import odd.macro.OddLoaderMacros;
-import odd.math.OddAngle;
-import odd.math.OddMat4;
-import odd.render.OddCullMethod;
-import odd.render.OddRenderMethod;
-import odd.target.OddCanvasRenderer;
-import odd.util.color.OddRGB;
+import odd.Context;
+import odd.geom.Geometry;
+import odd.geom.Mesh;
+import odd.macro.LoaderMacros;
+import odd.math.Angle;
+import odd.math.Mat4;
+import odd.render.CullMethod;
+import odd.render.RenderMethod;
+import odd.target.CanvasRenderer;
+import odd.util.color.RGB;
 
 class Main
 {
@@ -18,8 +18,8 @@ class Main
 		var width = 800;
 		var height = 600;
 		
-		var context = new OddContext(width, height, OddRGB.RGB(0x000000));
-		var renderer = new OddCanvasRenderer(width, height);
+		var context = new Context(width, height, RGB.rgb(0x000000));
+		var renderer = new CanvasRenderer(width, height);
 		/*
 		var triangleGeometry = new OddGeometry();
 		triangleGeometry.positionsFromArray([
@@ -67,12 +67,12 @@ class Main
 		cubeMesh.transform *= OddMat4.scale(0.4, 0.4, 0.4);
 		context.render(cubeMesh);*/
 		
-		var teapotGeometry = OddLoaderMacros.fromOBJ("res/teapot.obj");
-		var teapotMesh = new OddMesh(teapotGeometry);
-		teapotMesh.transform *= OddMat4.rotateX(OddAngle.rad( -45));
-		teapotMesh.transform *= OddMat4.rotateY(OddAngle.rad(15));
-		teapotMesh.transform *= OddMat4.translate(0, -1, 6);
-		teapotMesh.cullMethod = OddCullMethod.COUNTER_CLOCKWISE;
+		var teapotGeometry = LoaderMacros.fromOBJ("res/teapot.obj");
+		var teapotMesh = new Mesh(teapotGeometry);
+		teapotMesh.transform *= Mat4.rotateX(Angle.rad( -45));
+		teapotMesh.transform *= Mat4.rotateY(Angle.rad(15));
+		teapotMesh.transform *= Mat4.translate(0, -1, 6);
+		teapotMesh.cullMethod = CullMethod.COUNTER_CLOCKWISE;
 		context.render(teapotMesh);
 		
 		renderer.render(context.image.colorBuffer.getData());

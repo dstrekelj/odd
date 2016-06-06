@@ -1,6 +1,6 @@
 package odd.math;
 
-abstract OddMat4(Array<Float>)
+abstract Mat4(Array<Float>)
 {
     inline public function new(
         xx : Float = null, xy : Float = null, xz : Float = null, xw : Float = null,
@@ -81,9 +81,9 @@ abstract OddMat4(Array<Float>)
     inline function get_ww() : Float { return this[15]; }
     inline function set_ww(ww : Float) : Float { this[15] = ww; return this[15]; }
     
-    public static inline function fromArray(a : Array<Float>) : OddMat4
+    public static inline function fromArray(a : Array<Float>) : Mat4
     {
-        return new OddMat4(
+        return new Mat4(
             a[0],   a[1],   a[2],   a[3],
             a[4],   a[5],   a[6],   a[7],
             a[8],   a[9],   a[10],  a[11],
@@ -91,9 +91,9 @@ abstract OddMat4(Array<Float>)
         );
     }
     
-    public static inline function identity() : OddMat4
+    public static inline function identity() : Mat4
     {
-        return new OddMat4(
+        return new Mat4(
             1, 0, 0, 0,
             0, 1, 0, 0,
             0, 0, 1, 0,
@@ -101,9 +101,9 @@ abstract OddMat4(Array<Float>)
         );
     }
     
-    public static inline function empty() : OddMat4
+    public static inline function empty() : Mat4
     {
-        return new OddMat4(
+        return new Mat4(
             0, 0, 0, 0,
             0, 0, 0, 0,
             0, 0, 0, 0,
@@ -111,9 +111,9 @@ abstract OddMat4(Array<Float>)
         );
     }
     
-    public static inline function translate(x : Float, y : Float, z : Float) : OddMat4
+    public static inline function translate(x : Float, y : Float, z : Float) : Mat4
     {
-        return new OddMat4(
+        return new Mat4(
             1, 0, 0, 0,
             0, 1, 0, 0,
             0, 0, 1, 0,
@@ -121,9 +121,9 @@ abstract OddMat4(Array<Float>)
         );
     }
     
-    public static inline function scale(x : Float, y : Float, z : Float) : OddMat4
+    public static inline function scale(x : Float, y : Float, z : Float) : Mat4
     {
-        return new OddMat4(
+        return new Mat4(
             x, 0, 0, 0,
             0, y, 0, 0,
             0, 0, z, 0,
@@ -131,11 +131,11 @@ abstract OddMat4(Array<Float>)
         );
     }
     
-    public static inline function rotateX(a : Float) : OddMat4
+    public static inline function rotateX(a : Float) : Mat4
     {
         var c : Float = Math.cos(a);
         var s : Float = Math.sin(a);
-        return new OddMat4(
+        return new Mat4(
             1,  0,  0,  0,
             0,  c,  s,  0,
             0, -s,  c,  0,
@@ -143,11 +143,11 @@ abstract OddMat4(Array<Float>)
         );
     }
 
-    public static inline function rotateY(a : Float) : OddMat4
+    public static inline function rotateY(a : Float) : Mat4
     {
         var c : Float = Math.cos(a);
         var s : Float = Math.sin(a);
-        return new OddMat4(
+        return new Mat4(
             c,  0, -s,  0,
             0,  1,  0,  0,
             s,  0,  c,  0,
@@ -155,11 +155,11 @@ abstract OddMat4(Array<Float>)
         );
     }
 
-    public static inline function rotateZ(a : Float) : OddMat4
+    public static inline function rotateZ(a : Float) : Mat4
     {
         var c : Float = Math.cos(a);
         var s : Float = Math.sin(a);
-        return new OddMat4(
+        return new Mat4(
             c,  s,  0,  0,
            -s,  c,  0,  0,
             0,  0,  1,  0,
@@ -167,7 +167,7 @@ abstract OddMat4(Array<Float>)
         );
     }
 
-    public static inline function rotate(roll : Float, pitch : Float, yaw : Float) : OddMat4
+    public static inline function rotate(roll : Float, pitch : Float, yaw : Float) : Mat4
     {
         var cx : Float = Math.cos(roll);
         var sx : Float = Math.sin(roll);
@@ -178,7 +178,7 @@ abstract OddMat4(Array<Float>)
         var cz : Float = Math.cos(yaw);
         var sz : Float = Math.sin(yaw);
         
-        return new OddMat4(
+        return new Mat4(
             cz * cy,                    sz * sy,                   -sy,         0,
             cz * sy * sx - sz * cx,     sz * sy * sx + cz * cx,     cy * sx,    0,
             cz * sy * cx + sz * sx,     sz * sy * cx - cz * sx,     cy * cx,    0,
@@ -186,24 +186,24 @@ abstract OddMat4(Array<Float>)
         );
     }
     
-    public static inline function perspective(fieldOfView : Float, aspectRatio : Float, n : Float, f : Float) : OddMat4
+    public static inline function perspective(fieldOfView : Float, aspectRatio : Float, n : Float, f : Float) : Mat4
     {
-        var t : Float = Math.tan(OddAngle.rad(fieldOfView) / 2) * n;
+        var t : Float = Math.tan(Angle.rad(fieldOfView) / 2) * n;
         var b : Float = -t;
         var r : Float = t * aspectRatio;
         var l : Float = -r;
         
-        return new OddMat4(
-            (2 * n) / (r - l),  0,  0,  0,
-            0,                  (2 * n) / (t - b),  0,  0,
+        return new Mat4(
+            (2 * n) / (r - l),  0,                  0,                      0,
+            0,                  (2 * n) / (t - b),  0,                      0,
             (r + l) / (r - l),  (t + b) / (t - b), -(f + n) / (f - n),     -1,
             0,                  0,                 -(2 * f * n) / (f - n),  0
         );
     }
     
-    public static inline function orthographic(b : Float, t : Float, l : Float, r : Float, n : Float, f : Float) : OddMat4
+    public static inline function orthographic(b : Float, t : Float, l : Float, r : Float, n : Float, f : Float) : Mat4
     {
-        return new OddMat4(
+        return new Mat4(
             2 / (r - l),        0,                  0,                  0,
             0,                  2 / (t - b),        0,                  0,
             0,                  0,                 -2 / (f - n),        0,
@@ -212,9 +212,9 @@ abstract OddMat4(Array<Float>)
     }
     
     @:op(-A)
-    public inline function negate() : OddMat4
+    public inline function negate() : Mat4
     {
-        return new OddMat4(
+        return new Mat4(
           -xx, -xy, -xz, -xw,
           -yx, -yy, -yz, -yw,
           -zx, -zy, -zz, -zw,
@@ -223,9 +223,9 @@ abstract OddMat4(Array<Float>)
     }
 
     @:op(A + B)
-    public inline function add(B : OddMat4) : OddMat4
+    public inline function add(B : Mat4) : Mat4
     {
-        return new OddMat4(
+        return new Mat4(
           xx + B.xx,    xy + B.xy,    xz + B.xz,    xw + B.xw,
           yx + B.yx,    yy + B.yy,    yz + B.yz,    yw + B.yw,
           zx + B.zx,    zy + B.zy,    zz + B.zz,    zw + B.zw,
@@ -234,9 +234,9 @@ abstract OddMat4(Array<Float>)
     }
 
     @:op(A - B)
-    public inline function subtract(B : OddMat4) : OddMat4
+    public inline function subtract(B : Mat4) : Mat4
     {
-        return new OddMat4(
+        return new Mat4(
           xx - B.xx,    xy - B.xy,    xz - B.xz,    xw - B.xw,
           yx - B.yx,    yy - B.yy,    yz - B.yz,    yw - B.yw,
           zx - B.zx,    zy - B.zy,    zz - B.zz,    zw - B.zw,
@@ -245,9 +245,9 @@ abstract OddMat4(Array<Float>)
     }
 
     @:op(A * B)
-    public inline function multiplyScalar(B : Float) : OddMat4
+    public inline function multiplyScalar(B : Float) : Mat4
     {
-        return new OddMat4(
+        return new Mat4(
           xx * B,   xy * B,   xz * B,   xw * B,
           yx * B,   yy * B,   yz * B,   yw * B,
           zx * B,   zy * B,   zz * B,   zw * B,
@@ -256,9 +256,9 @@ abstract OddMat4(Array<Float>)
     }
 
     @:op(A * B)
-    public inline function multiplyMatrix(B : OddMat4) : OddMat4
+    public inline function multiplyMatrix(B : Mat4) : Mat4
     {
-        return new OddMat4(
+        return new Mat4(
           xx * B.xx + xy * B.yx + xz * B.zx + xw * B.wx,    xx * B.xy + xy * B.yy + xz * B.zy + xw * B.wy,    xx * B.xz + xy * B.yz + xz * B.zz + xw * B.wz,    xx * B.xw + xy * B.yw + xz * B.zw + xw * B.ww,
           yx * B.xx + yy * B.yx + yz * B.zx + yw * B.wx,    yx * B.xy + yy * B.yy + yz * B.zy + yw * B.wy,    yx * B.xz + yy * B.yz + yz * B.zz + yw * B.wz,    yx * B.xw + yy * B.yw + yz * B.zw + yw * B.ww,
           zx * B.xx + zy * B.yx + zz * B.zx + zw * B.wx,    zx * B.xy + zy * B.yy + zz * B.zy + zw * B.wy,    zx * B.xz + zy * B.yz + zz * B.zz + zw * B.wz,    zx * B.xw + zy * B.yw + zz * B.zw + zw * B.ww,

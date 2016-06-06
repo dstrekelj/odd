@@ -1,6 +1,6 @@
 package odd.math;
 
-abstract OddVec2(Array<Float>)
+abstract Vec2(Array<Float>)
 {
     public inline function new(x : Float = null, y : Float = null)
     {
@@ -18,74 +18,74 @@ abstract OddVec2(Array<Float>)
     public var length(get, never) : Float;
     inline function get_length() : Float { return Math.sqrt(dotProduct(fromArray(this))); }
     
-    public static inline function fromArray(a : Array<Float>) : OddVec2
+    public static inline function fromArray(a : Array<Float>) : Vec2
     {
-        return new OddVec2(
+        return new Vec2(
             a[0],
             a[1]
         );
     }
     
     @:op(-A)
-    public inline function negate() : OddVec2
+    public inline function negate() : Vec2
     {
-        return new OddVec2(
+        return new Vec2(
             -x,
             -y
         );
     }
 
     @:op(A + B)
-    public inline function add(B : OddVec2) : OddVec2
+    public inline function add(B : Vec2) : Vec2
     {
-        return new OddVec2(
+        return new Vec2(
             x + B.x,
             y + B.y
         );
     }
 
     @:op(A - B)
-    public inline function subtract(B : OddVec2) : OddVec2
+    public inline function subtract(B : Vec2) : Vec2
     {
-        return new OddVec2(
+        return new Vec2(
             x - B.x,
             y - B.y
         );
     }
 
     @:op(A * B)
-    public inline function multiplyScalar(B : Float) : OddVec2
+    public inline function multiplyScalar(B : Float) : Vec2
     {
-        return new OddVec2(
+        return new Vec2(
             x * B,
             y * B
         );
     }
     
     @:op(A / B)
-    public inline function divideScalar(B : Float) : OddVec2
+    public inline function divideScalar(B : Float) : Vec2
     {
-        return new OddVec2(
+        return new Vec2(
             x / B,
             y / B
         );
     }
     
     @:op(A * B)
-    public inline function dotProduct(B : OddVec2) : Float
+    public inline function dotProduct(B : Vec2) : Float
     {
         return x * B.x + y * B.y;
     }
     
     @:op(A % B)
-    public inline function crossProduct(B : OddVec2) : Float
+    public inline function crossProduct(B : Vec2) : Float
     {
         return x * B.y - y * B.x;
     }
     
-    public inline function normalize() : OddVec2
+    public inline function normalize() : Vec2
     {
-        return new OddVec2(
+        return new Vec2(
             x / length,
             y / length
         );

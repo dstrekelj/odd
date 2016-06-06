@@ -1,6 +1,6 @@
 package odd.render;
 
-enum OddRenderMethod 
+enum RenderMethod 
 {
     POINT;
     LINE;

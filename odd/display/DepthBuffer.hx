@@ -1,6 +1,6 @@
 package odd.display;
 
-class OddDepthBuffer extends OddPixelBuffer
+class DepthBuffer extends PixelBuffer
 {
     /**
      * Creates new depth buffer of `width * height * 8` size for

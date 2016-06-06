@@ -1,19 +1,19 @@
 package odd.display;
 
-import odd.math.OddVec2;
-import odd.util.color.OddRGB;
+import odd.math.Vec2;
+import odd.util.color.RGB;
 
-class OddImage
+class Image
 {
     /**
      * Color buffer.
      */
-    public var colorBuffer(default, null) : OddColorBuffer;
+    public var colorBuffer(default, null) : ColorBuffer;
     
     /**
      * Depth buffer.
      */
-    public var depthBuffer(default, null) : OddDepthBuffer;
+    public var depthBuffer(default, null) : DepthBuffer;
     
     /**
      * Creates new color and depth buffers.
@@ -22,10 +22,10 @@ class OddImage
      * @param height Height of both buffers
      * @param color Clear color of color buffer
      */
-    public function new(width : Int, height : Int, ?color : OddRGB = 0x000000ff)
+    public function new(width : Int, height : Int, ?color : RGB = 0x000000ff)
     {
-        colorBuffer = new OddColorBuffer(width, height, color);
-        depthBuffer = new OddDepthBuffer(width, height);
+        colorBuffer = new ColorBuffer(width, height, color);
+        depthBuffer = new DepthBuffer(width, height);
     }
     
     /**
@@ -37,7 +37,7 @@ class OddImage
      * @param z Pixel depth
      * @param c Pixel color
      */
-    public inline function pixel(x : Int, y : Int, z : Float, c : OddRGB) : Void
+    public inline function pixel(x : Int, y : Int, z : Float, c : RGB) : Void
     {
         if (z < depthBuffer.get(x, y))
         {
@@ -53,7 +53,7 @@ class OddImage
      * @param y Pixel vertical position
      * @param c Pixel color
      */
-    public inline function point(x : Int, y : Int, c : OddRGB) : Void
+    public inline function point(x : Int, y : Int, c : RGB) : Void
     {
         colorBuffer.setPixel(x, y, c);
     }
@@ -69,7 +69,7 @@ class OddImage
      * @param y2 End point vertical position
      * @param c2 End point color
      */
-    public function line(x1 : Int, y1 : Int, c1: OddRGB, x2 : Int, y2 : Int, c2 : OddRGB) : Void
+    public function line(x1 : Int, y1 : Int, c1: RGB, x2 : Int, y2 : Int, c2 : RGB) : Void
     {
         var x : Int = x1;
         var y : Int = y1;
@@ -96,7 +96,7 @@ class OddImage
                 var l2 : Float = Math.sqrt((x2 - x) * (x2 - x) + (y2 - y) * (y2 - y));
                 var s2 : Float = l1 / l;
                 var s1 : Float = l2 / l;
-                colorBuffer.setPixel(x, y, OddRGB.RGBc(Std.int(s1 * c1.Ri + s2 * c2.Ri), Std.int(s1 * c1.Gi + s2 * c2.Gi), Std.int(s1 * c1.Bi + s2 * c2.Bi)));
+                colorBuffer.setPixel(x, y, RGB.RGBi(Std.int(s1 * c1.ri + s2 * c2.ri), Std.int(s1 * c1.gi + s2 * c2.gi), Std.int(s1 * c1.bi + s2 * c2.bi)));
             }
             
             var te : Float = e;
@@ -124,7 +124,7 @@ class OddImage
      * @param r Circle radius
      * @param color Circle color
      */
-    public function circle(x : Int, y : Int, r : Int, color : OddRGB)
+    public function circle(x : Int, y : Int, r : Int, color : RGB)
     {
         var cx : Int = r;
         var cy : Int = 0;

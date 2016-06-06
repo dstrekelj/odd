@@ -1,6 +1,6 @@
 package odd.render;
 
-enum OddCullMethod 
+enum CullMethod 
 {
     CLOCKWISE;
     COUNTER_CLOCKWISE;

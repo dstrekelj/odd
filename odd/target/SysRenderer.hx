@@ -3,7 +3,7 @@ package odd.target;
 import haxe.io.Bytes;
 import haxe.io.BytesData;
 
-class OddSysRenderer
+class SysRenderer
 {
     var width : Int;
     var height : Int;

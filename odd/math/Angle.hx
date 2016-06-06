@@ -1,6 +1,6 @@
 package odd.math;
 
-class OddAngle
+class Angle
 {
     // 180 / Math.PI
     static inline var RAD_TO_DEG : Float = 57.2957795131;

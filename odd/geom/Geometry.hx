@@ -1,19 +1,19 @@
 package odd.geom;
 
-import odd.math.OddVec3;
-import odd.render.OddRenderMethod;
-import odd.util.color.OddRGB;
+import odd.math.Vec3;
+import odd.render.RenderMethod;
+import odd.util.color.RGB;
 
-class OddGeometry
+class Geometry
 {
-    public var positions : Array<OddVec3>;
-    public var colors : Array<OddRGB>;
+    public var positions : Array<Vec3>;
+    public var colors : Array<RGB>;
     public var indices : Array<Int>;
     
     public function new()
     {
-        positions = new Array<OddVec3>();
-        colors = new Array<OddRGB>();
+        positions = new Array<Vec3>();
+        colors = new Array<RGB>();
         indices = new Array<Int>();
     }
     
@@ -21,7 +21,7 @@ class OddGeometry
     {   
         var i : Int = 0;
         do {
-            positions.push(OddVec3.fromArray(array.slice(i, i + 3)));
+            positions.push(Vec3.fromArray(array.slice(i, i + 3)));
         } while ((i += 3) < array.length);
     }
     
@@ -29,7 +29,7 @@ class OddGeometry
     {
         var i : Int = 0;
         do {
-            colors.push(OddRGB.RGB(array[i]));
+            colors.push(RGB.RGBh(array[i]));
         } while (i++ < array.length);
     }
     
@@ -37,28 +37,28 @@ class OddGeometry
     {
         var i : Int = 0;
         do {
-            colors.push(OddRGB.RGBf(array[i], array[i + 1], array[i + 2]));
+            colors.push(RGB.RGBf(array[i], array[i + 1], array[i + 2]));
         } while ((i += 3) < array.length);
     }
     
-    public inline function clone() : OddGeometry
+    public inline function clone() : Geometry
     {
-        var g = new OddGeometry();
+        var g = new Geometry();
         g.positions = this.positions.copy();
         g.colors = this.colors.copy();
         g.indices = this.indices.copy();
         return g;
     }
     
-    @:allow(odd.macro.OddLoaderMacros)
-    public static inline function fromGeometryData(positions : Array<Float>, indices : Array<Int>) : OddGeometry
+    @:allow(odd.macro.LoaderMacros)
+    public static inline function fromGeometryData(positions : Array<Float>, indices : Array<Int>) : Geometry
     {
-        var g = new OddGeometry();
+        var g = new Geometry();
         g.positionsFromArray(positions);
         g.indices = indices.copy();
         var i = 0;
         do {
-            g.colors.push((i % 2 == 0) ? OddRGB.RGB(0xffffff) : OddRGB.RGB(0x999999));
+            g.colors.push((i % 2 == 0) ? RGB.RGBh(0xffffff) : RGB.RGBh(0x999999));
         } while (i++ < positions.length);
         return g;
     }

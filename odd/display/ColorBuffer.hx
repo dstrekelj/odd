@@ -1,9 +1,9 @@
 package odd.display;
 
 import haxe.io.Bytes;
-import odd.util.color.OddRGB;
+import odd.util.color.RGB;
 
-class OddColorBuffer extends OddPixelBuffer
+class ColorBuffer extends PixelBuffer
 {
     /**
      * Creates new color buffer of `width * height` size and clears it
@@ -13,7 +13,7 @@ class OddColorBuffer extends OddPixelBuffer
      * @param height Height of buffer
      * @param color Initial color of pixels in buffer
      */
-    public function new(width : Int, height : Int, ?color : OddRGB = 0x000000ff)
+    public function new(width : Int, height : Int, ?color : RGB = 0x000000ff)
     {
         super(width, height, 4);
         
@@ -25,7 +25,7 @@ class OddColorBuffer extends OddPixelBuffer
      * 
      * @param c Clear color
      */
-    private inline function clear(c : OddRGB) : Void
+    private inline function clear(c : RGB) : Void
     {
         for (y in 0...height)
         {
@@ -103,12 +103,12 @@ class OddColorBuffer extends OddPixelBuffer
      * @param y Vertical position of pixel
      * @param color Pixel color
      */
-    public inline function setPixel(x : Int, y : Int, c : OddRGB) : Void
+    public inline function setPixel(x : Int, y : Int, c : RGB) : Void
     {
-        setR(x, y, c.Ri);
-        setG(x, y, c.Gi);
-        setB(x, y, c.Bi);
-        setA(x, y, c.Ai);
+        setR(x, y, c.ri);
+        setG(x, y, c.gi);
+        setB(x, y, c.bi);
+        setA(x, y, c.ai);
     }
 
     /**

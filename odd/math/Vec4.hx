@@ -1,6 +1,6 @@
 package odd.math;
 
-abstract OddVec4(Array<Float>)
+abstract Vec4(Array<Float>)
 {
     inline public function new(x : Float = null, y : Float = null, z : Float = null, w : Float = null)
     {
@@ -26,9 +26,9 @@ abstract OddVec4(Array<Float>)
     public var length(get, never) : Float;
     inline function get_length() : Float { return Math.sqrt(dotProduct(fromArray(this))); }
     
-    public static inline function fromArray(a : Array<Float>) : OddVec4
+    public static inline function fromArray(a : Array<Float>) : Vec4
     {
-        return new OddVec4(
+        return new Vec4(
             a[0],
             a[1],
             a[2],
@@ -37,9 +37,9 @@ abstract OddVec4(Array<Float>)
     }
     
     @:op( -A)
-    public inline function negate() : OddVec4
+    public inline function negate() : Vec4
     {
-        return new OddVec4(
+        return new Vec4(
             -x,
             -y,
             -z,
@@ -48,9 +48,9 @@ abstract OddVec4(Array<Float>)
     }
     
     @:op(A + B)
-    public inline function add(B : OddVec4) : OddVec4
+    public inline function add(B : Vec4) : Vec4
     {
-        return new OddVec4(
+        return new Vec4(
             x + B.x,
             y + B.y,
             z + B.z,
@@ -59,9 +59,9 @@ abstract OddVec4(Array<Float>)
     }
     
     @:op(A - B)
-    public inline function subtract(B : OddVec4) : OddVec4
+    public inline function subtract(B : Vec4) : Vec4
     {
-        return new OddVec4(
+        return new Vec4(
             x - B.x,
             y - B.y,
             z - B.z,
@@ -70,9 +70,9 @@ abstract OddVec4(Array<Float>)
     }
     
     @:op(A * B)
-    public inline function multiplyScalar(B : Float) : OddVec4
+    public inline function multiplyScalar(B : Float) : Vec4
     {
-        return new OddVec4(
+        return new Vec4(
             x * B,
             y * B,
             z * B,
@@ -81,9 +81,9 @@ abstract OddVec4(Array<Float>)
     }
     
     @:op(A * B)
-    public inline function multiplyMat4(B : OddMat4) : OddVec4
+    public inline function multiplyMat4(B : Mat4) : Vec4
     {
-        return new OddVec4(
+        return new Vec4(
             x * B.xx + y * B.yx + z * B.zx + w * B.wx,
             x * B.xy + y * B.yy + z * B.zy + w * B.wy,
             x * B.xz + y * B.yz + z * B.zz + w * B.wz,
@@ -92,9 +92,9 @@ abstract OddVec4(Array<Float>)
     }
     
     @:op(A / B)
-    public inline function divideScalar(B : Float) : OddVec4
+    public inline function divideScalar(B : Float) : Vec4
     {
-        return new OddVec4(
+        return new Vec4(
             x / B,
             y / B,
             z / B,
@@ -103,14 +103,14 @@ abstract OddVec4(Array<Float>)
     }
     
     @:op(A * B)
-    public inline function dotProduct(B : OddVec4) : Float
+    public inline function dotProduct(B : Vec4) : Float
     {
         return x * B.x + y * B.y + z * B.z + w * B.w;
     }
     
-    public inline function normalize() : OddVec4
+    public inline function normalize() : Vec4
     {
-        return new OddVec4(
+        return new Vec4(
             x / length,
             y / length,
             z / length,

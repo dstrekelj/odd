@@ -6,7 +6,7 @@ import js.html.CanvasRenderingContext2D;
 import js.html.ImageData;
 import js.html.Uint8ClampedArray;
 #end
-class OddCanvasRenderer
+class CanvasRenderer
 {
     var width : Int;
     var height : Int;

@@ -1,6 +1,6 @@
 package odd.math;
 
-abstract OddVec3(Array<Float>)
+abstract Vec3(Array<Float>)
 {
     public inline function new(x : Float = null, y : Float = null, z : Float = null)
     {
@@ -22,19 +22,19 @@ abstract OddVec3(Array<Float>)
     public var length(get, never) : Float;
     inline function get_length() : Float { return Math.sqrt(dotProduct(fromArray(this))); }
     
-    public static inline function fromArray(a : Array<Float>) : OddVec3
+    public static inline function fromArray(a : Array<Float>) : Vec3
     {
-        return new OddVec3(
+        return new Vec3(
             a[0],
             a[1],
             a[2]
         );
     }
     
-	public static inline function fromDelimitiredString(s : String, d : String) : OddVec3
+	public static inline function fromDelimitiredString(s : String, d : String) : Vec3
 	{
 		var components : Array<String> = s.split(d);
-		return new OddVec3(
+		return new Vec3(
 			Std.parseFloat(components[0]),
 			Std.parseFloat(components[1]),
 			Std.parseFloat(components[2])
@@ -42,9 +42,9 @@ abstract OddVec3(Array<Float>)
 	}
 	
     @:op( -A)
-    public inline function negate() : OddVec3
+    public inline function negate() : Vec3
     {
-        return new OddVec3(
+        return new Vec3(
             -x,
             -y,
             -z
@@ -52,9 +52,9 @@ abstract OddVec3(Array<Float>)
     }
     
     @:op(A + B)
-    public inline function add(B : OddVec3) : OddVec3
+    public inline function add(B : Vec3) : Vec3
     {
-        return new OddVec3(
+        return new Vec3(
             x + B.x,
             y + B.y,
             z + B.z
@@ -62,9 +62,9 @@ abstract OddVec3(Array<Float>)
     }
     
     @:op(A - B)
-    public inline function subtract(B : OddVec3) : OddVec3
+    public inline function subtract(B : Vec3) : Vec3
     {
-        return new OddVec3(
+        return new Vec3(
             x - B.x,
             y - B.y,
             z - B.z
@@ -72,9 +72,9 @@ abstract OddVec3(Array<Float>)
     }
     
     @:op(A * B)
-    public inline function multiplyScalar(B : Float) : OddVec3
+    public inline function multiplyScalar(B : Float) : Vec3
     {
-        return new OddVec3(
+        return new Vec3(
             x * B,
             y * B,
             z * B
@@ -83,9 +83,9 @@ abstract OddVec3(Array<Float>)
     
     
     @:op(A / B)
-    public inline function divideScalar(B : Float) : OddVec3
+    public inline function divideScalar(B : Float) : Vec3
     {
-        return new OddVec3(
+        return new Vec3(
             x / B,
             y / B,
             z / B
@@ -93,15 +93,15 @@ abstract OddVec3(Array<Float>)
     }
     
     @:op(A * B)
-    public inline function dotProduct(B : OddVec3) : Float
+    public inline function dotProduct(B : Vec3) : Float
     {
         return x * B.x + y * B.y + z * B.z;
     }
     
     @:op(A % B)
-    public inline function crossProduct(B : OddVec3) :  OddVec3
+    public inline function crossProduct(B : Vec3) :  Vec3
     {
-        return new OddVec3(
+        return new Vec3(
             y * B.z - z * B.y,
             z * B.x - x * B.z,
             x * B.y - y * B.x
@@ -109,9 +109,9 @@ abstract OddVec3(Array<Float>)
     }
     
     @:op(A * B)
-    public inline function multiplyMat4(B : OddMat4) : OddVec3
+    public inline function multiplyMat4(B : Mat4) : Vec3
     {
-        var v = new OddVec4(
+        var v = new Vec4(
             x * B.xx + y * B.yx + z * B.zx + B.wx,
             x * B.xy + y * B.yy + z * B.zy + B.wy,
             x * B.xz + y * B.yz + z * B.zz + B.wz,
@@ -125,16 +125,16 @@ abstract OddVec3(Array<Float>)
             v.z = v.z / v.w;
         }
         
-        return new OddVec3(
+        return new Vec3(
             v.x,
             v.y,
             v.z
         );
     }
     
-    public inline function normalize() : OddVec3
+    public inline function normalize() : Vec3
     {
-        return new OddVec3(
+        return new Vec3(
             x / length,
             y / length,
             z / length

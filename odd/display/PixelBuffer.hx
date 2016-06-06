@@ -6,7 +6,7 @@ import haxe.io.BytesData;
 /**
  * Pixel-based bytes buffer for depth and color buffers.
  */
-class OddPixelBuffer
+class PixelBuffer
 {
     // Buffer data
     var data : Bytes;

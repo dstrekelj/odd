@@ -1,39 +1,56 @@
-package odd.display;
+package odd;
 
+#if java
+typedef FrameBuffer = odd._target.java.FrameBuffer;
+#elseif js
+typedef FrameBuffer = odd._target.js.FrameBuffer;
+#else
 import haxe.io.Bytes;
-import odd.util.color.RGB;
+import haxe.io.BytesData;
 
-class ColorBuffer extends PixelBuffer
+/**
+ * Pixel-based bytes buffer for depth and color buffers.
+ */
+class FrameBuffer
 {
     /**
-     * Creates new color buffer of `width * height` size and clears it
-     * to desired color.
+     * Buffer data.
+     */
+    var data : Bytes;
+    
+    /**
+     * Buffer width.
+     */
+    var width : Int;
+    
+    /**
+     * Buffer height.
+     */
+    var height : Int;
+    
+    /**
+     * Bytes stored per pixel.
+     */
+    static inline var bytesPerPixel : Int = 4;
+    
+    /**
+     * Allocates `width` * `height` * `bytesPerPixel` bytes for the
+     * pixel buffer.
      * 
      * @param width Width of buffer
      * @param height Height of buffer
-     * @param color Initial color of pixels in buffer
      */
-    public function new(width : Int, height : Int, ?color : RGB = 0x000000ff)
+    public function new(width : Int, height : Int)
     {
-        super(width, height, 4);
+        this.width = width;
+        this.height = height;
         
-        clear(color);
+        data = Bytes.alloc(width * height * bytesPerPixel);
     }
     
-    /**
-     * Clears buffer to desired color.
-     * 
-     * @param c Clear color
-     */
-    private inline function clear(c : RGB) : Void
+    public inline function clear(c : Int) : Void
     {
-        for (y in 0...height)
-        {
-            for (x in 0...width)
-            {
-                setPixel(x, y, c);
-            }
-        }
+        
     }
     
     /**
@@ -103,12 +120,12 @@ class ColorBuffer extends PixelBuffer
      * @param y Vertical position of pixel
      * @param color Pixel color
      */
-    public inline function setPixel(x : Int, y : Int, c : RGB) : Void
+    public inline function setPixel(x : Int, y : Int, v : Int) : Void
     {
-        setR(x, y, c.ri);
-        setG(x, y, c.gi);
-        setB(x, y, c.bi);
-        setA(x, y, c.ai);
+        setR(x, y, (v >> 24) & 0xff);
+        setG(x, y, (v >> 16) & 0xff);
+        setB(x, y, (v >> 8) & 0xff);
+        setA(x, y, v & 0xff);
     }
 
     /**
@@ -158,4 +175,58 @@ class ColorBuffer extends PixelBuffer
     {
         setByte(x, y, 3, a);
     }
+    
+    /**
+     * Retrieves buffer data as `haxe.io.BytesData`.
+     * 
+     * @return Buffer data
+     */
+    public inline function getData() : BytesData
+    {
+        return data.getData();
+    }
+    
+    /**
+     * Gets `b` byte of (x, y) pixel (relative to top-left corner).
+     * 
+     * @param x Horizontal position of pixel
+     * @param y Vertical position of pixel
+     * @param b Byte (component)
+     * @return Value
+     */
+    private inline function getByte(x : Int, y : Int, b : Int) : Int
+    {
+        return data.get(getIndex(x, y) + b);
+    }
+    
+    /**
+     * Sets `b` byte of (x, y) pixel (relative to top-left corner).
+     * Only sets if `0 <= x < width` and `0 <= y < height`.
+     * 
+     * @param x Horizontal position of pixel
+     * @param y Vertical position of pixel
+     * @param b Byte (component)
+     * @param v Value
+     */
+    private inline function setByte(x : Int, y : Int, b : Int, v : Int) : Void
+    {
+        // TODO: Implement proper clip space in pipeline
+        if (x >= 0 && x < width && y >= 0 && y < height)
+        {
+            data.set(getIndex(x, y) + b, v);
+        }
+    }
+    
+    /**
+     * Gets index of (x, y) pixel (relative to top-left corner).
+     * 
+     * @param x Horizontal position of pixel
+     * @param y Vertical position of pixel
+     * @return Index of pixel
+     */
+    private inline function getIndex(x : Int, y : Int) : Int
+    {
+        return (x + y * width) * bytesPerPixel;
+    }
 }
+#end

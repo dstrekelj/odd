@@ -1,5 +1,8 @@
 package odd.rasterizer.ds;
 
+/**
+ * Known vertex attributes.
+ */
 enum VertexAttribute 
 {
     Color(r : Float, g : Float, b : Float);

@@ -1,9 +1,12 @@
 package odd;
 
 /**
- * Context stub.
+ * Stub.
  * 
  * The context should initialise a window and draw to it.
+ * 
+ * TODO: Have `Context` serve as an abstraction layer over
+ * target-specific implementation.
  */
 class Context
 {

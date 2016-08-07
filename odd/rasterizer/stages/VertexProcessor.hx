@@ -6,6 +6,9 @@ import odd.math.Vec4;
 import odd.rasterizer.ds.Vertex;
 import odd.rasterizer.ds.VertexAttribute;
 
+/**
+ * Handles vertex processing.
+ */
 class VertexProcessor
 {
     public static function process(vertex : Vertex, shader : Shader) : Vertex

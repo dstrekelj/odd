@@ -1,9 +1,12 @@
 package odd;
 
 /**
- * Framebuffer stub.
+ * Stub.
  * 
  * The framebuffer should allow per-pixel and per-channel operations.
+ * 
+ * TODO: Have `Framebuffer` serve as an abstraction layer over
+ * target-specific implementation.
  */
 class Framebuffer 
 {

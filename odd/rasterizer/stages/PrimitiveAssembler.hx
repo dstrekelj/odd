@@ -5,6 +5,11 @@ import odd.rasterizer.ds.Primitive;
 import odd.rasterizer.ds.Vertex;
 import odd.rasterizer.ds.VertexAttribute;
 
+/**
+ * Handles assembling geometry vertices into appropriate primitives.
+ * 
+ * TODO: Implement point and line primitive assemblers.
+ */
 class PrimitiveAssembler
 {
     public static function assembleTriangle(indices : Array<Int>, geometry : Geometry) : Primitive

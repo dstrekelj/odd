@@ -1,5 +1,8 @@
 package odd;
 
+/**
+ * RGB color value abstracted over 24-bit integer.
+ */
 abstract ColorRGB(Int) from Int to Int
 {
     /**
@@ -57,16 +60,35 @@ abstract ColorRGB(Int) from Int to Int
         this = v;
     }
     
+    /**
+     * RGB from color value.
+     * @param rgb   0xrrggbb color value
+     * @return
+     */
     public static inline function RGB(rgb : Int) : ColorRGB
     {
         return new ColorRGB(rgb);
     }
     
+    /**
+     * RGB from integer color components.
+     * @param r [0, 255] red value
+     * @param g [0, 255] green value
+     * @param b [0, 255] blue value
+     * @return
+     */
     public static inline function RGBf(r : Float, g : Float, b : Float) : ColorRGB
     {
         return new ColorRGB((Std.int(r * 0xff) << 16) | (Std.int(g * 0xff) << 8) | Std.int(b * 0xff));
     }
     
+    /**
+     * RGB from float color components.
+     * @param r [0, 1] red value
+     * @param g [0, 1] green value
+     * @param b [0, 1] blue value
+     * @return
+     */
     public static inline function RGBi(r : Int, g : Int, b : Int) : ColorRGB
     {
         return new ColorRGB(r << 16 | g << 8 | b);

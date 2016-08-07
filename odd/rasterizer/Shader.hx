@@ -7,8 +7,9 @@ import odd.math.Vec3;
 import odd.math.Vec4;
 
 /**
- * A shader class should define vertex and fragment
- * shading functions.
+ * Base shader class, defining vertex and fragment shading methods.
+ * Different stages of the rasterization pipeline have write access
+ * to different vertex / fragment variables.
  */
 class Shader 
 {
@@ -39,8 +40,16 @@ class Shader
         return position;
     }
     
+    /**
+     * Fragment shader.
+     * 
+     * @param fragCoord
+     * @param frontFacing
+     * @param pointCoord
+     * @return `true` to keep the fragment, `false` to discard it
+     */
     public function fragment(fragCoord : Vec4, frontFacing : Bool, pointCoord : Vec2i) : Bool
     {
-        return false;
+        return true;
     }
 }

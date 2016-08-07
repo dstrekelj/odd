@@ -12,14 +12,15 @@ import odd.rasterizer.ds.Vertex;
 import odd.rasterizer.ds.VertexAttribute;
 
 /**
- * ...
- * @author 
+ * Handles the scan conversion of a primitive.
+ * 
+ * TODO: Implement point and line primitive scan conversion.
  */
 class ScanConverter
 {
     public static function process(framebuffer : Framebuffer, shader : Shader, primitive : Primitive) : Void
     {
-        trace(primitive);
+        //trace(primitive);
         switch (primitive)
         {
             case Primitive.Triangle(a, b, c):

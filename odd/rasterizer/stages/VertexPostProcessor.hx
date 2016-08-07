@@ -5,6 +5,9 @@ import odd.math.Vec4;
 import odd.rasterizer.ds.Vertex;
 import odd.rasterizer.ds.VertexAttribute;
 
+/**
+ * Handles vertex post-processing (projection, clipping, ...).
+ */
 class VertexPostProcessor
 {
     public static function process(vertex : Vertex, transformProjection : Mat4x4, transformViewport : Mat4x4) : Vertex
@@ -17,18 +20,18 @@ class VertexPostProcessor
             {
                 case VertexAttribute.Position(x, y, z, w):
                     var p = new Vec4(x, y, z, w);
-                    trace("1. RAW...", p);
+                    //trace("1. RAW...", p);
                     p *= transformProjection;
-                    trace("2. PROJECTION...", p);
+                    //trace("2. PROJECTION...", p);
                     if (clip(p))
                     {
                         // TODO: Clipping.
                         trace("This should be discarded by clipping!");
                     }
                     p /= p.w;
-                    trace("3. DIVISION...", p);
+                    //trace("3. DIVISION...", p);
                     p *= transformViewport;
-                    trace("4. VIEWPORT...", p);
+                    //trace("4. VIEWPORT...", p);
                     processedVertex.push(VertexAttribute.Position(p.x, p.y, p.z, p.w));
                 case _:
                     processedVertex.push(attribute);

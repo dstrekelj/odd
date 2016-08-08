@@ -1,31 +1,37 @@
 package odd;
 
+import odd._impl.ContextImpl;
+
 /**
  * Stub.
  * 
  * The context should initialise a window and draw to it.
- * 
- * TODO: Have `Context` serve as an abstraction layer over
- * target-specific implementation.
  */
 class Context
 {
-    public static var width(default, null) : Int;
-    public static var height(default, null) : Int;
+    public static var width(get, null) : Int;
+    inline static function get_width() return context.framebuffer.width;
     
-    private static var framebuffer : Framebuffer;
+    public static var height(get, null) : Int;
+    inline static function get_height() return context.framebuffer.height;
     
-    public static function init(_width : Int, _height : Int) : Void
+    private static var context : ContextImpl;
+    
+    public static function init(width : Int, height : Int) : Void
     {
-        width = _width;
-        height = _height;
+        trace("-- odd --");
         
-        framebuffer = new Framebuffer(width, height);
+        if (context == null)
+        {
+            context = new ContextImpl(width, height);
+        }
     }
     
     public static function run(onUpdate : Void->Void, onDraw : Framebuffer->Void) : Void
     {
-        onUpdate();
-        onDraw(framebuffer);
+        if (context != null)
+        {
+            context.run(onUpdate, onDraw);
+        }
     }
 }

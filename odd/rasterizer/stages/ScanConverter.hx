@@ -2,6 +2,7 @@ package odd.rasterizer.stages;
 
 import odd.ColorRGB;
 import odd.Framebuffer;
+import odd.data.DepthBuffer;
 import odd.math.Vec2;
 import odd.math.Vec2i;
 import odd.math.Vec3;
@@ -18,18 +19,18 @@ import odd.rasterizer.ds.VertexAttribute;
  */
 class ScanConverter
 {
-    public static function process(framebuffer : Framebuffer, shader : Shader, primitive : Primitive) : Void
+    public static function process(framebuffer : Framebuffer, depthBuffer : DepthBuffer, shader : Shader, primitive : Primitive) : Void
     {
         //trace(primitive);
         switch (primitive)
         {
             case Primitive.Triangle(a, b, c):
-                processTriangle(framebuffer, shader, a, b, c);
+                processTriangle(framebuffer, depthBuffer, shader, a, b, c);
             case _:
         }
     }
     
-    private static function processTriangle(framebuffer : Framebuffer, shader : Shader, a : Vertex, b : Vertex, c : Vertex) : Void
+    private static function processTriangle(framebuffer : Framebuffer, depthBuffer : DepthBuffer, shader : Shader, a : Vertex, b : Vertex, c : Vertex) : Void
     {
         var aPos : Vec3 = null; var aCol : Vec3 = null; var aUV : Vec2 = null;
         for (attribute in a)
@@ -104,61 +105,38 @@ class ScanConverter
                     edge(pC.x, pC.y, pA.x, pA.y, p.x, p.y)
                 );
                 
-                // Counter-clockwise winding order has negative area
-                if (areaP.x >= 0 && areaP.y >= 0 && areaP.z >= 0)
+                // Note: counter-clockwise winding order has negative area
+                
+                if (areaP.x <= 0 && areaP.y <= 0 && areaP.z <= 0)
                 {
                     // TODO: Interpolate
                     areaP /= areaABC;
                     
-                    var z = 1 / (areaP.x / aPos.z + areaP.y / bPos.z + areaP.z / cPos.z);
+                    var z = 1 / (areaP.y / aPos.z + areaP.z / bPos.z + areaP.x / cPos.z);
                     
                     if (aCol != null && bCol != null && cCol != null)
                     {
-                        var r = (areaP.y * aCol.x + areaP.z * bCol.x + areaP.x * cCol.x) * z;
-                        var g = (areaP.y * aCol.y + areaP.z * bCol.y + areaP.x * cCol.y) * z;
-                        var b = (areaP.y * aCol.z + areaP.z * bCol.z + areaP.x * cCol.z) * z;
+                        var r = (areaP.y * aCol.x + areaP.z * bCol.x + areaP.x * cCol.x);
+                        var g = (areaP.y * aCol.y + areaP.z * bCol.y + areaP.x * cCol.y);
+                        var b = (areaP.y * aCol.z + areaP.z * bCol.z + areaP.x * cCol.z);
                         shader.fragmentColor = new Vec3(r, g, b);
                     }
                     
                     if (aUV != null && bUV != null && cUV != null)
                     {
-                        var u = (areaP.y * aUV.x + areaP.z * bUV.x + areaP.x * cUV.x) * z;
-                        var v = (areaP.y * aUV.y + areaP.z * bUV.y + areaP.x * cUV.y) * z;
+                        var u = (areaP.y * aUV.x + areaP.z * bUV.x + areaP.x * cUV.x);
+                        var v = (areaP.y * aUV.y + areaP.z * bUV.y + areaP.x * cUV.y);
                         shader.fragmentTextureCoordinate = new Vec2(u, v);
                     }
                     
-                    if (shader.fragment(new Vec4(p.x, p.y, 1, 1), true, new Vec2i(j, i)))
+                    if (z < depthBuffer.get(j, i))
                     {
-                        var color = odd.ColorRGB.RGBf(shader.fragmentColor.x, shader.fragmentColor.y, shader.fragmentColor.z);
-                        framebuffer.setPixel(j, i, color);
-                    }
-                }
-                else if (areaP.x <= 0 && areaP.y <= 0 && areaP.z <= 0)
-                {
-                    // TODO: Interpolate
-                    areaP /= areaABC;
-                    
-                    var z = 1 / (areaP.x / aPos.z + areaP.y / bPos.z + areaP.z / cPos.z);
-                    
-                    if (aCol != null && bCol != null && cCol != null)
-                    {
-                        var r = (areaP.y * aCol.x + areaP.z * bCol.x + areaP.x * cCol.x) * z;
-                        var g = (areaP.y * aCol.y + areaP.z * bCol.y + areaP.x * cCol.y) * z;
-                        var b = (areaP.y * aCol.z + areaP.z * bCol.z + areaP.x * cCol.z) * z;
-                        shader.fragmentColor = new Vec3(r, g, b);
-                    }
-                    
-                    if (aUV != null && bUV != null && cUV != null)
-                    {
-                        var u = (areaP.y * aUV.x + areaP.z * bUV.x + areaP.x * cUV.x) * z;
-                        var v = (areaP.y * aUV.y + areaP.z * bUV.y + areaP.x * cUV.y) * z;
-                        shader.fragmentTextureCoordinate = new Vec2(u, v);
-                    }
-                    
-                    if (shader.fragment(new Vec4(p.x, p.y, 1, 1), false, new Vec2i(j, i)))
-                    {
-                        var color = odd.ColorRGB.RGBf(shader.fragmentColor.x, shader.fragmentColor.y, shader.fragmentColor.z);
-                        framebuffer.setPixel(j, i, color);
+                        if (shader.fragment(new Vec4(p.x, p.y, z, 1), true, new Vec2i(j, i)))
+                        {
+                            depthBuffer.set(j, i, z);
+                            var color = odd.ColorRGB.RGBf(shader.fragmentColor.x, shader.fragmentColor.y, shader.fragmentColor.z);
+                            framebuffer.setPixel(j, i, color);
+                        }
                     }
                 }
                 

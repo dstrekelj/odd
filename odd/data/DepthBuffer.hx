@@ -24,15 +24,9 @@ class DepthBuffer extends PixelBuffer
      * Clears buffer to Math.NEGATIVE_INFINITY (becausecamera looks
      * down negative z-axis).
      */
-    private inline function clear() : Void
+    public inline function clear() : Void
     {
-        for (y in 0...height)
-        {
-            for (x in 0...width)
-            {
-                data.setDouble(getIndex(x, y), Math.NEGATIVE_INFINITY);
-            }
-        }
+        for (y in 0...height) for (x in 0...width) bytes.setDouble(getIndex(x, y), Math.POSITIVE_INFINITY);
     }
     
     /**
@@ -46,7 +40,7 @@ class DepthBuffer extends PixelBuffer
     {
         if (x >= 0 && x < width && y >= 0 && y < height)
         {
-            return data.getDouble(getIndex(x, y));
+            return bytes.getDouble(getIndex(x, y));
         }
         return Math.POSITIVE_INFINITY;
     }
@@ -62,7 +56,7 @@ class DepthBuffer extends PixelBuffer
     {
         if (x >= 0 && x < width && y >= 0 && y < height)
         {
-            data.setDouble(getIndex(x, y), v);
+            bytes.setDouble(getIndex(x, y), v);
         }
     }
 }

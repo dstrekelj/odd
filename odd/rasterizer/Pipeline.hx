@@ -1,6 +1,7 @@
 package odd.rasterizer;
 
 import odd.Framebuffer;
+import odd.data.DepthBuffer;
 import odd.geom.Mesh;
 import odd.math.Mat4x4;
 import odd.rasterizer.ds.Primitive;
@@ -25,6 +26,9 @@ class Pipeline
     private var transformProjection : Mat4x4;
     private var transformViewport : Mat4x4;
     
+    private var depthBuffer : DepthBuffer;
+    private var clearedDepthBuffer : DepthBuffer;
+    
     public function new(viewportWidth : Int, viewportHeight : Int)
     {
         shader = new Shader();
@@ -32,7 +36,7 @@ class Pipeline
         meshes = new Array<Mesh>();
         // TODO: Define a proper camera type.
         transformView = Mat4x4.translate(0, 0, -4);
-        transformProjection = Mat4x4.perspective(100, 4 / 3, 0.1, 10);
+        transformProjection = Mat4x4.perspective(100, 4 / 3, 1, 100);
         // Negative Y.y component to mirror image vertically
         transformViewport = new Mat4x4(
             viewportWidth / 2,   0,                     0,  0,
@@ -40,6 +44,9 @@ class Pipeline
             0,                   0,                     1,  0,
             viewportWidth / 2,   viewportHeight / 2,    0,  1
         );
+        
+        depthBuffer = new DepthBuffer(viewportWidth, viewportHeight);
+        clearedDepthBuffer = new DepthBuffer(viewportWidth, viewportHeight);
     }
     
     public function addMesh(mesh : Mesh) : Void
@@ -49,6 +56,8 @@ class Pipeline
     
     public function execute(framebuffer : Framebuffer) : Void
     {
+        depthBuffer.blit(0, clearedDepthBuffer.bytes, 0, depthBuffer.width * depthBuffer.height * 8);
+        
         for (mesh in meshes)
         {
             shader.transformModel = mesh.transform;
@@ -84,7 +93,7 @@ class Pipeline
                         //trace(primitive);
                         // Scan conversion
                         //trace("4. SCAN CONVERSION...");
-                        ScanConverter.process(framebuffer, shader, primitive);
+                        ScanConverter.process(framebuffer, depthBuffer, shader, primitive);
                     case _:
                         return;
                 }

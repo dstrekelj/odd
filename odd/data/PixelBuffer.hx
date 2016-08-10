@@ -1,15 +1,14 @@
 package odd.data;
 
 import haxe.io.Bytes;
-import haxe.io.BytesData;
 
 /**
  * Per-pixel bytes buffer.
  */
 class PixelBuffer
 {
-    // Buffer data
-    public var data(get, null) : Bytes;
+    // Buffer bytes
+    public var bytes(get, null) : Bytes;
     
     // Buffer width
     public var width(default, null) : Int;
@@ -34,32 +33,32 @@ class PixelBuffer
         this.height = height;
         this.bytesPerPixel = bytesPerPixel;
         
-        data = Bytes.alloc(width * height * bytesPerPixel);
+        bytes = Bytes.alloc(width * height * bytesPerPixel);
     }
     
     /**
-     * From `start` position, copies `length` amount of `source` data
+     * From `start` position, copies `length` amount of `source` bytes
      * from `sourceStart` onward. This operation has almost no cost
      * and is useful for clearing the buffer.
      * 
-     * @param start Point at which to begin storing source data
-     * @param source Source data
-     * @param sourceStart Point at which to begin copying source data
-     * @param length Amount of source data to copy (in bytes)
+     * @param start Point at which to begin storing source bytes
+     * @param source Source bytes
+     * @param sourceStart Point at which to begin copying source bytes
+     * @param length Amount of source bytes to copy (in bytes)
      */
     public inline function blit(start : Int, source : Bytes, sourceStart : Int, length : Int) : Void
     {
-        data.blit(start, source, sourceStart, length);
+        bytes.blit(start, source, sourceStart, length);
     }
     
     /**
-     * Retrieves buffer data as `haxe.io.BytesData`.
+     * Retrieves buffer bytes as `haxe.io.Bytesbytes`.
      * 
-     * @return Buffer data
+     * @return Buffer bytes
      */
-    private inline function get_data() : BytesData
+    private inline function get_bytes() : Bytes
     {
-        return data.getData();
+        return bytes;
     }
     
     /**
@@ -74,9 +73,9 @@ class PixelBuffer
     {
         if (x >= 0 && x < width && y >= 0 && y < height)
         {
-            return data.get(getIndex(x, y) + b);
+            return bytes.get(getIndex(x, y) + b);
         }
-        return Math.NaN;
+        return -1;
     }
     
     /**
@@ -92,7 +91,7 @@ class PixelBuffer
     {
         if (x >= 0 && x < width && y >= 0 && y < height)
         {
-            data.set(getIndex(x, y) + b, v);
+            bytes.set(getIndex(x, y) + b, v);
         }
     }
     

@@ -32,7 +32,8 @@ class Shader
     
     public function new()
     {
-        // Stub
+        fragmentColor = new Vec3(0, 0, 0);
+        fragmentTextureCoordinate = new Vec2(0, 0);
     }
     
     public function vertex(position : Vec4) : Vec4

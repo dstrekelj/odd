@@ -63,12 +63,14 @@ class Pipeline
             shader.transformModel = mesh.transform;
             shader.transformView = transformView;
             
-            var indices = mesh.geometry.indices;
-            
             var i = 0;
-            while (i < indices.length)
+            while (i < mesh.geometry.indices.length)
             {
-                var primitiveIndices = [indices[i], indices[i + 1], indices[i + 2]];
+                var primitiveIndices = [
+                    mesh.geometry.indices[i],
+                    mesh.geometry.indices[i + 1],
+                    mesh.geometry.indices[i + 2]
+                ];
                 
                 // Primitive assembly
                 var primitive = PrimitiveAssembler.assembleTriangle(primitiveIndices, mesh.geometry);
@@ -79,20 +81,25 @@ class Pipeline
                     case Primitive.Triangle(a, b, c):
                         // Vertex processing
                         //trace("2. VERTEX PROCESSING...");
+                        
                         a = VertexProcessor.process(a, shader);
                         b = VertexProcessor.process(b, shader);
                         c = VertexProcessor.process(c, shader);
                         primitive = Primitive.Triangle(a, b, c);
+                        
                         //trace(primitive);
                         // Vertex post-processing
                         //trace("3. VERTEX POST-PROCESSING...");
+                        
                         a = VertexPostProcessor.process(a, transformProjection, transformViewport);
                         b = VertexPostProcessor.process(b, transformProjection, transformViewport);
                         c = VertexPostProcessor.process(c, transformProjection, transformViewport);
                         primitive = Primitive.Triangle(a, b, c);
+                        
                         //trace(primitive);
                         // Scan conversion
                         //trace("4. SCAN CONVERSION...");
+                        
                         ScanConverter.process(framebuffer, depthBuffer, shader, primitive);
                     case _:
                         return;

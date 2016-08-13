@@ -49,7 +49,7 @@ class Shader
      * @param pointCoord
      * @return `true` to keep the fragment, `false` to discard it
      */
-    public function fragment(fragCoord : Vec4, frontFacing : Bool, pointCoord : Vec2i) : Bool
+    public function fragment(fragCoord : Vec4, pointCoord : Vec2i) : Bool
     {
         return true;
     }

@@ -140,7 +140,7 @@ class ScanConverter
                         pixelCoordinate.x = j;
                         pixelCoordinate.y = i;
                         
-                        if (shader.fragment(fragmentCoordinate, true, pixelCoordinate))
+                        if (shader.fragment(fragmentCoordinate, pixelCoordinate))
                         {
                             depthBuffer.set(j, i, z);
                             var color = odd.ColorRGB.RGBf(shader.fragmentColor.x, shader.fragmentColor.y, shader.fragmentColor.z);

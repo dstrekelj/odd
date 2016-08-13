@@ -1,9 +1,33 @@
 package odd.math;
+import haxe.ds.Vector;
 
 /**
  * Four-by-four matrix of `Float` types.
  */
-abstract Mat4x4(Array<Float>)
+private class Matrix4x4 {
+    public var xx : Float;  public var xy : Float;  public var xz : Float;  public var xw : Float;
+    public var yx : Float;  public var yy : Float;  public var yz : Float;  public var yw : Float;
+    public var zx : Float;  public var zy : Float;  public var zz : Float;  public var zw : Float;
+    public var wx : Float;  public var wy : Float;  public var wz : Float;  public var ww : Float;
+    
+    public inline function new(
+        xx : Float, xy : Float, xz : Float, xw : Float,
+        yx : Float, yy : Float, yz : Float, yw : Float,
+        zx : Float, zy : Float, zz : Float, zw : Float,
+        wx : Float, wy : Float, wz : Float, ww : Float
+    ) : Void {
+        this.xx = xx;   this.xy = xy;   this.xz = xz;   this.xw = xw;
+        this.yx = yx;   this.yy = yy;   this.yz = yz;   this.yw = yw;
+        this.zx = zx;   this.zy = zy;   this.zz = zz;   this.zw = zw;
+        this.wx = wx;   this.wy = wy;   this.wz = wz;   this.ww = ww;
+    }
+    
+    public inline function toString() : String {
+        return '{ { xx : $xx, xy : $xy, xz : $xz, xw : $xw }, { yx : $yx, yy : $yy, yz : $yz, yw : $yw }, { zx : $zx, zy : $zy, zz : $zz, zw : $zw }, { wx : $wx, wy : $wy, wz : $wz, ww : $ww } }';
+    }
+}
+
+abstract Mat4x4(Matrix4x4)
 {
     inline public function new(
         xx : Float, xy : Float, xz : Float, xw : Float,
@@ -12,77 +36,77 @@ abstract Mat4x4(Array<Float>)
         wx : Float, wy : Float, wz : Float, ww : Float
     )
     {
-        this = [
+        this = new Matrix4x4(
             xx, xy, xz, xw,
             yx, yy, yz, yw,
             zx, zy, zz, zw,
             wx, wy, wz, ww
-        ];
+        );
     }
     
     public var xx(get, set) : Float;
-    inline function get_xx() return this[0];
-    inline function set_xx(xx : Float) return this[0] = xx;
+    inline function get_xx() return this.xx;
+    inline function set_xx(xx : Float) return this.xx = xx;
     
     public var xy(get, set) : Float;
-    inline function get_xy() return this[1];
-    inline function set_xy(xy : Float) return this[1] = xy;
+    inline function get_xy() return this.xy;
+    inline function set_xy(xy : Float) return this.xy = xy;
     
     public var xz(get, set) : Float;
-    inline function get_xz() return this[2];
-    inline function set_xz(xz : Float) return this[2] = xz;
+    inline function get_xz() return this.xz;
+    inline function set_xz(xz : Float) return this.xz = xz;
     
     public var xw(get, set) : Float;
-    inline function get_xw() return this[3];
-    inline function set_xw(xw : Float) return this[3] = xw;
+    inline function get_xw() return this.xw;
+    inline function set_xw(xw : Float) return this.xw = xw;
     
     public var yx(get, set) : Float;
-    inline function get_yx() return this[4];
-    inline function set_yx(yx : Float) return this[4] = yx;
+    inline function get_yx() return this.yx;
+    inline function set_yx(yx : Float) return this.yx = yx;
     
     public var yy(get, set) : Float;
-    inline function get_yy() return this[5];
-    inline function set_yy(yy : Float) return this[5] = yy;
+    inline function get_yy() return this.yy;
+    inline function set_yy(yy : Float) return this.yy = yy;
     
     public var yz(get, set) : Float;
-    inline function get_yz() return this[6];
-    inline function set_yz(yz : Float) return this[6] = yz;
+    inline function get_yz() return this.yz;
+    inline function set_yz(yz : Float) return this.yz = yz;
     
     public var yw(get, set) : Float;
-    inline function get_yw() return this[7];
-    inline function set_yw(yw : Float) return this[7] = yw;
+    inline function get_yw() return this.yw;
+    inline function set_yw(yw : Float) return this.yw = yw;
     
     public var zx(get, set) : Float;
-    inline function get_zx() return this[8];
-    inline function set_zx(zx : Float) return this[8] = zx;
+    inline function get_zx() return this.zx;
+    inline function set_zx(zx : Float) return this.zx = zx;
     
     public var zy(get, set) : Float;
-    inline function get_zy() return this[9];
-    inline function set_zy(zy : Float) return this[9] = zy;
+    inline function get_zy() return this.zy;
+    inline function set_zy(zy : Float) return this.zy = zy;
     
     public var zz(get, set) : Float;
-    inline function get_zz() return this[10];
-    inline function set_zz(zz : Float) return this[10] = zz;
+    inline function get_zz() return this.zz;
+    inline function set_zz(zz : Float) return this.zz = zz;
     
     public var zw(get, set) : Float;
-    inline function get_zw() return this[11];
-    inline function set_zw(zw : Float) return this[11] = zw;
+    inline function get_zw() return this.zw;
+    inline function set_zw(zw : Float) return this.zw = zw;
     
     public var wx(get, set) : Float;
-    inline function get_wx() return this[12];
-    inline function set_wx(wx : Float) return this[12] = wx;
+    inline function get_wx() return this.wx;
+    inline function set_wx(wx : Float) return this.wx = wx;
     
     public var wy(get, set) : Float;
-    inline function get_wy() return this[13];
-    inline function set_wy(wy : Float) return this[13] = wy;
+    inline function get_wy() return this.wy;
+    inline function set_wy(wy : Float) return this.wy = wy;
     
     public var wz(get, set) : Float;
-    inline function get_wz() return this[14];
-    inline function set_wz(wz : Float) return this[14] = wz;
+    inline function get_wz() return this.wz;
+    inline function set_wz(wz : Float) return this.wz = wz;
     
     public var ww(get, set) : Float;
-    inline function get_ww() return this[15];
-    inline function set_ww(ww : Float) return this[15] = ww;
+    inline function get_ww() return this.ww;
+    inline function set_ww(ww : Float) return this.ww = ww;
     
     public static inline function fromArray(a : Array<Float>) : Mat4x4
     {

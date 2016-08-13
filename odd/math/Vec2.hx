@@ -1,28 +1,46 @@
 package odd.math;
 
+import haxe.ds.Vector;
+
 /**
  * Two-component vector of `Float` types.
  */
-abstract Vec2(Array<Float>)
+private class Vector2 {
+    public var x : Float;   public var y : Float;
+    
+    public inline function new(x : Float, y : Float) : Void {
+        this.x = x; this.y = y;
+    }
+    
+    public inline function toString() : String {
+        return '{ x : $x, y : $y }';
+    }
+}
+
+abstract Vec2(Vector2)
 {
-    public inline function new(x : Float, y : Float) this = [x, y];
+    public inline function new(x : Float, y : Float)
+    {
+        this = new Vector2(
+            x,  y
+        );
+    }
     
     public var x(get, set) : Float;
-    inline function get_x() return this[0];
-    inline function set_x(x : Float) return this[0] = x;
+    inline function get_x() return this.x;
+    inline function set_x(x : Float) return this.x = x;
     
     public var y(get, set) : Float;
-    inline function get_y() return this[1];
-    inline function set_y(y : Float) return this[1] = y;
+    inline function get_y() return this.y;
+    inline function set_y(y : Float) return this.y = y;
     
     public var length(get, never) : Float;
-    inline function get_length() return Math.sqrt(dot(fromArray(this)));
+    inline function get_length() return Math.sqrt(dot(new Vec2(x, y)));
     
     public static inline function fromArray(a : Array<Float>) : Vec2
     {
         return new Vec2(
-            a[0],
-            a[1]
+            a[0],   a[1]
         );
     }
     
@@ -30,8 +48,7 @@ abstract Vec2(Array<Float>)
     public inline function neg() : Vec2
     {
         return new Vec2(
-            -x,
-            -y
+            -x, -y
         );
     }
 
@@ -39,8 +56,7 @@ abstract Vec2(Array<Float>)
     public inline function add(B : Vec2) : Vec2
     {
         return new Vec2(
-            x + B.x,
-            y + B.y
+            x + B.x,    y + B.y
         );
     }
 
@@ -48,8 +64,7 @@ abstract Vec2(Array<Float>)
     public inline function sub(B : Vec2) : Vec2
     {
         return new Vec2(
-            x - B.x,
-            y - B.y
+            x - B.x,    y - B.y
         );
     }
 
@@ -57,8 +72,7 @@ abstract Vec2(Array<Float>)
     public inline function mul(B : Float) : Vec2
     {
         return new Vec2(
-            x * B,
-            y * B
+            x * B,  y * B
         );
     }
     
@@ -66,8 +80,7 @@ abstract Vec2(Array<Float>)
     public inline function div(B : Float) : Vec2
     {
         return new Vec2(
-            x / B,
-            y / B
+            x / B,  y / B
         );
     }
     
@@ -86,8 +99,7 @@ abstract Vec2(Array<Float>)
     public inline function normalize() : Vec2
     {
         return new Vec2(
-            x / length,
-            y / length
+            x / length, y / length
         );
     }
 }

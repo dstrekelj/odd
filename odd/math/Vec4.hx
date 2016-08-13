@@ -1,38 +1,53 @@
 package odd.math;
+import haxe.ds.Vector;
 
 /**
  * Four-component vector of `Float` types.
  */
-abstract Vec4(Array<Float>)
+private class Vector4 {
+    public var x : Float;   public var y : Float;   public var z : Float;   public var w : Float;
+    
+    public inline function new(x : Float, y : Float, z : Float, w : Float) : Void {
+        this.x = x; this.y = y; this.z = z; this.w = w;
+    }
+    
+    public inline function toString() : String {
+        return '{ x : $x, y : $y, z : $z, w : $w }';
+    }
+}
+
+abstract Vec4(Vector4)
 {
-    inline public function new(x : Float, y : Float, z : Float, w : Float) this = [x, y, z, w];
+    inline public function new(x : Float, y : Float, z : Float, w : Float)
+    {
+        this = new Vector4(
+            x,  y,  z,  w
+        );
+    }
     
     public var x(get, set) : Float;
-    inline function get_x() return this[0];
-    inline function set_x(x : Float) return this[0] = x;
+    inline function get_x() return this.x;
+    inline function set_x(x : Float) return this.x = x;
     
     public var y(get, set) : Float;
-    inline function get_y() return this[1];
-    inline function set_y(y : Float) return this[1] = y;
+    inline function get_y() return this.y;
+    inline function set_y(y : Float) return this.y = y;
     
     public var z(get, set) : Float;
-    inline function get_z() return this[2];
-    inline function set_z(z : Float) return this[2] = z;
+    inline function get_z() return this.z;
+    inline function set_z(z : Float) return this.z = z;
     
     public var w(get, set) : Float;
-    inline function get_w() return this[3];
-    inline function set_w(w : Float) return this[3] = w;
+    inline function get_w() return this.w;
+    inline function set_w(w : Float) return this.w = w;
     
     public var length(get, never) : Float;
-    inline function get_length() return Math.sqrt(dot(fromArray(this)));
+    inline function get_length() return Math.sqrt(dot(new Vec4(x, y, z, w)));
     
     public static inline function fromArray(a : Array<Float>) : Vec4
     {
         return new Vec4(
-            a[0],
-            a[1],
-            a[2],
-            a[3]
+            a[0],   a[1],   a[2],   a[3]
         );
     }
     
@@ -40,10 +55,7 @@ abstract Vec4(Array<Float>)
     public inline function neg() : Vec4
     {
         return new Vec4(
-            -x,
-            -y,
-            -z,
-            -w
+            -x, -y, -z, -w
         );
     }
     
@@ -51,10 +63,7 @@ abstract Vec4(Array<Float>)
     public inline function add(B : Vec4) : Vec4
     {
         return new Vec4(
-            x + B.x,
-            y + B.y,
-            z + B.z,
-            w + B.w
+            x + B.x,    y + B.y,    z + B.z,    w + B.w
         );
     }
     
@@ -62,10 +71,7 @@ abstract Vec4(Array<Float>)
     public inline function sub(B : Vec4) : Vec4
     {
         return new Vec4(
-            x - B.x,
-            y - B.y,
-            z - B.z,
-            w - B.w
+            x - B.x,    y - B.y,    z - B.z,    w - B.w
         );
     }
     
@@ -73,10 +79,7 @@ abstract Vec4(Array<Float>)
     public inline function mul(B : Float) : Vec4
     {
         return new Vec4(
-            x * B,
-            y * B,
-            z * B,
-            w * B
+            x * B,  y * B,  z * B,  w * B
         );
     }
     
@@ -84,10 +87,7 @@ abstract Vec4(Array<Float>)
     public inline function mulMat4x4(B : Mat4x4) : Vec4
     {
         return new Vec4(
-            x * B.xx + y * B.yx + z * B.zx + w * B.wx,
-            x * B.xy + y * B.yy + z * B.zy + w * B.wy,
-            x * B.xz + y * B.yz + z * B.zz + w * B.wz,
-            x * B.xw + y * B.yw + z * B.zw + w * B.ww
+            x * B.xx + y * B.yx + z * B.zx + w * B.wx,  x * B.xy + y * B.yy + z * B.zy + w * B.wy,  x * B.xz + y * B.yz + z * B.zz + w * B.wz,  x * B.xw + y * B.yw + z * B.zw + w * B.ww
         );
     }
     
@@ -95,10 +95,7 @@ abstract Vec4(Array<Float>)
     public inline function div(B : Float) : Vec4
     {
         return new Vec4(
-            x / B,
-            y / B,
-            z / B,
-            w / B
+            x / B,  y / B,  z / B,  w / B
         );
     }
     
@@ -111,10 +108,7 @@ abstract Vec4(Array<Float>)
     public inline function normalize() : Vec4
     {
         return new Vec4(
-            x / length,
-            y / length,
-            z / length,
-            w / length
+            x / length, y / length, z / length, w / length
         );
     }
 }

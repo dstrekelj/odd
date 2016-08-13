@@ -1,9 +1,30 @@
 package odd.math;
+import haxe.ds.Vector;
 
 /**
  * Three-by-three matrix of `Float` types.
  */
-abstract Mat3x3(Array<Float>)
+private class Matrix3x3 {
+    public var xx : Float;  public var xy : Float;  public var xz : Float;
+    public var yx : Float;  public var yy : Float;  public var yz : Float;
+    public var zx : Float;  public var zy : Float;  public var zz : Float;
+    
+    public inline function new(
+        xx : Float, xy : Float, xz : Float,
+        yx : Float, yy : Float, yz : Float,
+        zx : Float, zy : Float, zz : Float
+    ) : Void {
+        this.xx = xx;   this.xy = xy;   this.xz = xz;
+        this.yx = yx;   this.yy = yy;   this.yz = yz;
+        this.zx = zx;   this.zy = zy;   this.zz = zz;
+    }
+    
+    public inline function toString() : String {
+        return '{ { xx : $xx, xy : $xy, xz : $xz }, { yx : $yx, yy : $yy, yz : $yz }, { zx : $zx, zy : $zy, zz : $zz } }';
+    }
+}
+
+abstract Mat3x3(Matrix3x3)
 {
     inline public function new(
         xx : Float, xy : Float, xz : Float,
@@ -11,48 +32,48 @@ abstract Mat3x3(Array<Float>)
         zx : Float, zy : Float, zz : Float
     )
     {
-        this = [
+        this = new Matrix3x3(
             xx, xy, xz,
             yx, yy, yz,
             zx, zy, zz
-        ];
+        );
     }
     
     public var xx(get, set) : Float;
-    inline function get_xx() return this[0];
-    inline function set_xx(xx : Float) return this[0] = xx;
+    inline function get_xx() return this.xx;
+    inline function set_xx(xx : Float) return this.xx = xx;
     
     public var xy(get, set) : Float;
-    inline function get_xy() return this[1];
-    inline function set_xy(xy : Float) return this[1] = xy;
+    inline function get_xy() return this.xy;
+    inline function set_xy(xy : Float) return this.xy = xy;
     
     public var xz(get, set) : Float;
-    inline function get_xz() return this[2];
-    inline function set_xz(xz : Float) return this[2] = xz;
+    inline function get_xz() return this.xz;
+    inline function set_xz(xz : Float) return this.xz = xz;
     
     public var yx(get, set) : Float;
-    inline function get_yx() return this[3];
-    inline function set_yx(yx : Float) return this[3] = yx;
+    inline function get_yx() return this.yx;
+    inline function set_yx(yx : Float) return this.yx = yx;
     
     public var yy(get, set) : Float;
-    inline function get_yy() return this[4];
-    inline function set_yy(yy : Float) return this[4] = yy;
+    inline function get_yy() return this.yy;
+    inline function set_yy(yy : Float) return this.yy = yy;
     
     public var yz(get, set) : Float;
-    inline function get_yz() return this[5];
-    inline function set_yz(yz : Float) return this[5] = yz;
+    inline function get_yz() return this.yz;
+    inline function set_yz(yz : Float) return this.yz = yz;
     
     public var zx(get, set) : Float;
-    inline function get_zx() return this[6];
-    inline function set_zx(zx : Float) return this[6] = zx;
+    inline function get_zx() return this.zx;
+    inline function set_zx(zx : Float) return this.zx = zx;
     
     public var zy(get, set) : Float;
-    inline function get_zy() return this[7];
-    inline function set_zy(zy : Float) return this[7] = zy;
+    inline function get_zy() return this.zy;
+    inline function set_zy(zy : Float) return this.zy = zy;
     
     public var zz(get, set) : Float;
-    inline function get_zz() return this[8];
-    inline function set_zz(zz : Float) return this[8] = zz;
+    inline function get_zz() return this.zz;
+    inline function set_zz(zz : Float) return this.zz = zz;
     
     public static inline function fromArray(a : Array<Float>) : Mat3x3
     {

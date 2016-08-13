@@ -93,11 +93,12 @@ class ScanConverter
         var i = min.y;
         while (i <= max.y)
         {
+            p.y = i + 0.5;
+            
             var j = min.x;
             while (j <= max.x)
             {
                 p.x = j + 0.5;
-                p.y = i + 0.5;
                 
                 var areaP = new Vec3(
                     edge(pA.x, pA.y, pB.x, pB.y, p.x, p.y),

@@ -42,11 +42,11 @@ class InitMacro
             return;
         }
         
-        if (!FileSystem.exists(output.filePath + assetsFolder))
+        if (!FileSystem.exists(output.filePath + "assets"))
         {
             Sys.println("Assets folder does not exist");
             Sys.println("Creating assets folder");
-            FileSystem.createDirectory(output.filePath + assetsFolder);
+            FileSystem.createDirectory(output.filePath + "assets");
         }
         else
         {
@@ -60,8 +60,8 @@ class InitMacro
         {
             if (!FileSystem.isDirectory(assetsPath + "/" + item))
             {
-                Sys.println("Copying to... " + output.filePath + assetsFolder + "/" + item);
-                File.copy(assetsPath + "/" + item, output.filePath + assetsFolder + "/" + item);
+                Sys.println("Copying to... " + output.filePath + "assets/" + item);
+                File.copy(assetsPath + "/" + item, output.filePath + "assets/" + item);
             }
         }
     }

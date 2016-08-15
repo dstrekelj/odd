@@ -70,13 +70,17 @@ class ScanConverter
         
         var hasDefinedPos : Bool = (aPos != null && bPos != null && cPos != null);
         var hasDefinedCol : Bool = (aCol != null && bCol != null && cCol != null);
-        var hasDevinedUV : Bool = (aUV != null && bUV != null && cUV != null);
+        var hasDefinedUV : Bool = (aUV != null && bUV != null && cUV != null);
         
         if (!hasDefinedPos)
         {
             trace("ERROR: No positions! Aborting...");
             return;
         }
+        
+        aPos.z = 1 / aPos.z;
+        bPos.z = 1 / bPos.z;
+        cPos.z = 1 / cPos.z;
         
         var min : Vec2i = new Vec2i(
             Math.floor(Math.min(aPos.x, Math.min(bPos.x, cPos.x))),
@@ -119,20 +123,20 @@ class ScanConverter
                     // TODO: Interpolate
                     areaP /= areaABC;
                     
-                    var z : Float = 1 / (areaP.y / aPos.z + areaP.z / bPos.z + areaP.x / cPos.z);
-                    
-                    if (hasDefinedCol)
-                    {
-                        interpolateColor(shader, areaP, aCol, bCol, cCol);
-                    }
-                    
-                    if (hasDevinedUV)
-                    {
-                        interpolateUV(shader, areaP, aUV, bUV, cUV);
-                    }
+                    var z : Float = 1 / (areaP.y * aPos.z + areaP.z * bPos.z + areaP.x * cPos.z);
                     
                     if (z < depthBuffer.get(j, i))
                     {
+                        if (hasDefinedCol)
+                        {
+                            interpolateColor(shader, areaP, aCol, bCol, cCol);
+                        }
+                        
+                        if (hasDefinedUV)
+                        {
+                            interpolateUV(shader, areaP, aUV, bUV, cUV);
+                        }
+                        
                         fragmentCoordinate.x = p.x;
                         fragmentCoordinate.y = p.y;
                         fragmentCoordinate.z = z;

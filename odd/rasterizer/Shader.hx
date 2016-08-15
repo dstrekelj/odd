@@ -45,7 +45,6 @@ class Shader
      * Fragment shader.
      * 
      * @param fragCoord
-     * @param frontFacing
      * @param pointCoord
      * @return `true` to keep the fragment, `false` to discard it
      */

@@ -15,6 +15,9 @@ class InitMacro
         var outPath : String = FileSystem.fullPath(Compiler.getOutput());
         var output : CompilerOutput = getCompilerOutput(outPath);
         
+        Globals.buildDirectory = output.filePath;
+        Globals.buildName = output.fileName;
+        
         Sys.println("- Creating output directory");
         createOutputDirectory(output);
         

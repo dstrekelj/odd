@@ -3,6 +3,7 @@ package odd.rasterizer;
 import odd.Framebuffer;
 import odd.data.DepthBuffer;
 import odd.geom.Mesh;
+import odd.geom.Scene;
 import odd.math.Mat4x4;
 import odd.rasterizer.ds.Primitive;
 import odd.rasterizer.stages.PrimitiveAssembler;
@@ -20,6 +21,7 @@ import odd.rasterizer.stages.VertexProcessor;
 class Pipeline
 {
     public var shader : Shader;
+    public var scene : Scene;
     
     private var meshes : Array<Mesh>;
     private var transformView : Mat4x4;
@@ -27,11 +29,11 @@ class Pipeline
     private var transformViewport : Mat4x4;
     
     private var depthBuffer : DepthBuffer;
-    private var clearedDepthBuffer : DepthBuffer;
     
     public function new(viewportWidth : Int, viewportHeight : Int)
     {
         shader = new Shader();
+        scene = new Scene();
         
         meshes = new Array<Mesh>();
         // TODO: Define a proper camera type.
@@ -46,19 +48,13 @@ class Pipeline
         );
         
         depthBuffer = new DepthBuffer(viewportWidth, viewportHeight);
-        clearedDepthBuffer = new DepthBuffer(viewportWidth, viewportHeight);
-    }
-    
-    public function addMesh(mesh : Mesh) : Void
-    {
-        meshes.push(mesh);
     }
     
     public function execute(framebuffer : Framebuffer) : Void
     {
-        depthBuffer.blit(0, clearedDepthBuffer.bytes, 0, depthBuffer.width * depthBuffer.height * 8);
+        depthBuffer.clear();
         
-        for (mesh in meshes)
+        for (mesh in scene.meshes)
         {
             shader.transformModel = mesh.transform;
             shader.transformView = transformView;

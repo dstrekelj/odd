@@ -1,10 +1,13 @@
 package odd.data;
+import haxe.io.Bytes;
 
 /**
  * Stores depth values per-pixel.
  */
 class DepthBuffer extends PixelBuffer
 {
+    static var clearData : Bytes;
+    
     /**
      * Creates new depth buffer of `width * height * 8` size for
      * storing depths as double precision floating point values.
@@ -13,9 +16,15 @@ class DepthBuffer extends PixelBuffer
      * @param width Width of buffer
      * @param height Height of buffer
      */
-    public function new(width : Int, height : Int)
+    public function new(width : Int, height : Int) : Void
     {
         super(width, height, 8);
+        
+        if (clearData == null)
+        {
+            clearData = Bytes.alloc(width * height * 8);
+            reset(clearData);
+        }
         
         clear();
     }
@@ -26,7 +35,7 @@ class DepthBuffer extends PixelBuffer
      */
     public inline function clear() : Void
     {
-        for (y in 0...height) for (x in 0...width) bytes.setDouble(getIndex(x, y), Math.POSITIVE_INFINITY);
+        blit(0, clearData, 0, width * height * 8);
     }
     
     /**
@@ -58,5 +67,10 @@ class DepthBuffer extends PixelBuffer
         {
             bytes.setDouble(getIndex(x, y), v);
         }
+    }
+    
+    private inline function reset(bytesData : Bytes) : Void
+    {
+        for (y in 0...height) for (x in 0...width) bytesData.setDouble(getIndex(x, y), Math.POSITIVE_INFINITY);
     }
 }

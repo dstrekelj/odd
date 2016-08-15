@@ -21,7 +21,6 @@ class ScanConverter
 {
     public static function process(framebuffer : Framebuffer, depthBuffer : DepthBuffer, shader : Shader, primitive : Primitive) : Void
     {
-        //trace(primitive);
         switch (primitive)
         {
             case Primitive.Triangle(a, b, c):
@@ -82,6 +81,20 @@ class ScanConverter
         bPos.z = 1 / bPos.z;
         cPos.z = 1 / cPos.z;
         
+        if (hasDefinedUV)
+        {
+            aUV *= aPos.z;
+            bUV *= bPos.z;
+            cUV *= cPos.z;
+        }
+        
+        if (hasDefinedCol)
+        {
+            aCol *= aPos.z;
+            bCol *= bPos.z;
+            cCol *= cPos.z;
+        }
+        
         var min : Vec2i = new Vec2i(
             Math.floor(Math.min(aPos.x, Math.min(bPos.x, cPos.x))),
             Math.floor(Math.min(aPos.y, Math.min(bPos.y, cPos.y)))
@@ -103,11 +116,12 @@ class ScanConverter
         var pixelCoordinate : Vec2i = new Vec2i(0, 0);
         
         var i = min.y;
+        var j = min.x;
         while (i <= max.y)
         {
             p.y = i + 0.5;
             
-            var j = min.x;
+            j = min.x;
             while (j <= max.x)
             {
                 p.x = j + 0.5;
@@ -129,12 +143,12 @@ class ScanConverter
                     {
                         if (hasDefinedCol)
                         {
-                            interpolateColor(shader, areaP, aCol, bCol, cCol);
+                            interpolateColor(shader, z, areaP, aCol, bCol, cCol);
                         }
                         
                         if (hasDefinedUV)
                         {
-                            interpolateUV(shader, areaP, aUV, bUV, cUV);
+                            interpolateUV(shader, z, areaP, aUV, bUV, cUV);
                         }
                         
                         fragmentCoordinate.x = p.x;
@@ -165,23 +179,23 @@ class ScanConverter
         return px * (ay - by) + py * (bx - ax) + (ax * by - ay * bx);
     }
     
-    private static inline function interpolateColor(shader : Shader, areaP : Vec3, aCol : Vec3, bCol : Vec3, cCol : Vec3) : Void
+    private static inline function interpolateColor(shader : Shader, z : Float, areaP : Vec3, aCol : Vec3, bCol : Vec3, cCol : Vec3) : Void
     {
         var r = (areaP.y * aCol.x + areaP.z * bCol.x + areaP.x * cCol.x);
         var g = (areaP.y * aCol.y + areaP.z * bCol.y + areaP.x * cCol.y);
         var b = (areaP.y * aCol.z + areaP.z * bCol.z + areaP.x * cCol.z);
         
-        shader.fragmentColor.x = r;
-        shader.fragmentColor.y = g;
-        shader.fragmentColor.z = b;
+        shader.fragmentColor.x = r * z;
+        shader.fragmentColor.y = g * z;
+        shader.fragmentColor.z = b * z;
     }
     
-    private static inline function interpolateUV(shader : Shader, areaP : Vec3, aUV : Vec2, bUV : Vec2, cUV : Vec2) : Void
+    private static inline function interpolateUV(shader : Shader, z : Float, areaP : Vec3, aUV : Vec2, bUV : Vec2, cUV : Vec2) : Void
     {
         var u = (areaP.y * aUV.x + areaP.z * bUV.x + areaP.x * cUV.x);
         var v = (areaP.y * aUV.y + areaP.z * bUV.y + areaP.x * cUV.y);
         
-        shader.fragmentTextureCoordinate.x = u;
-        shader.fragmentTextureCoordinate.y = v;
+        shader.fragmentTextureCoordinate.x = u * z;
+        shader.fragmentTextureCoordinate.y = v * z;
     }
 }

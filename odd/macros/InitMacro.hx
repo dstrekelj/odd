@@ -10,7 +10,7 @@ class InitMacro
 {
     public static macro function initProject() : Expr
     {
-        Sys.println("- Initialising Odd project");
+        Sys.println("Initialising Odd project");
         
         var outPath : String = FileSystem.fullPath(Compiler.getOutput());
         var output : CompilerOutput = getCompilerOutput(outPath);
@@ -18,13 +18,13 @@ class InitMacro
         Globals.buildDirectory = output.filePath;
         Globals.buildName = output.fileName;
         
-        Sys.println("- Creating output directory");
+        Sys.println("Creating output directory");
         createOutputDirectory(output);
         
-        Sys.println("- Copying assets folder");
+        Sys.println("Copying assets folder");
         copyAssetsFolder(output);
         
-        Sys.println("- Done");
+        Sys.println("Done");
 
         return null;
     }
@@ -35,25 +35,25 @@ class InitMacro
         
         if (assetsFolder == null)
         {
-            Sys.println("No assets folder defined");
+            Sys.println("... No assets folder defined");
             return;
         }
         
         if (assetsFolder == "1")
         {
-            Sys.println("No assets folder path provided");
+            Sys.println("... No assets folder path provided");
             return;
         }
         
         if (!FileSystem.exists(output.filePath + "assets"))
         {
-            Sys.println("Assets folder does not exist");
-            Sys.println("Creating assets folder");
+            Sys.println("... Assets folder does not exist");
+            Sys.println("... Creating assets folder");
             FileSystem.createDirectory(output.filePath + "assets");
         }
         else
         {
-            Sys.println("Found existing assets folder");
+            Sys.println("... Found existing assets folder");
         }
         
         var assetsPath : String = FileSystem.fullPath(assetsFolder);
@@ -63,7 +63,7 @@ class InitMacro
         {
             if (!FileSystem.isDirectory(assetsPath + "/" + item))
             {
-                Sys.println("Copying to... " + output.filePath + "assets/" + item);
+                Sys.println("... Copying to... " + output.filePath + "assets/" + item);
                 File.copy(assetsPath + "/" + item, output.filePath + "assets/" + item);
             }
         }
@@ -73,14 +73,14 @@ class InitMacro
     {
         if (!FileSystem.exists(output.filePath))
         {
-            Sys.println("Output directory does not exist");
-            Sys.println("Creating output directory");
+            Sys.println("... Output directory does not exist");
+            Sys.println("... Creating output directory");
             
             FileSystem.createDirectory(output.filePath);
         }
         else
         {
-            Sys.println("Found existing output directory");
+            Sys.println("... Found existing output directory");
         }
     }
     

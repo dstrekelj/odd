@@ -3,7 +3,7 @@ package odd;
 /**
  * RGB color value abstracted over 24-bit integer.
  */
-abstract ColorRGB(Int) from Int to Int
+abstract Color(Int) from Int to Int
 {
     /**
      * INT
@@ -65,9 +65,9 @@ abstract ColorRGB(Int) from Int to Int
      * @param rgb   0xrrggbb color value
      * @return
      */
-    public static inline function RGB(rgb : Int) : ColorRGB
+    public static inline function RGB(rgb : Int) : Color
     {
-        return new ColorRGB(rgb);
+        return new Color(rgb);
     }
     
     /**
@@ -77,9 +77,9 @@ abstract ColorRGB(Int) from Int to Int
      * @param b [0, 255] blue value
      * @return
      */
-    public static inline function RGBf(r : Float, g : Float, b : Float) : ColorRGB
+    public static inline function RGBf(r : Float, g : Float, b : Float) : Color
     {
-        return new ColorRGB((Std.int(r * 0xff) << 16) | (Std.int(g * 0xff) << 8) | Std.int(b * 0xff));
+        return new Color((Std.int(r * 0xff) << 16) | (Std.int(g * 0xff) << 8) | Std.int(b * 0xff));
     }
     
     /**
@@ -89,8 +89,8 @@ abstract ColorRGB(Int) from Int to Int
      * @param b [0, 1] blue value
      * @return
      */
-    public static inline function RGBi(r : Int, g : Int, b : Int) : ColorRGB
+    public static inline function RGBi(r : Int, g : Int, b : Int) : Color
     {
-        return new ColorRGB(r << 16 | g << 8 | b);
+        return new Color(r << 16 | g << 8 | b);
     }
 }

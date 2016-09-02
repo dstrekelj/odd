@@ -58,6 +58,7 @@ class Pipeline
         {
             shader.transformModel = mesh.transform;
             shader.transformView = transformView;
+            shader.transformProjection = transformProjection;
             
             var i = 0;
             while (i < mesh.geometry.indices.length)

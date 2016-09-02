@@ -1,6 +1,6 @@
 package odd;
 
-import odd._impl.ContextImpl;
+import odd.impl.ContextImpl;
 
 /**
  * Stub.

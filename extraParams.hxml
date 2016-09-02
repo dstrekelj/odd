@@ -1,1 +1,1 @@
---macro odd.macros.InitMacro.initProject()
+--macro odd.tools.macros.Project.init()

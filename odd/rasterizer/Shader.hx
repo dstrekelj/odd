@@ -17,6 +17,8 @@ class Shader
     var transformModel : Mat4x4;
     @:allow(odd.rasterizer.Pipeline)
     var transformView : Mat4x4;
+    @:allow(odd.rasterizer.Pipeline)
+    var transformProjection : Mat4x4;
     
     @:allow(odd.rasterizer.stages.VertexProcessor)
     var vertexColor : Vec3;
@@ -32,12 +34,12 @@ class Shader
     
     public function new()
     {
-        fragmentColor = new Vec3(0, 0, 0);
-        fragmentTextureCoordinate = new Vec2(0, 0);
+        fragmentColor = new Vec3(1, 1, 1);
     }
     
     public function vertex(position : Vec4) : Vec4
     {
+        position.w = 1;
         return position;
     }
     

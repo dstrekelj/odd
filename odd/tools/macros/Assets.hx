@@ -1,11 +1,12 @@
-package odd.macros;
+package odd.tools.macros;
 
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import sys.FileSystem;
 
-class AssetMacro
+class Assets
 {
+    /*
     public static macro function build() : Array<Field>
     {
         Sys.println("- Building assets");
@@ -45,4 +46,5 @@ class AssetMacro
             pos : Context.currentPos()
         });
     }
+    */
 }

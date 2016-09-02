@@ -21,8 +21,6 @@ class VertexPostProcessor
                 case VertexAttribute.Position(x, y, z, w):
                     var p = new Vec4(x, y, z, w);
                     //trace("1. RAW...", p);
-                    p *= transformProjection;
-                    //trace("2. PROJECTION...", p);
                     if (clip(p))
                     {
                         // TODO: Clipping.

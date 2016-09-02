@@ -1,6 +1,6 @@
 package odd.rasterizer.stages;
 
-import odd.ColorRGB;
+import odd.Color;
 import odd.Framebuffer;
 import odd.data.DepthBuffer;
 import odd.math.Vec2;
@@ -161,7 +161,7 @@ class ScanConverter
                         if (shader.fragment(fragmentCoordinate, pixelCoordinate))
                         {
                             depthBuffer.set(j, i, z);
-                            var color = odd.ColorRGB.RGBf(shader.fragmentColor.x, shader.fragmentColor.y, shader.fragmentColor.z);
+                            var color = odd.Color.RGBf(shader.fragmentColor.x, shader.fragmentColor.y, shader.fragmentColor.z);
                             framebuffer.setPixel(j, i, color);
                         }
                     }

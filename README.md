@@ -6,6 +6,14 @@ The idea is to define the rendering process in a cross-platform way, and have it
 
 **Please note that Odd is still under development!**
 
+| Platform | Target         | Repository                                                            | 
+| -------- | -------------- | --------------------------------------------------------------------- |
+| Desktop  | Java (Swing)   | [odd-target-java](https://github.com/dstrekelj/odd-target-java)       |
+| Mobile   | Android        | [odd-target-android](https://github.com/dstrekelj/odd-target-android) |
+| Web      | HTML5 (Canvas) | [odd-target-html5](https://github.com/dstrekelj/odd-target-html5)     |
+
+For examples of use, please visit the [odd-samples](https://github.com/dstrekelj/odd-samples) repository.
+
 ## Instructions
 
 1. Get [Haxe](http://haxe.org/download/). Odd was developed with 3.3.0-rc1, but any 3.2.x version is likely to work as well.

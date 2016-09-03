@@ -1,9 +1,9 @@
 package odd.rasterizer.stages;
 
-import odd.geom.Geometry;
 import odd.rasterizer.ds.Primitive;
 import odd.rasterizer.ds.Vertex;
 import odd.rasterizer.ds.VertexAttribute;
+import odd.rasterizer.object.Geometry;
 
 /**
  * Handles assembling geometry vertices into appropriate primitives.

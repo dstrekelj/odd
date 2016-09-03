@@ -10,7 +10,7 @@ import odd.rasterizer.ds.VertexAttribute;
  */
 class VertexPostProcessor
 {
-    public static function process(vertex : Vertex, transformProjection : Mat4x4, transformViewport : Mat4x4) : Vertex
+    public static function process(vertex : Vertex, transformViewport : Mat4x4) : Vertex
     {
         var processedVertex : Vertex = [];
         

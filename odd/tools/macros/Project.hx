@@ -11,16 +11,14 @@ class Project
 {
     public static macro function init() : Expr
     {
-        if (Compiler.getDefine("display"))
+        if (!Compiler.getDefine("display"))
         {
-            return null;
+            Sys.println("Initialising Odd project.");
+        
+            createOutputDirectory(Utils.getOutputPath());
+            
+            Sys.println("Done.");
         }
-
-        Sys.println("Initialising Odd project.");
-        
-        createOutputDirectory(Utils.getOutputPath());
-        
-        Sys.println("Done.");
 
         return null;
     }

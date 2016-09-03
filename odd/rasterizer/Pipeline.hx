@@ -1,15 +1,16 @@
 package odd.rasterizer;
 
-import odd.Framebuffer;
 import odd.data.DepthBuffer;
-import odd.geom.Mesh;
-import odd.geom.Scene;
 import odd.math.Mat4x4;
 import odd.rasterizer.ds.Primitive;
+import odd.rasterizer.object.Camera;
+import odd.rasterizer.object.Mesh;
+import odd.rasterizer.object.Scene;
 import odd.rasterizer.stages.PrimitiveAssembler;
 import odd.rasterizer.stages.ScanConverter;
 import odd.rasterizer.stages.VertexPostProcessor;
 import odd.rasterizer.stages.VertexProcessor;
+import odd.Framebuffer;
 
 /**
  * Rasterisation pipeline.
@@ -20,25 +21,20 @@ import odd.rasterizer.stages.VertexProcessor;
  */
 class Pipeline
 {
-    public var shader : Shader;
-    public var scene : Scene;
+    var scene : Scene;
+    var shader : Shader;
+
+    var transformViewport : Mat4x4;
     
-    private var meshes : Array<Mesh>;
-    private var transformView : Mat4x4;
-    private var transformProjection : Mat4x4;
-    private var transformViewport : Mat4x4;
+    var depthBuffer : DepthBuffer;
     
-    private var depthBuffer : DepthBuffer;
-    
-    public function new(viewportWidth : Int, viewportHeight : Int)
+    public function new(viewportWidth : Int, viewportHeight : Int) : Void
     {
         shader = new Shader();
         scene = new Scene();
-        
-        meshes = new Array<Mesh>();
-        // TODO: Define a proper camera type.
-        transformView = Mat4x4.translate(0, 0, -4);
-        transformProjection = Mat4x4.perspective(100, 4 / 3, 1, 100);
+
+        //transformProjection = Mat4x4.perspective(100, 4 / 3, 1, 100);
+
         // Negative Y.y component to mirror image vertically
         transformViewport = new Mat4x4(
             viewportWidth / 2,   0,                     0,  0,
@@ -49,16 +45,28 @@ class Pipeline
         
         depthBuffer = new DepthBuffer(viewportWidth, viewportHeight);
     }
+
+    public function setScene(scene : Scene) : Void
+    {
+        this.scene = scene;
+    }
+
+    public function setShader(shader : Shader) : Void
+    {
+        this.shader = shader;
+    }
     
     public function execute(framebuffer : Framebuffer) : Void
     {
+        if (scene == null) return;
+
         depthBuffer.clear();
         
         for (mesh in scene.meshes)
         {
             shader.transformModel = mesh.transform;
-            shader.transformView = transformView;
-            shader.transformProjection = transformProjection;
+            shader.transformView = scene.camera.transformView;
+            shader.transformProjection = scene.camera.transformProjection;
             
             var i = 0;
             while (i < mesh.geometry.indices.length)
@@ -88,9 +96,9 @@ class Pipeline
                         // Vertex post-processing
                         //trace("3. VERTEX POST-PROCESSING...");
                         
-                        a = VertexPostProcessor.process(a, transformProjection, transformViewport);
-                        b = VertexPostProcessor.process(b, transformProjection, transformViewport);
-                        c = VertexPostProcessor.process(c, transformProjection, transformViewport);
+                        a = VertexPostProcessor.process(a, transformViewport);
+                        b = VertexPostProcessor.process(b, transformViewport);
+                        c = VertexPostProcessor.process(c, transformViewport);
                         primitive = Primitive.Triangle(a, b, c);
                         
                         //trace(primitive);

@@ -1,4 +1,4 @@
-package odd.geom;
+package odd.rasterizer.object;
 
 import odd.math.Mat4x4;
 import odd.rasterizer.RenderMethod;

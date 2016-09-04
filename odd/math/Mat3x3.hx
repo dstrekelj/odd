@@ -1,5 +1,4 @@
 package odd.math;
-import haxe.ds.Vector;
 
 /**
  * Three-by-three matrix of `Float` types.

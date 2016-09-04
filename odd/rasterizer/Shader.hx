@@ -13,23 +13,23 @@ import odd.math.Vec4;
  */
 class Shader 
 {
-    @:allow(odd.rasterizer.Pipeline)
+    @:allow(odd.rasterizer.pipeline.Pipeline)
     var transformModel : Mat4x4;
-    @:allow(odd.rasterizer.Pipeline)
+    @:allow(odd.rasterizer.pipeline.Pipeline)
     var transformView : Mat4x4;
-    @:allow(odd.rasterizer.Pipeline)
+    @:allow(odd.rasterizer.pipeline.Pipeline)
     var transformProjection : Mat4x4;
     
-    @:allow(odd.rasterizer.stages.VertexProcessor)
+    @:allow(odd.rasterizer.pipeline.VertexProcessor)
     var vertexColor : Vec3;
-    @:allow(odd.rasterizer.stages.VertexProcessor)
+    @:allow(odd.rasterizer.pipeline.VertexProcessor)
     var vertexNormal : Vec3;
-    @:allow(odd.rasterizer.stages.VertexProcessor)
+    @:allow(odd.rasterizer.pipeline.VertexProcessor)
     var vertexTextureCoordinate : Vec2;
     
-    @:allow(odd.rasterizer.stages.ScanConverter)
+    @:allow(odd.rasterizer.pipeline.ScanConverter)
     var fragmentColor : Vec3;
-    @:allow(odd.rasterizer.stages.ScanConverter)
+    @:allow(odd.rasterizer.pipeline.ScanConverter)
     var fragmentTextureCoordinate : Vec2;
     
     public function new()

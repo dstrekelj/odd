@@ -1,9 +1,9 @@
-package odd.rasterizer.object;
+package odd.rasterizer;
 
-import odd.rasterizer.object.Mesh;
-import odd.rasterizer.object.Camera;
+import odd.rasterizer.Camera;
+import odd.rasterizer.Mesh;
 
-@:allow(odd.rasterizer.Pipeline)
+@:allow(odd.rasterizer.pipeline.Pipeline)
 class Scene
 {
     var meshes : Array<Mesh>;

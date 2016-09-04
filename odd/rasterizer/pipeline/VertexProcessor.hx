@@ -1,4 +1,4 @@
-package odd.rasterizer.stages;
+package odd.rasterizer.pipeline;
 
 import odd.math.Vec2;
 import odd.math.Vec3;

@@ -1,7 +1,8 @@
-package odd.rasterizer.object;
+package odd.rasterizer;
 
 import odd.math.Mat4x4;
-import odd.rasterizer.RenderMethod;
+import odd.rasterizer.pipeline.RenderMethod;
+import odd.rasterizer.Geometry;
 
 /**
  * Mesh.

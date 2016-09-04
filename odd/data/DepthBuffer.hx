@@ -1,4 +1,5 @@
 package odd.data;
+
 import haxe.io.Bytes;
 
 /**

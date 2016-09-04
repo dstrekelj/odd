@@ -1,8 +1,8 @@
-package odd.rasterizer.object;
+package odd.rasterizer;
 
 import odd.math.Mat4x4;
 
-@:allow(odd.rasterizer.Pipeline)
+@:allow(odd.rasterizer.pipeline.Pipeline)
 class Camera
 {
     var transformProjection : Mat4x4;

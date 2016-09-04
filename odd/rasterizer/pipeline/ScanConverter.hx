@@ -1,7 +1,5 @@
-package odd.rasterizer.stages;
+package odd.rasterizer.pipeline;
 
-import odd.Color;
-import odd.Framebuffer;
 import odd.data.DepthBuffer;
 import odd.math.Vec2;
 import odd.math.Vec2i;
@@ -11,6 +9,7 @@ import odd.rasterizer.Shader;
 import odd.rasterizer.ds.Primitive;
 import odd.rasterizer.ds.Vertex;
 import odd.rasterizer.ds.VertexAttribute;
+import odd.Framebuffer;
 
 /**
  * Handles the scan conversion of a primitive.

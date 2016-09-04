@@ -1,6 +1,4 @@
-package odd.rasterizer.object;
-
-import odd.math.Vec3;
+package odd.rasterizer;
 
 /**
  * Geometry.

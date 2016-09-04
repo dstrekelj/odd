@@ -1,15 +1,13 @@
-package odd.rasterizer;
+package odd.rasterizer.pipeline;
 
 import odd.data.DepthBuffer;
 import odd.math.Mat4x4;
 import odd.rasterizer.ds.Primitive;
-import odd.rasterizer.object.Camera;
-import odd.rasterizer.object.Mesh;
-import odd.rasterizer.object.Scene;
-import odd.rasterizer.stages.PrimitiveAssembler;
-import odd.rasterizer.stages.ScanConverter;
-import odd.rasterizer.stages.VertexPostProcessor;
-import odd.rasterizer.stages.VertexProcessor;
+import odd.rasterizer.pipeline.PrimitiveAssembler;
+import odd.rasterizer.pipeline.ScanConverter;
+import odd.rasterizer.pipeline.VertexPostProcessor;
+import odd.rasterizer.pipeline.VertexProcessor;
+import odd.rasterizer.Scene;
 import odd.Framebuffer;
 
 /**
@@ -27,13 +25,11 @@ class Pipeline
     var transformViewport : Mat4x4;
     
     var depthBuffer : DepthBuffer;
-    
+
     public function new(viewportWidth : Int, viewportHeight : Int) : Void
     {
-        shader = new Shader();
-        scene = new Scene();
-
-        //transformProjection = Mat4x4.perspective(100, 4 / 3, 1, 100);
+        scene = null;
+        shader = null;
 
         // Negative Y.y component to mirror image vertically
         transformViewport = new Mat4x4(
@@ -58,7 +54,7 @@ class Pipeline
     
     public function execute(framebuffer : Framebuffer) : Void
     {
-        if (scene == null) return;
+        if (shader == null || scene == null) return;
 
         depthBuffer.clear();
         
@@ -79,32 +75,23 @@ class Pipeline
                 
                 // Primitive assembly
                 var primitive = PrimitiveAssembler.assembleTriangle(primitiveIndices, mesh.geometry);
-                //trace("1. PRIMITIVE ASSEMBLY...", primitive);
                 
                 switch (primitive)
                 {
                     case Primitive.Triangle(a, b, c):
                         // Vertex processing
-                        //trace("2. VERTEX PROCESSING...");
-                        
                         a = VertexProcessor.process(a, shader);
                         b = VertexProcessor.process(b, shader);
                         c = VertexProcessor.process(c, shader);
                         primitive = Primitive.Triangle(a, b, c);
                         
-                        //trace(primitive);
-                        // Vertex post-processing
-                        //trace("3. VERTEX POST-PROCESSING...");
-                        
+                        // Vertex post-processing                        
                         a = VertexPostProcessor.process(a, transformViewport);
                         b = VertexPostProcessor.process(b, transformViewport);
                         c = VertexPostProcessor.process(c, transformViewport);
                         primitive = Primitive.Triangle(a, b, c);
                         
-                        //trace(primitive);
-                        // Scan conversion
-                        //trace("4. SCAN CONVERSION...");
-                        
+                        // Scan conversion                        
                         ScanConverter.process(framebuffer, depthBuffer, shader, primitive);
                     case _:
                         return;

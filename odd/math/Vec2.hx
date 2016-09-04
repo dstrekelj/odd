@@ -1,7 +1,5 @@
 package odd.math;
 
-import haxe.ds.Vector;
-
 /**
  * Two-component vector of `Float` types.
  */

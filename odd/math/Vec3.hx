@@ -126,4 +126,13 @@ abstract Vec3(Vector3)
             x / length, y / length, z / length
         );
     }
+
+    public inline function lerp(to : Vec3, factor : Float) : Vec3
+    {
+        return new Vec3(
+            x + (to.x - x) * factor,
+            y + (to.y - y) * factor,
+            z + (to.z - z) * factor
+        );
+    }
 }

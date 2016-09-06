@@ -100,4 +100,12 @@ abstract Vec2(Vector2)
             x / length, y / length
         );
     }
+
+    public inline function lerp(to : Vec2, factor : Float) : Vec2
+    {
+        return new Vec2(
+            x + (to.x - x) * factor,
+            y + (to.y - y) * factor
+        );
+    }
 }

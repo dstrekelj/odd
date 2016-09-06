@@ -110,4 +110,14 @@ abstract Vec4(Vector4)
             x / length, y / length, z / length, w / length
         );
     }
+    
+    public inline function lerp(to : Vec4, factor : Float) : Vec4
+    {
+        return new Vec4(
+            x + (to.x - x) * factor,
+            y + (to.y - y) * factor,
+            z + (to.z - z) * factor,
+            w + (to.w - w) * factor
+        );
+    }
 }

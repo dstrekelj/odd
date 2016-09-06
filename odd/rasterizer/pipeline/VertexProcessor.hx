@@ -1,39 +1,30 @@
 package odd.rasterizer.pipeline;
 
-import odd.math.Vec2;
-import odd.math.Vec3;
-import odd.math.Vec4;
-import odd.rasterizer.ds.Vertex;
-import odd.rasterizer.ds.VertexAttribute;
+import haxe.ds.Vector;
+
+import odd.rasterizer.ds.Primitive;
 
 /**
  * Handles vertex processing.
  */
 class VertexProcessor
 {
-    public static function process(vertex : Vertex, shader : Shader) : Vertex
+    public static function process(primitives : Vector<Primitive>, shader : Shader) : Void
     {
-        var processedVertex : Vertex = [];
-        
-        for (attribute in vertex)
+        switch (primitives[0])
         {
-            switch (attribute)
-            {
-                case VertexAttribute.Position(x, y, z, w):
-                    var p = shader.vertex(new Vec4(x, y, z, w));
-                    processedVertex.push(VertexAttribute.Position(p.x, p.y, p.z, p.w));
-                case VertexAttribute.Color(r, g, b):
-                    shader.vertexColor = new Vec3(r, g, b);
-                    processedVertex.push(attribute);
-                case VertexAttribute.Normal(x, y, z):
-                    shader.vertexNormal = new Vec3(x, y, z);
-                    processedVertex.push(attribute);
-                case VertexAttribute.TextureCoordinate(u, v):
-                    shader.vertexTextureCoordinate = new Vec2(u, v);
-                    processedVertex.push(attribute);
-            }
+            case Primitive.Line(a, b):
+                a.position = shader.vertex(a.position);
+                b.position = shader.vertex(b.position);
+                primitives[0] = Primitive.Line(a, b);
+            case Primitive.Point(a):
+                a.position = shader.vertex(a.position);
+                primitives[0] = Primitive.Point(a);
+            case Primitive.Triangle(a, b, c):
+                a.position = shader.vertex(a.position);
+                b.position = shader.vertex(b.position);
+                c.position = shader.vertex(c.position);
+                primitives[0] = Primitive.Triangle(a, b, c);
         }
-        
-        return processedVertex;
     }
 }

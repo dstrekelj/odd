@@ -8,7 +8,6 @@ import odd.math.Vec4;
 import odd.rasterizer.Shader;
 import odd.rasterizer.ds.Primitive;
 import odd.rasterizer.ds.Vertex;
-import odd.rasterizer.ds.VertexAttribute;
 import odd.Framebuffer;
 
 /**
@@ -30,83 +29,49 @@ class ScanConverter
     
     private static function processTriangle(framebuffer : Framebuffer, depthBuffer : DepthBuffer, shader : Shader, a : Vertex, b : Vertex, c : Vertex) : Void
     {
-        var aPos : Vec3 = null; var aCol : Vec3 = null; var aUV : Vec2 = null;
-        for (attribute in a)
+        trace("...Process triangle");
+        var haveVerticesDefinedColor = (a.color != null) || (b.color != null) || (c.color != null);
+        var haveVerticesDefinedNormal = (a.normal != null) || (b.normal != null) || (c.normal != null);
+        var haveVerticesDefinedTextureCoordinate = (a.textureCoordinate != null) || (b.textureCoordinate != null) || (c.textureCoordinate != null); 
+
+        a.position.z = 1 / a.position.z;
+        b.position.z = 1 / b.position.z;
+        c.position.z = 1 / c.position.z;
+        
+        if (haveVerticesDefinedColor)
         {
-            switch (attribute)
-            {
-                case VertexAttribute.Color(r, g, b):            aCol = new Vec3(r, g, b);
-                case VertexAttribute.Position(x, y, z, w):      aPos = new Vec3(x, y, z);
-                case VertexAttribute.TextureCoordinate(u, v):   aUV = new Vec2(u, v);
-                case _:
-            }
+            a.color *= a.position.z;
+            b.color *= b.position.z;
+            c.color *= c.position.z;
         }
         
-        var bPos : Vec3 = null; var bCol : Vec3 = null;  var bUV : Vec2 = null;
-        for (attribute in b)
+        if (haveVerticesDefinedNormal)
         {
-            switch (attribute)
-            {
-                case VertexAttribute.Color(r, g, b):            bCol = new Vec3(r, g, b);
-                case VertexAttribute.Position(x, y, z, w):      bPos = new Vec3(x, y, z);
-                case VertexAttribute.TextureCoordinate(u, v):   bUV = new Vec2(u, v);
-                case _:
-            }
+            a.normal *= a.position.z;
+            b.normal *= b.position.z;
+            c.normal *= c.position.z;
         }
-        
-        var cPos : Vec3 = null; var cCol : Vec3 = null;  var cUV : Vec2 = null;
-        for (attribute in c)
+
+        if (haveVerticesDefinedTextureCoordinate)
         {
-            switch (attribute)
-            {
-                case VertexAttribute.Color(r, g, b):            cCol = new Vec3(r, g, b);
-                case VertexAttribute.Position(x, y, z, w):      cPos = new Vec3(x, y, z);
-                case VertexAttribute.TextureCoordinate(u, v):   cUV = new Vec2(u, v);
-                case _:
-            }
-        }
-        
-        var hasDefinedPos : Bool = (aPos != null && bPos != null && cPos != null);
-        var hasDefinedCol : Bool = (aCol != null && bCol != null && cCol != null);
-        var hasDefinedUV : Bool = (aUV != null && bUV != null && cUV != null);
-        
-        if (!hasDefinedPos)
-        {
-            trace("ERROR: No positions! Aborting...");
-            return;
-        }
-        
-        aPos.z = 1 / aPos.z;
-        bPos.z = 1 / bPos.z;
-        cPos.z = 1 / cPos.z;
-        
-        if (hasDefinedUV)
-        {
-            aUV *= aPos.z;
-            bUV *= bPos.z;
-            cUV *= cPos.z;
-        }
-        
-        if (hasDefinedCol)
-        {
-            aCol *= aPos.z;
-            bCol *= bPos.z;
-            cCol *= cPos.z;
+            a.textureCoordinate *= a.position.z;
+            b.textureCoordinate *= b.position.z;
+            c.textureCoordinate *= c.position.z;
         }
         
         var min : Vec2i = new Vec2i(
-            Math.floor(Math.min(aPos.x, Math.min(bPos.x, cPos.x))),
-            Math.floor(Math.min(aPos.y, Math.min(bPos.y, cPos.y)))
+            Math.floor(Math.max(0, Math.min(a.position.x, Math.min(b.position.x, c.position.x)))),
+            Math.floor(Math.max(0, Math.min(a.position.y, Math.min(b.position.y, c.position.y))))
         );
         var max : Vec2i = new Vec2i(
-            Math.floor(Math.max(aPos.x, Math.max(bPos.x, cPos.x))),
-            Math.floor(Math.max(aPos.y, Math.max(bPos.y, cPos.y)))
+            Math.floor(Math.min(framebuffer.width, Math.max(a.position.x, Math.max(b.position.x, c.position.x)))),
+            Math.floor(Math.min(framebuffer.height, Math.max(a.position.y, Math.max(b.position.y, c.position.y))))
         );
         
         var p : Vec2 = new Vec2(0, 0);
-        var pA : Vec2 = new Vec2(aPos.x, aPos.y);
-        var pB : Vec2 = new Vec2(bPos.x, bPos.y);
-        var pC : Vec2 = new Vec2(cPos.x, cPos.y);
+        var pA : Vec2 = new Vec2(a.position.x, a.position.y);
+        var pB : Vec2 = new Vec2(b.position.x, b.position.y);
+        var pC : Vec2 = new Vec2(c.position.x, c.position.y);
         
         var areaABC : Float = edge(pA.x, pA.y, pB.x, pB.y, pC.x, pC.y);
         var areaP : Vec3 = new Vec3(0, 0, 0);
@@ -133,21 +98,20 @@ class ScanConverter
                 
                 if (areaP.x <= 0 && areaP.y <= 0 && areaP.z <= 0)
                 {
-                    // TODO: Interpolate
                     areaP /= areaABC;
                     
-                    var z : Float = 1 / (areaP.y * aPos.z + areaP.z * bPos.z + areaP.x * cPos.z);
+                    var z : Float = 1 / (areaP.y * a.position.z + areaP.z * b.position.z + areaP.x * c.position.z);
                     
                     if (z < depthBuffer.get(j, i))
                     {
-                        if (hasDefinedCol)
+                        if (haveVerticesDefinedColor)
                         {
-                            interpolateColor(shader, z, areaP, aCol, bCol, cCol);
+                            interpolateColor(shader, z, areaP, a.color, b.color, c.color);
                         }
                         
-                        if (hasDefinedUV)
+                        if (haveVerticesDefinedTextureCoordinate)
                         {
-                            interpolateUV(shader, z, areaP, aUV, bUV, cUV);
+                            interpolateUV(shader, z, areaP, a.textureCoordinate, b.textureCoordinate, c.textureCoordinate);
                         }
                         
                         fragmentCoordinate.x = p.x;

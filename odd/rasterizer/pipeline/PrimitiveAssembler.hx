@@ -1,5 +1,10 @@
 package odd.rasterizer.pipeline;
 
+import haxe.ds.Vector;
+
+import odd.math.Vec2;
+import odd.math.Vec3;
+import odd.math.Vec4;
 import odd.rasterizer.ds.Primitive;
 import odd.rasterizer.ds.Vertex;
 import odd.rasterizer.Geometry;
@@ -11,48 +16,49 @@ import odd.rasterizer.Geometry;
  */
 class PrimitiveAssembler
 {
-    public static function assembleTriangle(indices : Array<Int>, geometry : Geometry) : Primitive
+    public static function assembleTriangle(indices : Vector<Int>, geometry : Geometry) : Primitive
     {
-        var vertices : Array<Vertex> = [];
+        var vertices : Vector<Vertex> = new Vector<Vertex>(3);
         
-        for (i in indices)
+        for (i in 0...indices.length)
         {
-            var vertex : Vertex = [];
-            
-            vertex.push(VertexAttribute.Position(
-                geometry.positions[i * 3],
-                geometry.positions[i * 3 + 1],
-                geometry.positions[i * 3 + 2],
+            var index = indices[i];
+            var vertex = new Vertex();
+
+            vertex.position = new Vec4(
+                geometry.positions[index * 3],
+                geometry.positions[index * 3 + 1],
+                geometry.positions[index * 3 + 2],
                 1
-            ));
+            );
             
             if (geometry.colors.length > 0)
             {
-                vertex.push(VertexAttribute.Color(
-                    geometry.colors[i * 3],
-                    geometry.colors[i * 3 + 1],
-                    geometry.colors[i * 3 + 2]
-                ));
+                vertex.color = new Vec3(
+                    geometry.colors[index * 3],
+                    geometry.colors[index * 3 + 1],
+                    geometry.colors[index * 3 + 2]
+                );
             }
             
             if (geometry.normals.length > 0)
             {
-                vertex.push(VertexAttribute.Normal(
-                    geometry.normals[i * 3],
-                    geometry.normals[i * 3 + 1],
-                    geometry.normals[i * 3 + 2]
-                ));
+                vertex.normal = new Vec3(
+                    geometry.normals[index * 3],
+                    geometry.normals[index * 3 + 1],
+                    geometry.normals[index * 3 + 2]
+                );
             }
             
             if (geometry.textureCoordinates.length > 0)
             {
-                vertex.push(VertexAttribute.TextureCoordinate(
-                    geometry.textureCoordinates[i * 2],
-                    geometry.textureCoordinates[i * 2 + 1]
-                ));
+                vertex.textureCoordinate = new Vec2(
+                    geometry.textureCoordinates[index * 2],
+                    geometry.textureCoordinates[index * 2 + 1]
+                );
             }
-            
-            vertices.push(vertex);
+
+            vertices[i] = vertex;
         }
         
         return Primitive.Triangle(vertices[0], vertices[1], vertices[2]);

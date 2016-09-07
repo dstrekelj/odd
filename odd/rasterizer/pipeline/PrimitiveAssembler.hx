@@ -5,7 +5,7 @@ import haxe.ds.Vector;
 import odd.math.Vec2;
 import odd.math.Vec3;
 import odd.math.Vec4;
-import odd.rasterizer.ds.Primitive;
+import odd.rasterizer.ds.primitives.Triangle;
 import odd.rasterizer.ds.Vertex;
 import odd.rasterizer.Geometry;
 
@@ -16,7 +16,7 @@ import odd.rasterizer.Geometry;
  */
 class PrimitiveAssembler
 {
-    public static function assembleTriangle(indices : Vector<Int>, geometry : Geometry) : Primitive
+    public static function assembleTriangle(indices : Vector<Int>, geometry : Geometry) : Triangle
     {
         var vertices : Vector<Vertex> = new Vector<Vertex>(3);
         
@@ -61,6 +61,6 @@ class PrimitiveAssembler
             vertices[i] = vertex;
         }
         
-        return Primitive.Triangle(vertices[0], vertices[1], vertices[2]);
+        return new Triangle(vertices[0], vertices[1], vertices[2]);
     }
 }

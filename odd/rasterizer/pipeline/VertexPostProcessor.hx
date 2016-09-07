@@ -1,10 +1,8 @@
 package odd.rasterizer.pipeline;
 
-import haxe.ds.Vector;
-
 import odd.math.Mat4x4;
 import odd.math.Vec4;
-import odd.rasterizer.ds.Primitive;
+import odd.rasterizer.ds.primitives.Triangle;
 import odd.rasterizer.ds.Vertex;
 
 /**
@@ -12,58 +10,32 @@ import odd.rasterizer.ds.Vertex;
  */
 class VertexPostProcessor
 {
-    public static function process(primitives : Vector<Primitive>, transformViewport : Mat4x4) : Void
+    public static function process(triangle : Triangle, transformViewport : Mat4x4) : Void
     {
-        switch (primitives[0])
-        {
-            case Primitive.Line(a, b):
-                clipLine(a, b, primitives, transformViewport);
-            case Primitive.Point(a):
-                clipPoint(a, primitives, transformViewport);
-            case Primitive.Triangle(a, b, c):
-                clipTriangle(a, b, c, primitives, transformViewport);
-        }
-    }
+        var aClipState = getClipState(triangle.a.position);
+        var bClipState = getClipState(triangle.b.position);
+        var cClipState = getClipState(triangle.c.position);
 
-    static function clipLine(a : Vertex, b : Vertex, primitives : Vector<Primitive>, transformViewport : Mat4x4) : Void
-    {
-        var aClipState = getClipState(a.position);
-        var bClipState = getClipState(b.position);
-
-        if ((aClipState & bClipState) != ClipState.OUTSIDE)
-        {
-            transform(a, transformViewport);
-            transform(b, transformViewport);
-            primitives[0] = Primitive.Line(a, b);
-        }
-    }
-
-    static function clipPoint(a : Vertex, primitives : Vector<Primitive>, transformViewport : Mat4x4) : Void
-    {
-        if (getClipState(a.position) == ClipState.INSIDE)
-        {
-            transform(a, transformViewport);
-            primitives[0] = Primitive.Point(a);
-        }
-    }
-    
-    static function clipTriangle(a : Vertex, b : Vertex, c : Vertex, primitives : Vector<Primitive>, transformViewport : Mat4x4) : Void
-    {
-        var aClipState = getClipState(a.position);
-        var bClipState = getClipState(b.position);
-        var cClipState = getClipState(c.position);
-        trace(aClipState, bClipState, cClipState);
         if ((aClipState & bClipState & cClipState) == ClipState.INSIDE)
         {
-            trace("inside");
-            transform(a, transformViewport);
-            transform(b, transformViewport);
-            transform(c, transformViewport);
-            primitives[0] = Primitive.Triangle(a, b, c);
+            transformVertex(triangle.a, transformViewport);
+            transformVertex(triangle.b, transformViewport);
+            transformVertex(triangle.c, transformViewport);
+            triangle.calculateFaceNormal();
+            
+            if (triangle.faceNormal.z < 0) {
+                triangle.isValid = true;
+            } else {
+                triangle.isValid = false;
+            }
+        }
+        else
+        {
+            triangle.isValid = false;
         }
     }
 
-    static function transform(v : Vertex, transformViewport : Mat4x4) : Void
+    static function transformVertex(v : Vertex, transformViewport : Mat4x4) : Void
     {
         v.position /= v.position.w;
         v.position *= transformViewport;

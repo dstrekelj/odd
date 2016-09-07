@@ -1,5 +1,7 @@
 package odd.math;
 
+import odd.math.Vec3;
+
 /**
  * Four-component vector of `Float` types.
  */
@@ -17,7 +19,7 @@ private class Vector4 {
 
 abstract Vec4(Vector4)
 {
-    inline public function new(x : Float, y : Float, z : Float, w : Float)
+    public inline function new(x : Float, y : Float, z : Float, w : Float)
     {
         this = new Vector4(
             x,  y,  z,  w
@@ -42,6 +44,13 @@ abstract Vec4(Vector4)
     
     public var length(get, never) : Float;
     inline function get_length() return Math.sqrt(dot(new Vec4(x, y, z, w)));
+    
+    @:to public inline function toVec3() : Vec3
+    {
+        return new Vec3(
+            x, y, z
+        );
+    }
     
     public static inline function fromArray(a : Array<Float>) : Vec4
     {

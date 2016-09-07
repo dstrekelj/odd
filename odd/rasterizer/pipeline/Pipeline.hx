@@ -4,7 +4,7 @@ import haxe.ds.Vector;
 
 import odd.data.DepthBuffer;
 import odd.math.Mat4x4;
-import odd.rasterizer.ds.Primitive;
+import odd.rasterizer.ds.primitives.Triangle;
 import odd.rasterizer.pipeline.PrimitiveAssembler;
 import odd.rasterizer.pipeline.ScanConverter;
 import odd.rasterizer.pipeline.VertexPostProcessor;
@@ -60,9 +60,7 @@ class Pipeline
 
         depthBuffer.clear();
 
-        var primitiveIndices = new Vector<Int>(3);
-        // Maximum number of vertices after clipping is 9, so 6 triangle primitives
-        var primitives = new Vector<Primitive>(6);
+        var triangleIndices = new Vector<Int>(3);
 
         for (mesh in scene.meshes)
         {
@@ -73,56 +71,25 @@ class Pipeline
             var i = 0;
             while (i < mesh.geometry.indices.length)
             {   
-                primitiveIndices[0] = mesh.geometry.indices[i];
-                primitiveIndices[1] = mesh.geometry.indices[i + 1];
-                primitiveIndices[2] = mesh.geometry.indices[i + 2];
+                triangleIndices[0] = mesh.geometry.indices[i];
+                triangleIndices[1] = mesh.geometry.indices[i + 1];
+                triangleIndices[2] = mesh.geometry.indices[i + 2];
         
                 // Primitive assembly
-                trace("Primitive assembly");
-                primitives[0] = PrimitiveAssembler.assembleTriangle(primitiveIndices, mesh.geometry);
-                for (p in 1...6) {
-                    primitives[p] = null;
-                }
+                var triangle = PrimitiveAssembler.assembleTriangle(triangleIndices, mesh.geometry);
 
                 // Vertex processing
-                trace("Vertex processing");
-                VertexProcessor.process(primitives, shader);
-  
-                // Vertex post-processing
-                trace("Vertex post-processing");
-                VertexPostProcessor.process(primitives, transformViewport);
+                VertexProcessor.process(triangle, shader);
 
-                // Scan conversion
-                trace("Scan conversion");
-                for (primitive in primitives)
+                // Vertex post-processing
+                VertexPostProcessor.process(triangle, transformViewport);
+
+                if (triangle.isValid)
                 {
-                    if (primitive != null)
-                    {
-                        ScanConverter.process(framebuffer, depthBuffer, shader, primitive);
-                    }
+                    // Scan conversion
+                    ScanConverter.process(framebuffer, depthBuffer, shader, triangle);
                 }
 
-                /*switch (primitive)
-                {
-                    case Primitive.Triangle(a, b, c):
-                        // Vertex processing
-                        a = VertexProcessor.process(a, shader);
-                        b = VertexProcessor.process(b, shader);
-                        c = VertexProcessor.process(c, shader);
-                        primitives[0] = Primitive.Triangle(a, b, c);
-                        
-                        // Vertex post-processing                        
-                        a = VertexPostProcessor.process(a, transformViewport);
-                        b = VertexPostProcessor.process(b, transformViewport);
-                        c = VertexPostProcessor.process(c, transformViewport);
-                        primitive = Primitive.Triangle(a, b, c);
-                        
-                        // Scan conversion                        
-                        ScanConverter.process(framebuffer, depthBuffer, shader, primitive);
-                    case _:
-                        return;
-                }*/
-                
                 i += 3;
             }
         }

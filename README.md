@@ -16,13 +16,7 @@ For examples of use, please visit the [odd-samples](https://github.com/dstrekelj
 
 ## Instructions
 
-1. Get [Haxe](http://haxe.org/download/). Odd was developed with 3.3.0-rc1, but any 3.2.x version is likely to work as well.
-2. Get odd: `haxelib git odd https://github.com/dstrekelj/odd.git`.
+1. Get [Haxe](http://haxe.org/download/). Odd was developed with 3.3.0-rc1. The 3.2.x versions should work, but with possible performance issues (the Java target is very slow).
+2. Get odd: `haxelib git odd https://github.com/dstrekelj/odd.git` or `haxelib dev odd path/to/downloaded/odd/repository`.
 3. Get one (or several!) Odd targets from `odd-target-*` repositories.
 4. Try the samples in the `odd-samples` repository.
-
-## Documentation
-
-I have tried to keep the sources well documented, but not everything can fit into a couple of comment lines.
-
-Please refer to the repository wiki for more complete documentation.

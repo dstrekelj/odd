@@ -22,8 +22,8 @@ Odd was developed with 3.3.0-rc1. The 3.2.x versions should work, but with possi
 
 2. Get Odd.
 
-For git users: `haxelib git odd https://github.com/dstrekelj/odd.git`
-Everyone else: `haxelib dev odd path/to/downloaded/odd/repository`
+* For git users: `haxelib git odd https://github.com/dstrekelj/odd.git`
+* Everyone else: `haxelib dev odd path/to/downloaded/odd/repository`
 
 3. Get one (or several!) Odd targets from `odd-target-*` repositories.
 

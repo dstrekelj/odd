@@ -1,3 +1,5 @@
+<p align="center"><img src="https://thumbs.gfycat.com/DescriptiveIdolizedGuernseycow-size_restricted.gif"/></p>
+
 # odd
 
 Odd is a peculiar little software renderer written in Haxe that aims to be platform agnostic.

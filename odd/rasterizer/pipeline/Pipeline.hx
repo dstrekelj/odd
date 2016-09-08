@@ -56,6 +56,8 @@ class Pipeline
     
     public function execute(framebuffer : Framebuffer) : Void
     {
+        var tris = 0;
+
         if (shader == null || scene == null) return;
 
         depthBuffer.clear();
@@ -67,6 +69,7 @@ class Pipeline
             shader.transformModel = mesh.transform;
             shader.transformView = scene.camera.transformView;
             shader.transformProjection = scene.camera.transformProjection;
+            shader.texture = mesh.texture;
             
             var i = 0;
             while (i < mesh.geometry.indices.length)
@@ -88,10 +91,13 @@ class Pipeline
                 {
                     // Scan conversion
                     ScanConverter.process(framebuffer, depthBuffer, shader, triangle);
+                    tris++;
                 }
 
                 i += 3;
             }
         }
+        
+        trace("drew " + tris + " tris");
     }
 }

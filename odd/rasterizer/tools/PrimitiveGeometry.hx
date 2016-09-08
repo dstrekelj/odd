@@ -1,6 +1,6 @@
 package odd.rasterizer.tools;
 
-import odd.rasterizer.object.Geometry;
+import odd.rasterizer.Geometry;
 
 class PrimitiveGeometry
 {

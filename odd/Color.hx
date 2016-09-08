@@ -1,10 +1,21 @@
 package odd;
 
+import odd.math.Vec3;
+
 /**
  * RGB color value abstracted over 24-bit integer.
  */
 abstract Color(Int) from Int to Int
 {
+    public static var BLACK = Color.RGB(0x000000);
+    public static var WHITE = Color.RGB(0xffffff);
+    public static var RED = Color.RGB(0xff0000);
+    public static var GREEN = Color.RGB(0x00ff00);
+    public static var BLUE = Color.RGB(0x0000ff);
+    public static var CYAN = Color.RGB(0x00ffff);
+    public static var MAGENTA = Color.RGB(0xff00ff);
+    public static var YELLOW = Color.RGB(0xffff00);
+
     /**
      * INT
      */

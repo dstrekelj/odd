@@ -5,6 +5,7 @@ import odd.math.Vec2;
 import odd.math.Vec2i;
 import odd.math.Vec3;
 import odd.math.Vec4;
+import odd.Texture;
 
 /**
  * Base shader class, defining vertex and fragment shading methods.
@@ -19,6 +20,8 @@ class Shader
     var transformView : Mat4x4;
     @:allow(odd.rasterizer.pipeline.Pipeline)
     var transformProjection : Mat4x4;
+    @:allow(odd.rasterizer.pipeline.Pipeline)
+    var texture : Texture;
     
     @:allow(odd.rasterizer.pipeline.VertexProcessor)
     var vertexColor : Vec3;
@@ -35,6 +38,7 @@ class Shader
     public function new()
     {
         fragmentColor = new Vec3(1, 1, 1);
+        fragmentTextureCoordinate = new Vec2(0, 0);
     }
     
     public function vertex(position : Vec4) : Vec4

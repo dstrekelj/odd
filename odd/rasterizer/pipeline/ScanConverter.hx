@@ -61,7 +61,7 @@ class ScanConverter
         var pB : Vec2 = new Vec2(triangle.b.position.x, triangle.b.position.y);
         var pC : Vec2 = new Vec2(triangle.c.position.x, triangle.c.position.y);
         
-        var areaABC : Float = edge(pA.x, pA.y, pB.x, pB.y, pC.x, pC.y);
+        var areaABC : Float = edge(pA, pB, pC);
         var areaP : Vec3 = new Vec3(0, 0, 0);
         
         var fragmentCoordinate : Vec4 = new Vec4(0, 0, 0, 1);
@@ -78,9 +78,9 @@ class ScanConverter
             {
                 p.x = j + 0.5;
                 
-                areaP.x = edge(pA.x, pA.y, pB.x, pB.y, p.x, p.y);
-                areaP.y = edge(pB.x, pB.y, pC.x, pC.y, p.x, p.y);
-                areaP.z = edge(pC.x, pC.y, pA.x, pA.y, p.x, p.y);
+                areaP.x = edge(pA, pB, p);
+                areaP.y = edge(pB, pC, p);
+                areaP.z = edge(pC, pA, p);
                 
                 // Note: counter-clockwise winding order has negative area
                 
@@ -124,10 +124,10 @@ class ScanConverter
             i++;
         }
     }
-    
-    private static inline function edge(ax : Float, ay : Float, bx : Float, by : Float, px : Float, py : Float) : Float
+
+    private static inline function edge(a : Vec2, b : Vec2, p : Vec2) : Float
     {
-        return px * (ay - by) + py * (bx - ax) + (ax * by - ay * bx);
+        return p.x * (a.y - b.y) + p.y * (b.x - a.x) + (a.x * b.y - a.y * b.x);
     }
     
     private static inline function interpolateColor(shader : Shader, z : Float, areaP : Vec3, triangle : Triangle) : Void
@@ -136,9 +136,9 @@ class ScanConverter
         var g = (areaP.y * triangle.a.color.y + areaP.z * triangle.b.color.y + areaP.x * triangle.c.color.y);
         var b = (areaP.y * triangle.a.color.z + areaP.z * triangle.b.color.z + areaP.x * triangle.c.color.z);
         
-        shader.fragmentColor.x = r * z;
-        shader.fragmentColor.y = g * z;
-        shader.fragmentColor.z = b * z;
+        shader.fragmentColor.x = Math.max(0, Math.min(1.0, r * z));
+        shader.fragmentColor.y = Math.max(0, Math.min(1.0, g * z));
+        shader.fragmentColor.z = Math.max(0, Math.min(1.0, b * z));
     }
     
     private static inline function interpolateUV(shader : Shader, z : Float, areaP : Vec3, triangle : Triangle) : Void
@@ -146,7 +146,7 @@ class ScanConverter
         var u = (areaP.y * triangle.a.textureCoordinate.x + areaP.z * triangle.b.textureCoordinate.x + areaP.x * triangle.c.textureCoordinate.x);
         var v = (areaP.y * triangle.a.textureCoordinate.y + areaP.z * triangle.b.textureCoordinate.y + areaP.x * triangle.c.textureCoordinate.y);
         
-        shader.fragmentTextureCoordinate.x = u * z;
-        shader.fragmentTextureCoordinate.y = v * z;
+        shader.fragmentTextureCoordinate.x = Math.max(0, Math.min(1.0, u * z));
+        shader.fragmentTextureCoordinate.y = Math.max(0, Math.min(1.0, v * z));
     }
 }

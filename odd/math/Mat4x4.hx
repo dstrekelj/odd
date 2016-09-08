@@ -223,7 +223,7 @@ abstract Mat4x4(Matrix4x4)
      */
     public static inline function perspective(fieldOfView : Float, aspectRatio : Float, n : Float, f : Float) : Mat4x4
     {
-        var t : Float = Math.tan(Angle.rad(fieldOfView) / 2) * n;
+        var t : Float = Math.tan(fieldOfView / 2) * n;
         var b : Float = -t;
         var r : Float = t * aspectRatio;
         var l : Float = -r;

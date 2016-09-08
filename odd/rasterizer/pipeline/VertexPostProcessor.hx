@@ -16,7 +16,7 @@ class VertexPostProcessor
         var bClipState = getClipState(triangle.b.position);
         var cClipState = getClipState(triangle.c.position);
 
-        if ((aClipState & bClipState & cClipState) == ClipState.INSIDE)
+        if ((aClipState | bClipState | cClipState) == ClipState.INSIDE)
         {
             transformVertex(triangle.a, transformViewport);
             transformVertex(triangle.b, transformViewport);
@@ -37,7 +37,10 @@ class VertexPostProcessor
 
     static function transformVertex(v : Vertex, transformViewport : Mat4x4) : Void
     {
-        v.position /= v.position.w;
+        if (v.position.w != 0 && v.position.w != 1)
+        {
+            v.position /= v.position.w;
+        }
         v.position *= transformViewport;
     }
     

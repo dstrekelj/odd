@@ -1,5 +1,6 @@
 package odd.rasterizer.ds;
 
+import odd.math.Mat4x4;
 import odd.math.Vec4;
 import odd.math.Vec3;
 import odd.math.Vec2;
@@ -17,6 +18,31 @@ class Vertex
         color = null;
         normal = null;
         textureCoordinate = null;
+    }
+
+    public function perspectiveDivide() : Void
+    {
+        if (position.w != 0 && position.w != 1)
+        {
+            position.x /= position.w;
+            position.y /= position.w;
+            position.z /= position.w;
+            
+            position.z = 1 / position.z;
+            position.w = 1 / position.w;
+
+            if (color != null) color *= position.w;
+            if (normal != null) normal *= position.w;
+            if (textureCoordinate != null) textureCoordinate *= position.w;
+        }
+    }
+
+    public function viewportTransform(transform : Mat4x4) : Void
+    {
+        var w = position.w;
+        position.w = 1;
+        position *= transform;
+        position.w = w;
     }
 
     public function lerp(to : Vertex) : Void

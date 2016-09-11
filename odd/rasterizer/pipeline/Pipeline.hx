@@ -33,10 +33,9 @@ class Pipeline
         scene = null;
         shader = null;
 
-        // Negative Y.y component to mirror image vertically
         transformViewport = new Mat4x4(
             viewportWidth / 2,   0,                     0,  0,
-            0,                  -viewportHeight / 2,    0,  0,
+            0,                   viewportHeight / 2,    0,  0,
             0,                   0,                     1,  0,
             viewportWidth / 2,   viewportHeight / 2,    0,  1
         );
@@ -79,17 +78,25 @@ class Pipeline
                 triangleIndices[2] = mesh.geometry.indices[i + 2];
         
                 // Primitive assembly
+                trace("Primitive assembly");
                 var triangle = PrimitiveAssembler.assembleTriangle(triangleIndices, mesh.geometry);
+                trace(Std.string(triangle));
 
                 // Vertex processing
+                trace("Vertex processing");
                 VertexProcessor.process(triangle, shader);
+                trace(Std.string(triangle));
 
                 // Vertex post-processing
+                trace("Vertex post-processing");
                 VertexPostProcessor.process(triangle, transformViewport);
+                trace(Std.string(triangle));
 
                 if (triangle.isValid)
                 {
                     // Scan conversion
+                    trace("Scan conversion");
+                    trace(Std.string(triangle));
                     ScanConverter.process(framebuffer, depthBuffer, shader, triangle);
                     tris++;
                 }
@@ -98,6 +105,6 @@ class Pipeline
             }
         }
         
-        trace("drew " + tris + " tris");
+        trace("Drew " + tris + " triangles");
     }
 }

@@ -18,35 +18,7 @@ class ScanConverter
 {
     public static function process(framebuffer : Framebuffer, depthBuffer : DepthBuffer, shader : Shader, triangle : Triangle) : Void
     {
-        var haveVerticesDefinedColor = (triangle.a.color != null) || (triangle.b.color != null) || (triangle.c.color != null);
-        var haveVerticesDefinedNormal = (triangle.a.normal != null) || (triangle.b.normal != null) || (triangle.c.normal != null);
-        var haveVerticesDefinedTextureCoordinate = (triangle.a.textureCoordinate != null) || (triangle.b.textureCoordinate != null) || (triangle.c.textureCoordinate != null); 
-
-        triangle.a.position.z = 1 / triangle.a.position.z;
-        triangle.b.position.z = 1 / triangle.b.position.z;
-        triangle.c.position.z = 1 / triangle.c.position.z;
-        
-        if (haveVerticesDefinedColor)
-        {
-            triangle.a.color *= triangle.a.position.z;
-            triangle.b.color *= triangle.b.position.z;
-            triangle.c.color *= triangle.c.position.z;
-        }
-        
-        if (haveVerticesDefinedNormal)
-        {
-            triangle.a.normal *= triangle.a.position.z;
-            triangle.b.normal *= triangle.b.position.z;
-            triangle.c.normal *= triangle.c.position.z;
-        }
-
-        if (haveVerticesDefinedTextureCoordinate)
-        {
-            triangle.a.textureCoordinate *= triangle.a.position.z;
-            triangle.b.textureCoordinate *= triangle.b.position.z;
-            triangle.c.textureCoordinate *= triangle.c.position.z;
-        }
-        
+        // Determine triangle bounding box area within framebuffer dimensions
         var min : Vec2i = new Vec2i(
             Math.floor(Math.max(0, Math.min(triangle.a.position.x, Math.min(triangle.b.position.x, triangle.c.position.x)))),
             Math.floor(Math.max(0, Math.min(triangle.a.position.y, Math.min(triangle.b.position.y, triangle.c.position.y))))
@@ -56,97 +28,113 @@ class ScanConverter
             Math.floor(Math.min(framebuffer.height, Math.max(triangle.a.position.y, Math.max(triangle.b.position.y, triangle.c.position.y))))
         );
         
-        var p : Vec2 = new Vec2(0, 0);
+        // Extract projected locations of triangle points
         var pA : Vec2 = new Vec2(triangle.a.position.x, triangle.a.position.y);
         var pB : Vec2 = new Vec2(triangle.b.position.x, triangle.b.position.y);
         var pC : Vec2 = new Vec2(triangle.c.position.x, triangle.c.position.y);
-        
+        // Calculate triangle area
         var areaABC : Float = edge(pA, pB, pC);
+
+        // Track fragment sample point within triangle bounding box
+        var p : Vec2 = new Vec2(0, 0);
+        // Track area of triangles formed by sample and two triangle points
         var areaP : Vec3 = new Vec3(0, 0, 0);
         
         var fragmentCoordinate : Vec4 = new Vec4(0, 0, 0, 1);
         var pixelCoordinate : Vec2i = new Vec2i(0, 0);
         
-        var i = min.y;
-        var j = min.x;
-        while (i <= max.y)
+        var y = min.y;
+        var x = min.x;
+        while (y <= max.y)
         {
-            p.y = i + 0.5;
+            p.y = y + 0.5;
             
-            j = min.x;
-            while (j <= max.x)
+            x = min.x;
+            while (x <= max.x)
             {
-                p.x = j + 0.5;
+                p.x = x + 0.5;
                 
-                areaP.x = edge(pA, pB, p);
-                areaP.y = edge(pB, pC, p);
-                areaP.z = edge(pC, pA, p);
-                
-                // Note: counter-clockwise winding order has negative area
-                
-                if (areaP.x <= 0 && areaP.y <= 0 && areaP.z <= 0)
+                areaP.x = edge(pB, pC, p);
+                areaP.y = edge(pC, pA, p);
+                areaP.z = edge(pA, pB, p);
+
+                if (areaP.x >= 0 && areaP.y >= 0 && areaP.z >= 0)
                 {
                     areaP /= areaABC;
+
+                    var z : Float = 1 / (areaP.x * triangle.a.position.z + areaP.y * triangle.b.position.z + areaP.z * triangle.c.position.z);
                     
-                    var z : Float = 1 / (areaP.y * triangle.a.position.z + areaP.z * triangle.b.position.z + areaP.x * triangle.c.position.z);
-                    
-                    if (z < depthBuffer.get(j, i))
+                    if (1 / z == 0)
                     {
-                        if (haveVerticesDefinedColor)
-                        {
-                            interpolateColor(shader, z, areaP, triangle);
-                        }
-                        
-                        if (haveVerticesDefinedTextureCoordinate)
-                        {
-                            interpolateUV(shader, z, areaP, triangle);
-                        }
+                        z = 0;
+                    }
+                    
+                    if (!Math.isFinite(z) || z < 0 || z > 1)
+                    {
+                        x += 1;
+                        continue;
+                    }
+
+                    var w : Float = 1 / (areaP.x * triangle.a.position.w + areaP.y * triangle.b.position.w + areaP.z * triangle.c.position.w);
+
+                    if (z <= depthBuffer.get(x, y))
+                    {
+                        interpolateAttributes(triangle, z, w, areaP, shader);
                         
                         fragmentCoordinate.x = p.x;
                         fragmentCoordinate.y = p.y;
-                        fragmentCoordinate.z = z;
-                        
-                        pixelCoordinate.x = j;
-                        pixelCoordinate.y = i;
+                        fragmentCoordinate.z = 1 / z;
+                        fragmentCoordinate.w = 1 / w;
+
+                        pixelCoordinate.x = x;
+                        pixelCoordinate.y = framebuffer.height - y;
                         
                         if (shader.fragment(fragmentCoordinate, pixelCoordinate))
                         {
-                            depthBuffer.set(j, i, z);
+                            depthBuffer.set(x, y, z);
                             var color = odd.Color.RGBf(shader.fragmentColor.x, shader.fragmentColor.y, shader.fragmentColor.z);
-                            framebuffer.setPixel(j, i, color);
+                            framebuffer.setPixel(pixelCoordinate.x, pixelCoordinate.y, color);
                         }
                     }
                 }
                 
-                j++;
+                x += 1;
             }
             
-            i++;
+            y += 1;
         }
     }
 
-    private static inline function edge(a : Vec2, b : Vec2, p : Vec2) : Float
+    static inline function edge(a : Vec2, b : Vec2, p : Vec2) : Float
     {
         return p.x * (a.y - b.y) + p.y * (b.x - a.x) + (a.x * b.y - a.y * b.x);
     }
-    
-    private static inline function interpolateColor(shader : Shader, z : Float, areaP : Vec3, triangle : Triangle) : Void
+
+    static inline function interpolateAttributes(triangle : Triangle, z : Float, w : Float, areaP : Vec3, shader : Shader) : Void
     {
-        var r = (areaP.y * triangle.a.color.x + areaP.z * triangle.b.color.x + areaP.x * triangle.c.color.x);
-        var g = (areaP.y * triangle.a.color.y + areaP.z * triangle.b.color.y + areaP.x * triangle.c.color.y);
-        var b = (areaP.y * triangle.a.color.z + areaP.z * triangle.b.color.z + areaP.x * triangle.c.color.z);
-        
-        shader.fragmentColor.x = Math.max(0, Math.min(1.0, r * z));
-        shader.fragmentColor.y = Math.max(0, Math.min(1.0, g * z));
-        shader.fragmentColor.z = Math.max(0, Math.min(1.0, b * z));
+        if (triangle.hasColorAttribute()) interpolateColor(triangle, w, areaP, shader);
+        if (triangle.hasTextureCoordinateAttribute()) interpolateUV(triangle, w, areaP, shader);
     }
     
-    private static inline function interpolateUV(shader : Shader, z : Float, areaP : Vec3, triangle : Triangle) : Void
+    static inline function interpolateColor(triangle : Triangle, w : Float, areaP : Vec3, shader : Shader) : Void
     {
-        var u = (areaP.y * triangle.a.textureCoordinate.x + areaP.z * triangle.b.textureCoordinate.x + areaP.x * triangle.c.textureCoordinate.x);
-        var v = (areaP.y * triangle.a.textureCoordinate.y + areaP.z * triangle.b.textureCoordinate.y + areaP.x * triangle.c.textureCoordinate.y);
+        //trace(Std.string(areaP), w, 1 / w);
+
+        var r = (areaP.x * triangle.a.color.x + areaP.y * triangle.b.color.x + areaP.z * triangle.c.color.x);
+        var g = (areaP.x * triangle.a.color.y + areaP.y * triangle.b.color.y + areaP.z * triangle.c.color.y);
+        var b = (areaP.x * triangle.a.color.z + areaP.y * triangle.b.color.z + areaP.z * triangle.c.color.z);
         
-        shader.fragmentTextureCoordinate.x = Math.max(0, Math.min(1.0, u * z));
-        shader.fragmentTextureCoordinate.y = Math.max(0, Math.min(1.0, v * z));
+        shader.fragmentColor.x = r * w;
+        shader.fragmentColor.y = g * w;
+        shader.fragmentColor.z = b * w;
+    }
+    
+    static inline function interpolateUV(triangle : Triangle, w : Float, areaP : Vec3, shader : Shader) : Void
+    {
+        var u = (areaP.x * triangle.a.textureCoordinate.x + areaP.y * triangle.b.textureCoordinate.x + areaP.z * triangle.c.textureCoordinate.x);
+        var v = (areaP.x * triangle.a.textureCoordinate.y + areaP.y * triangle.b.textureCoordinate.y + areaP.z * triangle.c.textureCoordinate.y);
+
+        shader.fragmentTextureCoordinate.x = u * w;
+        shader.fragmentTextureCoordinate.y = v * w;
     }
 }

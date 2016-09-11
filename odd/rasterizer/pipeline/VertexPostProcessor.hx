@@ -3,7 +3,6 @@ package odd.rasterizer.pipeline;
 import odd.math.Mat4x4;
 import odd.math.Vec4;
 import odd.rasterizer.ds.primitives.Triangle;
-import odd.rasterizer.ds.Vertex;
 
 /**
  * Handles vertex post-processing (projection, clipping, ...).
@@ -12,36 +11,45 @@ class VertexPostProcessor
 {
     public static function process(triangle : Triangle, transformViewport : Mat4x4) : Void
     {
+        if (triangle.a.position.w < 0 || triangle.b.position.w < 0 || triangle.c.position.w < 0)
+        {
+            trace("...Triangle culled. Vertex w < 0.");
+            triangle.isValid = false;
+            return;
+        }
+
         var aClipState = getClipState(triangle.a.position);
         var bClipState = getClipState(triangle.b.position);
         var cClipState = getClipState(triangle.c.position);
 
-        if ((aClipState | bClipState | cClipState) == ClipState.INSIDE)
-        {
-            transformVertex(triangle.a, transformViewport);
-            transformVertex(triangle.b, transformViewport);
-            transformVertex(triangle.c, transformViewport);
-            triangle.calculateFaceNormal();
-            
-            if (triangle.faceNormal.z < 0) {
-                triangle.isValid = true;
-            } else {
-                triangle.isValid = false;
-            }
-        }
-        else
-        {
-            triangle.isValid = false;
-        }
-    }
+        trace("...Clip state: ", aClipState, bClipState, cClipState);
 
-    static function transformVertex(v : Vertex, transformViewport : Mat4x4) : Void
-    {
-        if (v.position.w != 0 && v.position.w != 1)
+        if ((aClipState & bClipState & cClipState) != ClipState.INSIDE)
         {
-            v.position /= v.position.w;
+            trace("...Triangle culled. Vertices outside frustum.");
+            triangle.isValid = false;
+            return;
         }
-        v.position *= transformViewport;
+
+        triangle.a.perspectiveDivide();
+        triangle.b.perspectiveDivide();
+        triangle.c.perspectiveDivide();
+
+        triangle.calculateFaceNormal();
+
+        if (triangle.faceNormal.z <= 0)
+        {
+            trace("...Triangle culled. Face normal not facing camera.");
+            triangle.isValid = false;
+            return;
+        }
+            
+        trace(Std.string(triangle));
+        triangle.a.viewportTransform(transformViewport);
+        triangle.b.viewportTransform(transformViewport);
+        triangle.c.viewportTransform(transformViewport);
+
+        triangle.isValid = true;
     }
     
     static function getClipState(p : Vec4) : Int
@@ -67,5 +75,4 @@ abstract ClipState(Int) from Int to Int
     var Y_NEG = 8;
     var Z_POS = 16;
     var Z_NEG = 32;
-    var OUTSIDE = 63;
 }

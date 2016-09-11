@@ -212,18 +212,9 @@ abstract Mat4x4(Matrix4x4)
         );
     }
     
-    /**
-     * Note: `fieldOfView` >= 180° flips the image vertically.
-     * 
-     * @param fieldOfView   Vertical field of view, in degrees
-     * @param aspectRatio
-     * @param n
-     * @param f
-     * @return
-     */
-    public static inline function perspective(fieldOfView : Float, aspectRatio : Float, n : Float, f : Float) : Mat4x4
+    public static inline function perspective(fovY : Float, aspectRatio : Float, n : Float, f : Float) : Mat4x4
     {
-        var t : Float = Math.tan(fieldOfView / 2) * n;
+        var t : Float = Math.tan(fovY / 2) * n;
         var b : Float = -t;
         var r : Float = t * aspectRatio;
         var l : Float = -r;
@@ -231,8 +222,8 @@ abstract Mat4x4(Matrix4x4)
         return new Mat4x4(
             (2 * n) / (r - l),  0,                  0,                      0,
             0,                  (2 * n) / (t - b),  0,                      0,
-            (r + l) / (r - l),  (t + b) / (t - b), -(f + n) / (f - n),     -1,
-            0,                  0,                 -(2 * f * n) / (f - n),  0
+           -(r + l) / (r - l), -(t + b) / (t - b),  f / (n - f),           -1,
+            0,                  0,                  (n * f) / (n - f),      0
         );
     }
     

@@ -33,4 +33,19 @@ class Triangle
         faceNormal = ab.cross(ac);
         return faceNormal;
     }
+
+    public function hasColorAttribute() : Bool
+    {
+        return a.color != null && b.color != null && c.color != null;
+    }
+
+    public function hasNormalAttribute() : Bool
+    {
+        return a.normal != null && b.normal != null && c.normal != null;
+    }
+
+    public function hasTextureCoordinateAttribute() : Bool
+    {
+        return a.textureCoordinate != null && b.textureCoordinate != null && c.textureCoordinate != null;
+    }
 }

@@ -13,7 +13,7 @@ class VertexPostProcessor
     {
         if (triangle.a.position.w < 0 || triangle.b.position.w < 0 || triangle.c.position.w < 0)
         {
-            trace("...Triangle culled. Vertex w < 0.");
+            //trace("...Triangle culled. Vertex w < 0.");
             triangle.isValid = false;
             return;
         }
@@ -22,11 +22,11 @@ class VertexPostProcessor
         var bClipState = getClipState(triangle.b.position);
         var cClipState = getClipState(triangle.c.position);
 
-        trace("...Clip state: ", aClipState, bClipState, cClipState);
+        //trace("...Clip state: ", aClipState, bClipState, cClipState);
 
         if ((aClipState & bClipState & cClipState) != ClipState.INSIDE)
         {
-            trace("...Triangle culled. Vertices outside frustum.");
+            //trace("...Triangle culled. Vertices outside frustum.");
             triangle.isValid = false;
             return;
         }
@@ -39,12 +39,11 @@ class VertexPostProcessor
 
         if (triangle.faceNormal.z <= 0)
         {
-            trace("...Triangle culled. Face normal not facing camera.");
+            //trace("...Triangle culled. Face normal not facing camera.");
             triangle.isValid = false;
             return;
         }
-            
-        trace(Std.string(triangle));
+
         triangle.a.viewportTransform(transformViewport);
         triangle.b.viewportTransform(transformViewport);
         triangle.c.viewportTransform(transformViewport);

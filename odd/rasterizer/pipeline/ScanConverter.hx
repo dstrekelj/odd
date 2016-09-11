@@ -63,7 +63,7 @@ class ScanConverter
                     areaP /= areaABC;
 
                     var z : Float = 1 / (areaP.x * triangle.a.position.z + areaP.y * triangle.b.position.z + areaP.z * triangle.c.position.z);
-                    
+
                     if (1 / z == 0)
                     {
                         z = 0;
@@ -118,8 +118,6 @@ class ScanConverter
     
     static inline function interpolateColor(triangle : Triangle, w : Float, areaP : Vec3, shader : Shader) : Void
     {
-        //trace(Std.string(areaP), w, 1 / w);
-
         var r = (areaP.x * triangle.a.color.x + areaP.y * triangle.b.color.x + areaP.z * triangle.c.color.x);
         var g = (areaP.x * triangle.a.color.y + areaP.y * triangle.b.color.y + areaP.z * triangle.c.color.y);
         var b = (areaP.x * triangle.a.color.z + areaP.y * triangle.b.color.z + areaP.z * triangle.c.color.z);

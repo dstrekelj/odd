@@ -85,7 +85,7 @@ class PrimitiveGeometry
              0.0, 1.0, 0.0
         ];
         g.indices = [
-            0, 1, 2, 2, 3, 0,   // Pyramid base
+            0, 3, 2, 2, 1, 0,   // Pyramid base
             0, 1, 4,            // Facing +z
             1, 2, 4,            // Facing +x
             2, 3, 4,            // Facing -z

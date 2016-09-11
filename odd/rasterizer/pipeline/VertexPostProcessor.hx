@@ -11,7 +11,7 @@ class VertexPostProcessor
 {
     public static function process(triangle : Triangle, transformViewport : Mat4x4) : Void
     {
-        if (triangle.a.position.w < 0 || triangle.b.position.w < 0 || triangle.c.position.w < 0)
+        if (triangle.a.position.w < 0 && triangle.b.position.w < 0 && triangle.c.position.w < 0)
         {
             //trace("...Triangle culled. Vertex w < 0.");
             triangle.isValid = false;
@@ -31,11 +31,14 @@ class VertexPostProcessor
             return;
         }
 
+        //trace("...Perspective divide");
         triangle.a.perspectiveDivide();
         triangle.b.perspectiveDivide();
         triangle.c.perspectiveDivide();
-
+        //trace("...Calculate face normal");
         triangle.calculateFaceNormal();
+
+        //trace(Std.string(triangle));
 
         if (triangle.faceNormal.z <= 0)
         {
@@ -44,6 +47,7 @@ class VertexPostProcessor
             return;
         }
 
+        //trace("...Viewport transform");
         triangle.a.viewportTransform(transformViewport);
         triangle.b.viewportTransform(transformViewport);
         triangle.c.viewportTransform(transformViewport);

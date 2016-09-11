@@ -62,36 +62,43 @@ class ScanConverter
                 {
                     areaP /= areaABC;
 
-                    var z : Float = 1 / (areaP.x * triangle.a.position.z + areaP.y * triangle.b.position.z + areaP.z * triangle.c.position.z);
-
-                    if (1 / z == 0)
+                    // Interpolate vertex position 1 / z, where z = [0, 1]
+                    var z : Float = (areaP.x * triangle.a.position.z + areaP.y * triangle.b.position.z + areaP.z * triangle.c.position.z);
+                    // Vertex position z, where z = [0, 1]
+                    var z_ : Float = 1 / z;
+                    
+                    // Handle the case of division by zero
+                    if (z == 0)
                     {
-                        z = 0;
+                        z_ = 0;
                     }
                     
-                    if (!Math.isFinite(z) || z < 0 || z > 1)
+                    // Skip if 1 / z is infinite or not in [0, 1] range
+                    if (!Math.isFinite(z_) || (z_ < 0 || z_ > 1))
                     {
                         x += 1;
                         continue;
                     }
 
-                    var w : Float = 1 / (areaP.x * triangle.a.position.w + areaP.y * triangle.b.position.w + areaP.z * triangle.c.position.w);
+                    // Interpolate vertex position 1 / w
+                    var w : Float = (areaP.x * triangle.a.position.w + areaP.y * triangle.b.position.w + areaP.z * triangle.c.position.w);
+                    var w_ : Float = 1 / w;
 
-                    if (z <= depthBuffer.get(x, y))
+                    if (z_ <= depthBuffer.get(x, y))
                     {
-                        interpolateAttributes(triangle, z, w, areaP, shader);
+                        interpolateAttributes(triangle, w_, areaP, shader);
                         
                         fragmentCoordinate.x = p.x;
                         fragmentCoordinate.y = p.y;
-                        fragmentCoordinate.z = 1 / z;
-                        fragmentCoordinate.w = 1 / w;
+                        fragmentCoordinate.z = z_;
+                        fragmentCoordinate.w = w_;
 
                         pixelCoordinate.x = x;
                         pixelCoordinate.y = framebuffer.height - y;
                         
                         if (shader.fragment(fragmentCoordinate, pixelCoordinate))
                         {
-                            depthBuffer.set(x, y, z);
+                            depthBuffer.set(x, y, z_);
                             var color = odd.Color.RGBf(shader.fragmentColor.x, shader.fragmentColor.y, shader.fragmentColor.z);
                             framebuffer.setPixel(pixelCoordinate.x, pixelCoordinate.y, color);
                         }
@@ -110,7 +117,7 @@ class ScanConverter
         return p.x * (a.y - b.y) + p.y * (b.x - a.x) + (a.x * b.y - a.y * b.x);
     }
 
-    static inline function interpolateAttributes(triangle : Triangle, z : Float, w : Float, areaP : Vec3, shader : Shader) : Void
+    static inline function interpolateAttributes(triangle : Triangle, w : Float, areaP : Vec3, shader : Shader) : Void
     {
         if (triangle.hasColorAttribute()) interpolateColor(triangle, w, areaP, shader);
         if (triangle.hasTextureCoordinateAttribute()) interpolateUV(triangle, w, areaP, shader);

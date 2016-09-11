@@ -23,4 +23,9 @@ class Camera
     {
         transformView = transformView * Mat4x4.translate(-x, -y, -z);
     }
+
+    public function rotate(x : Float, y : Float, z : Float)
+    {
+        transformView = transformView * Mat4x4.rotate(-x, -y, -z);
+    }
 }

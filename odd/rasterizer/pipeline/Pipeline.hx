@@ -55,7 +55,7 @@ class Pipeline
     
     public function execute(framebuffer : Framebuffer) : Void
     {
-        var tris = 0;
+        //var tris = 0;
 
         if (shader == null || scene == null) return;
 
@@ -98,7 +98,7 @@ class Pipeline
                     //trace("Scan conversion");
                     //trace(Std.string(triangle));
                     ScanConverter.process(framebuffer, depthBuffer, shader, triangle);
-                    tris++;
+                    //tris++;
                 }
 
                 i += 3;

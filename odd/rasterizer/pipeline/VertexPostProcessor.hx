@@ -40,7 +40,7 @@ class VertexPostProcessor
 
         //trace(Std.string(triangle));
 
-        if (triangle.faceNormal.z <= 0)
+        if (triangle.faceNormal.z >= 0)
         {
             //trace("...Triangle culled. Face normal not facing camera.");
             triangle.isValid = false;

@@ -30,7 +30,7 @@ class Triangle
         var ac : Vec3 = (c.position - a.position);
         ab.normalize();
         ac.normalize();
-        faceNormal = ab.cross(ac);
+        faceNormal = ac.cross(ab);
         return faceNormal;
     }
 

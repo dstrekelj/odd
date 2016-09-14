@@ -72,10 +72,9 @@ class Assets
     {
         var typeName = getAssetName(assetPath).toUpperCase();
 
-        var geometryData : ObjData = ObjReader.read(assetPath);
+        var geometryData : ObjData = ObjReader.readPositions(assetPath);
 
         var typeDefinition = macro class C {
-            public static var hello = "world!";
             public static var positions = $v{geometryData.positions};
             public static var indices = $v{geometryData.indices};
         }

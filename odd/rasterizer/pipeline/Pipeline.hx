@@ -55,8 +55,6 @@ class Pipeline
     
     public function execute(framebuffer : Framebuffer) : Void
     {
-        //var tris = 0;
-
         if (shader == null || scene == null) return;
 
         depthBuffer.clear();
@@ -70,9 +68,14 @@ class Pipeline
             shader.transformProjection = scene.camera.transformProjection;
             shader.texture = mesh.texture;
             
+            var triangleId = 0;
             var i = 0;
             while (i < mesh.geometry.indices.length)
-            {   
+            {
+                shader.triangleId = triangleId;
+
+                triangleId += 1;
+
                 triangleIndices[0] = mesh.geometry.indices[i];
                 triangleIndices[1] = mesh.geometry.indices[i + 1];
                 triangleIndices[2] = mesh.geometry.indices[i + 2];

@@ -15,6 +15,9 @@ import odd.Texture;
 class Shader 
 {
     @:allow(odd.rasterizer.pipeline.Pipeline)
+    var triangleId : Int;
+
+    @:allow(odd.rasterizer.pipeline.Pipeline)
     var transformModel : Mat4x4;
     @:allow(odd.rasterizer.pipeline.Pipeline)
     var transformView : Mat4x4;

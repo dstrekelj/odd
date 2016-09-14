@@ -1,6 +1,4 @@
 package odd;
 
-@:build(odd.macros.AssetMacro.build())
-class Assets
-{
-}
+@:build(odd.tools.macros.Assets.build())
+class Assets {}

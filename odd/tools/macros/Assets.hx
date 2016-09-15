@@ -5,8 +5,8 @@ import haxe.macro.Context;
 import haxe.macro.Expr;
 
 import odd.tools.SysUtils;
-import odd.tools.macros.readers.ObjReader;
-import odd.tools.macros.readers.ObjReader.ObjData;
+import odd.tools.readers.ObjReader;
+import odd.tools.readers.ObjReader.ObjData;
 
 import sys.io.File;
 import sys.FileSystem;

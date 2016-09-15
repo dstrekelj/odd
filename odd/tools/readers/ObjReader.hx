@@ -1,4 +1,4 @@
-package odd.tools.macros.readers;
+package odd.tools.readers;
 
 import sys.io.File;
 import sys.io.FileInput;

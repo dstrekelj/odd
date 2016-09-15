@@ -227,13 +227,13 @@ abstract Mat4x4(Matrix4x4)
         );
     }
     
-    public static inline function orthographic(b : Float, t : Float, l : Float, r : Float, n : Float, f : Float) : Mat4x4
+    public static inline function orthographic(r : Float, l : Float, t : Float, b : Float, n : Float, f : Float) : Mat4x4
     {
         return new Mat4x4(
             2 / (r - l),        0,                  0,                  0,
             0,                  2 / (t - b),        0,                  0,
-            0,                  0,                 -2 / (f - n),        0,
-           -(r + l) / (r - l), -(t + b) / (t - b), -(f + n) / (f - n),  1
+            0,                  0,                  1 / (n - f),        0,
+           -(r + l) / (r - l), -(t + b) / (t - b),  n / (n - f),        1
         );
     }
     

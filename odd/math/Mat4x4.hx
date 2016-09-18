@@ -226,7 +226,7 @@ abstract Mat4x4(Matrix4x4)
             0,                  0,                  (n * f) / (n - f),      0
         );
     }
-    
+    /*
     public static inline function orthographic(r : Float, l : Float, t : Float, b : Float, n : Float, f : Float) : Mat4x4
     {
         return new Mat4x4(
@@ -236,7 +236,7 @@ abstract Mat4x4(Matrix4x4)
            -(r + l) / (r - l), -(t + b) / (t - b),  n / (n - f),        1
         );
     }
-    
+    */
     @:op(-A)
     public inline function neg() : Mat4x4
     {

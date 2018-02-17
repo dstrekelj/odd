@@ -20,8 +20,7 @@ For examples of use, please visit the [odd-samples](https://github.com/dstrekelj
 
 1. Get [Haxe](http://haxe.org/download/).
 
-    * 3.3.0-rc1 was used to develop Odd
-    * 3.2.x was tested and worked for HTML5, but the generated Java code was sometimes slow on Java, Android targets
+    * 3.3.0-rc1 was used to develop Odd, newer versions should work
 
 2. Get Odd.
 
